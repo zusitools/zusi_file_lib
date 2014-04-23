@@ -123,4 +123,10 @@ struct Streckenelement {
     set<StreckenelementFlag> flags;
 };
 
+// Ein Verweis auf eine Richtung eines Streckenelements.
+struct StreckenelementReferenz {
+    weak_ptr<Streckenelement> streckenelement;
+    streckenelement_richtung_t richtung;
+};
+
 #endif

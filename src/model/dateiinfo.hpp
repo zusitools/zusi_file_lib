@@ -18,8 +18,11 @@ struct DateiInfo {
     // Beschreibung des Objekts.
     string beschreibung;
 
-    // Version.
-    // MinVersion.
+    // Dateiformat-Version.
+    string formatVersion;
+
+    // Dateiformat-Min.-Version
+    string formatMinVersion;
 
 };
 

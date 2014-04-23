@@ -5,6 +5,7 @@
 
 typedef float autoraufwand_t;
 typedef int_fast32_t autorid_t;
+typedef int_fast8_t breitengrad_t;
 typedef int_fast32_t ereignis_nr_t;
 typedef float ereignis_wert_t;
 typedef int_fast32_t fahrstr_register_nr_t;
@@ -16,6 +17,9 @@ typedef float kruemmung_t;
 typedef int_fast32_t objektid_t;
 typedef float meter_t;
 typedef float ueberhoehung_t;
+typedef int_fast32_t referenz_nr_t;
+typedef int_fast8_t referenz_typ_t;
+typedef int_fast32_t rekursionstiefe_t;
 typedef float spannung_t;
 typedef int_fast32_t streckenelement_nr_t;
 typedef bool streckenelement_richtung_t;

@@ -1,4 +1,8 @@
+#include <stdexcept>
+
 #include <io/z2_leser.hpp>
+
+using namespace std;
 
 string Z2Leser::liesZeile(istream &datei) {
     string result;
@@ -9,6 +13,15 @@ string Z2Leser::liesZeile(istream &datei) {
         substrLaenge--;
     }
     return result.substr(0, substrLaenge);
+}
+
+int_fast32_t Z2Leser::liesGanzzahl(istream &datei) {
+    string tmp = Z2Leser::liesZeile(datei);
+    if (tmp.find_first_not_of("-0123456789") != string::npos) {
+        throw invalid_argument(tmp + " kann nicht in eine Ganzzahl konvertiert werden.");
+    } else {
+        return stoi(tmp);
+    }
 }
 
 string Z2Leser::liesMehrzeiligenString(istream &datei) {
