@@ -23,4 +23,5 @@
 *.out
 *.app
 
-
+### Other ###
+.swp # vi swap files
