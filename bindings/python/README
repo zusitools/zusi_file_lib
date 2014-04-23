@@ -1,0 +1,3 @@
+Erzeugen der Python-Bindings:
+
+BOOST_ROOT=/pfad/zu/boost bjam

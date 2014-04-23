@@ -1,5 +1,5 @@
 #include <string>
-#include <iostream>
+#include <fstream>
 
 #include <model/autorinfo.hpp>
 #include <model/dateiinfo.hpp>
@@ -45,4 +45,9 @@ unique_ptr<Strecke> StrLeser::liesStrDatei(istream& datei) {
 
     result->dateiInfo = std::move(dateiInfo);
     return result;
+}
+
+unique_ptr<Strecke> StrLeser::liesStrDateiMitDateiname(const string dateiname) {
+   ifstream datei(dateiname);
+    return StrLeser::liesStrDatei(datei);
 }

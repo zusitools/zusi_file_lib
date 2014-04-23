@@ -12,6 +12,7 @@ class StrLeser : public Z2Leser {
 
 public:
     static unique_ptr<Strecke> liesStrDatei(istream& datei);
+    static unique_ptr<Strecke> liesStrDateiMitDateiname(const string dateiname);
 
 };
 
