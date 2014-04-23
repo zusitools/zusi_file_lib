@@ -1,0 +1,126 @@
+#ifndef SRC_MODEL_STRECKENELEMENT_HPP
+#define SRC_MODEL_STRECKENELEMENT_HPP
+
+using namespace std;
+
+#include <memory>
+#include <set>
+#include <string>
+#include <vector>
+
+#include <common/types.hpp>
+#include <model/ereignis.hpp>
+#include <model/signal.hpp>
+
+// Funktions-Flags eines Streckenelements.
+enum StreckenelementFlag {
+
+    // Tunnel. Zusi 2 und Zusi 3.
+    Tunnel,
+
+    // Weichenbausatz. Zusi 2 und Zusi 3. Entspricht bei Zusi 2 der Funktion "Weiche".
+    Weichenbausatz,
+
+    // Steinbrücke. Nur Zusi 2.
+    Steinbruecke,
+
+    // Stahlbrücke. Nur Zusi 2.
+    Stahlbruecke,
+
+    // Keine Gleisfunktion. Zusi 2 und Zusi 3.
+    KeineGleisfunktion,
+
+    // Kein Weichenbau. Nur Zusi 2.
+    KeinWeichenbau,
+
+    // Keine Schulter rechts. Nur Zusi 3.
+    KeineSchulterRechts,
+
+    // Keine Schulter links. Nur Zusi 3.
+    KeineSchulterLinks,
+};
+
+// Info über eine Richtung eines Streckenelements.
+struct StreckenelementRichtungsInfo {
+
+    // Durch das Befahren ausgelöste Ereignisse.
+    vector<unique_ptr<Ereignis>> ereignisse;
+
+    // Die Nummer des zugeordneten Fahrstraßenregisters.
+    fahrstr_register_nr_t fahrstrRegisterNr;
+
+    // Die zulässige Höchstgeschwindigkeit [m/s].
+    geschwindigkeit_t vMax;
+
+    // Die Kilometrierung am Elementanfang(?) [km]
+    kilometrierung_t km;
+
+    // Ist die Kilometrierung in Richtung des Elementendes aufsteigend?
+    bool kmAufsteigend;
+
+    // Fahrstraßensignal
+    unique_ptr<FahrstrassenSignal> fahrstrSignal;
+
+    // Kombinationssignal
+    unique_ptr<KombiSignal> kombiSignal;
+
+    // TODO: Koppelweiche
+};
+
+// Ein Streckenelement.
+struct Streckenelement {
+    // Konstanten für die Indizierung von richtungsspezifischen Daten, die in Arrays abgelegt sind.
+    static const streckenelement_richtung_t RICHTUNG_NORM = 0;
+    static const streckenelement_richtung_t RICHTUNG_GEGEN = 1;
+
+    // Die Nummer des Streckenelements in der fertig zusammengesetzten Strecke.
+    streckenelement_nr_t nr;
+
+    // Die Nummer des Streckenelements im Modul, in dem es definiert ist.
+    streckenelement_nr_t nrInModul;
+
+    // Die Position von Element-Ende 1 (Normrichtung: 1-->2).
+    Punkt3D p1;
+
+    // Die Position von Element-Ende 2 (Normrichtung: 1-->2).
+    Punkt3D p2;
+
+    // Die Überhöhung des Elements [rad].
+    ueberhoehung_t ueberhoehung;
+
+    // Die Krümmung des Elements [1/km].
+    kruemmung_t kruemmung;
+
+    // Die Spannung der Oberleitung [kV]. 0 = nicht elektrifiziert.
+    spannung_t volt;
+
+    // Die Fahrdrahthöhe in Elementmitte [m].
+    meter_t drahthoehe;
+
+    // Der Name des Oberbaus.
+    string oberbauName;
+
+    // Der Name des Fahrleitungstyps.
+    string fahrleitungTyp;
+
+    // Die Zwangshelligkeit des Streckenelments [0..1].
+    helligkeit_t zwangshelligkeit;
+
+    // Die Trassierungsgeschwindigkeit des Streckenelements [m/s].
+    geschwindigkeit_t vTrassierung;
+
+    // Informationen zu Norm- und Gegenrichtung.
+    StreckenelementRichtungsInfo richtungsInfo[2];
+
+    // Geordnete Liste von Nachfolgern in jeder Richtung.
+    vector<weak_ptr<Streckenelement>> nachfolger[2];
+
+    // Element n dieses Vektors ist genau dann 1, wenn der Nachfolger
+    // in der entsprechenden Richtung die Gegenrichtung des nächsten
+    // Elements ist.
+    vector<bool> nachfolgerGegenrichtung[2];
+
+    set<StreckenelementFlag> flags;
+};
+
+#endif
