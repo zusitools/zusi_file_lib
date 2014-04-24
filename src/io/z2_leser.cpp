@@ -17,14 +17,18 @@ string Z2Leser::liesZeile(istream &datei) {
 }
 
 int_fast32_t Z2Leser::liesGanzzahl(istream &datei) {
-    string tmp = Z2Leser::liesZeile(datei);
-    if (tmp.find_first_not_of("-0123456789") != string::npos) {
-        throw invalid_argument("'" + tmp + "' kann nicht in eine Ganzzahl konvertiert werden.");
+    return Z2Leser::konvertiereInGanzzahl(Z2Leser::liesZeile(datei));
+}
+
+int_fast32_t Z2Leser::konvertiereInGanzzahl(string zeile) {
+    if (zeile.find_first_not_of("-0123456789") != string::npos) {
+        throw invalid_argument("'" + zeile + "' kann nicht in eine Ganzzahl konvertiert werden.");
     } else {
         try {
-            return stoi(tmp);
+            return stoi(zeile);
         } catch (invalid_argument) {
-            throw invalid_argument("'" + tmp + "' kann nicht in eine Ganzzahl konvertiert werden.");
+            throw invalid_argument(
+                "'" + zeile + "' kann nicht in eine Ganzzahl konvertiert werden.");
         }
     }
 }

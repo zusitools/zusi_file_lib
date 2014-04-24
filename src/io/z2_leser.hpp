@@ -17,6 +17,9 @@ protected:
     // Liest eine Zeile mit einem Integer-Wert aus einem Stream.
     // Wirft std::invalid_argument, wenn keine Konversion durchgeführt werden konnte.
     int_fast32_t liesGanzzahl(istream &datei);
+    
+    // Liest einen String mit einem Integer-Wert in eine Ganzzahl.
+    int_fast32_t konvertiereInGanzzahl(string zeile);
 
     // Liest eine Zeile mit einem Gleitkomma-Wert (Dezimalkomma) aus einem Stream.
     // Wirft std::invalid_argument, wenn keine Konversion durchgeführt werden konnte.

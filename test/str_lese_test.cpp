@@ -14,6 +14,9 @@ using namespace std;
 void testVorgaengerNachfolger(unique_ptr<Strecke>& strecke, streckenelement_nr_t nr,
     vector<streckenelement_nr_t> nrsVorgaenger, vector<streckenelement_nr_t> nrsNachfolger) {
 
+    BOOST_CHECK_EQUAL(strecke->streckenelemente.at(nr)->nr, nr);
+    BOOST_CHECK_EQUAL(strecke->streckenelemente.at(nr)->nrInModul, nr);
+
     BOOST_REQUIRE_EQUAL(
         strecke->streckenelemente.at(nr)->nachfolger[Streckenelement::RICHTUNG_GEGEN].size(),
         nrsVorgaenger.size());
@@ -21,6 +24,7 @@ void testVorgaengerNachfolger(unique_ptr<Strecke>& strecke, streckenelement_nr_t
         strecke->streckenelemente.at(nr)->nachfolger[Streckenelement::RICHTUNG_NORM].size(),
         nrsNachfolger.size());
 
+    // TODO: Bei Zusi 2 hat die Liste der Vorgänger keine definierte Ordnung.
     for (size_t i = 0; i < nrsVorgaenger.size(); i++) {
         auto vorgaenger = strecke->streckenelemente.at(nr)->
             nachfolger[Streckenelement::RICHTUNG_GEGEN].at(i).lock();
@@ -37,10 +41,10 @@ void testVorgaengerNachfolger(unique_ptr<Strecke>& strecke, streckenelement_nr_t
 BOOST_AUTO_TEST_CASE(leere_str_datei) {
     ifstream infile("./eingabe/zusi2/LeereStrecke.str");
     unique_ptr<Strecke> strecke = StrLeser().liesStrDatei(infile);
-    BOOST_CHECK(strecke.get() != NULL);
+    BOOST_CHECK(strecke.get() != nullptr);
 
     // Dateiinformationen.
-    BOOST_CHECK(strecke->dateiInfo.get() != NULL);
+    BOOST_CHECK(strecke->dateiInfo.get() != nullptr);
 
     BOOST_CHECK_EQUAL(strecke->dateiInfo->formatVersion, "2.3");
     BOOST_CHECK_EQUAL(strecke->dateiInfo->formatMinVersion, "2.3");
@@ -51,7 +55,7 @@ BOOST_AUTO_TEST_CASE(leere_str_datei) {
 
     // Dateiautor.
     BOOST_CHECK_EQUAL(strecke->dateiInfo->autorInfo.size(), 1);
-    BOOST_CHECK(strecke->dateiInfo->autorInfo.at(0).get() != NULL);
+    BOOST_CHECK(strecke->dateiInfo->autorInfo.at(0).get() != nullptr);
     BOOST_CHECK_EQUAL(strecke->dateiInfo->autorInfo.at(0)->name, "TestAutor");
 
     // Gebietsschema.
@@ -114,9 +118,13 @@ BOOST_AUTO_TEST_CASE(nachfolger_vorgaenger) {
     ifstream infile("./eingabe/zusi2/NachfolgerVorgaengerTest.str");
     unique_ptr<Strecke> strecke = StrLeser().liesStrDatei(infile);
 
-    BOOST_CHECK_EQUAL(strecke->streckenelemente.size(), 5);
+    BOOST_REQUIRE_EQUAL(strecke->streckenelemente.size(), 6);
 
-    // Die Nachfolger von Element 1 sind die Elemente 2 und 3. Keine Vorgänger.
+    BOOST_CHECK(strecke->streckenelemente.at(0).get() == nullptr);
     testVorgaengerNachfolger(strecke, 1, {}, {2, 3});
+    testVorgaengerNachfolger(strecke, 2, {1}, {5});
+    testVorgaengerNachfolger(strecke, 3, {1}, {});
+    testVorgaengerNachfolger(strecke, 4, {}, {5});
+    testVorgaengerNachfolger(strecke, 5, {2, 4}, {});
 }
 
