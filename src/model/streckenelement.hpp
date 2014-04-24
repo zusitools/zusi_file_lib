@@ -69,6 +69,7 @@ struct StreckenelementRichtungsInfo {
 
 // Ein Streckenelement.
 struct Streckenelement {
+
     // Konstanten für die Indizierung von richtungsspezifischen Daten, die in Arrays abgelegt sind.
     static const streckenelement_richtung_t RICHTUNG_NORM = 0;
     static const streckenelement_richtung_t RICHTUNG_GEGEN = 1;

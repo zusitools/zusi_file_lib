@@ -16,7 +16,14 @@ protected:
 
     // Liest eine Zeile mit einem Integer-Wert aus einem Stream.
     // Wirft std::invalid_argument, wenn keine Konversion durchgeführt werden konnte.
-    static int_fast32_t liesGanzzahl(istream &atei);
+    static int_fast32_t liesGanzzahl(istream &datei);
+
+    // Liest eine Zeile mit einem Gleitkomma-Wert (Dezimalkomma) aus einem Stream.
+    // Wirft std::invalid_argument, wenn keine Konversion durchgeführt werden konnte.
+    static double liesGleitkommazahl(istream &datei);
+
+    // Konvertiert einen String mit Dezimalkomma in eine Gleitkommazahl.
+    static double konvertiereInGleitkommazahl(string zeile);
 
     // Liest einen durch "#" abgeschlossenen mehrzeiligen String aus der Datei. Das '#' und das
     // letzte Zeilenende werden dabei nicht in den String aufgenommen. Zeilenenden werden auf '\n'

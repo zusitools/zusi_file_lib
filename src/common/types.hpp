@@ -24,18 +24,4 @@ typedef float spannung_t;
 typedef int_fast32_t streckenelement_nr_t;
 typedef bool streckenelement_richtung_t;
 
-// Ein Punkt im dreidimensionalen Raum.
-struct Punkt3D {
-    koordinate_t x;
-    koordinate_t y;
-    koordinate_t z;
-};
-
-// Eine Position inkl. Blickrichtung im dreidimensionalen Raum.
-struct Pos3D {
-    Punkt3D pos;
-    Punkt3D lookat;
-    Punkt3D up;
-};
-
 #endif

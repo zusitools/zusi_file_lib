@@ -3,7 +3,7 @@
 
 #include <string>
 
-#include <common/types.hpp>
+#include <model/punkt3d.hpp>
 
 using namespace std;
 
@@ -11,7 +11,7 @@ using namespace std;
 struct Blickpunkt {
 
     // Bezeichnung.
-    string bezeichnung;
+    string name;
 
     // Position im 3D-Raum.
     Pos3D position;

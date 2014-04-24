@@ -28,7 +28,7 @@ unique_ptr<Strecke> StrLeser::liesStrDatei(istream& datei) {
     result->gebietsschema = Z2Leser::liesZeile(datei);  // Gebietsschema
 
     dateiInfo->beschreibung = Z2Leser::liesMehrzeiligenString(datei); // Freier Text
-    tmp = Z2Leser::liesMehrzeiligenString(datei); // UTM-Info, nicht Version 1.1
+    Z2Leser::liesMehrzeiligenString(datei); // UTM-Info, nicht Version 1.1
 
     // Geschwindigkeits-Multiplikator 3,6 (ohne Funktion); ab Zusi 2.4.5.0: Signalhaltabstand.
     try {
@@ -37,10 +37,34 @@ unique_ptr<Strecke> StrLeser::liesStrDatei(istream& datei) {
         result->signalHaltabstand = 0;
     }
 
-    getline(datei, tmp);  // Pfad Landschaftsdatei
+    Z2Leser::liesZeile(datei);  // Pfad Landschaftsdatei
 
     // Referenzpunkte: Einsatzelemente
-    // Streckenfeste Standorte
+    Z2Leser::liesMehrzeiligenString(datei);
+
+    // Streckenfeste Standorte (Blickpunkte).
+    tmp = Z2Leser::liesZeile(datei);
+    while (tmp.compare("#") != 0) {
+        unique_ptr<Blickpunkt> blickpunkt(new Blickpunkt());
+        blickpunkt->position.loc.x = Z2Leser::konvertiereInGleitkommazahl(tmp);
+        blickpunkt->position.loc.y = Z2Leser::liesGleitkommazahl(datei);
+        blickpunkt->position.loc.z = Z2Leser::liesGleitkommazahl(datei);
+
+        // Zwischenspeichern der Koordinaten in lokale Variablen -- wenn man die Aufrufe an
+        // liesGleitkommazahl in die Konstruktorparameter packt, ist die Aufrufreihenfolge
+        // undefiniert.
+        koordinate_t x, y, z;
+        x = Z2Leser::liesGleitkommazahl(datei);
+        y = Z2Leser::liesGleitkommazahl(datei);
+        z = Z2Leser::liesGleitkommazahl(datei);
+        blickpunkt->position.setRichtungAlsRot(Punkt3D(x, y, z));
+
+        blickpunkt->name = Z2Leser::liesZeile(datei);
+
+        result->blickpunkte.push_back(std::move(blickpunkt));
+        tmp = Z2Leser::liesZeile(datei);
+    }
+
     // Streckenelemente
 
     result->dateiInfo = std::move(dateiInfo);

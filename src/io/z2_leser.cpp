@@ -24,6 +24,27 @@ int_fast32_t Z2Leser::liesGanzzahl(istream &datei) {
     }
 }
 
+double Z2Leser::liesGleitkommazahl(istream &datei) {
+    return Z2Leser::konvertiereInGleitkommazahl(Z2Leser::liesZeile(datei));
+}
+
+double Z2Leser::konvertiereInGleitkommazahl(string zeile) {
+    if (zeile.find_first_not_of("-,0123456789e") != string::npos) {
+        throw invalid_argument(zeile + " kann nicht in eine Gleitkommazahl konvertiert werden.");
+    } else {
+        // Ersetze (erstes) , durch .
+        size_t kommaPos = zeile.find(',');
+        if (kommaPos != string::npos) {
+            zeile[kommaPos] = '.';
+        }
+        if (zeile.find(',') != string::npos) {
+            throw invalid_argument(
+                zeile + " kann nicht in eine Gleitkommazahl konvertiert werden.");
+        }
+        return stof(zeile);
+    }
+}
+
 string Z2Leser::liesMehrzeiligenString(istream &datei) {
     string zeile;
     string result;
