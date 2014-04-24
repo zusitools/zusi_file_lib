@@ -30,7 +30,7 @@ struct Strecke : public ZusiObjekt {
 
     // Die in der Strecke enthaltenen Elemente. Die Position innerhalb der
     // Liste entspricht der Nummer des Streckenelements.
-    vector<unique_ptr<Streckenelement>> streckenelemente;
+    vector<shared_ptr<Streckenelement>> streckenelemente;
 
     // Referenzpunkte (Aufgleispunkte etc.)
     vector<unique_ptr<Referenzpunkt>> referenzpunkte;

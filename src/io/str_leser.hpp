@@ -14,6 +14,8 @@ public:
     unique_ptr<Strecke> liesStrDatei(istream& datei);
     unique_ptr<Strecke> liesStrDateiMitDateiname(const string dateiname);
 
+private:
+    void liesStreckenelemente(istream& datei, unique_ptr<Strecke>& strecke);
 };
 
 #endif

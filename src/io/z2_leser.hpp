@@ -12,23 +12,26 @@ class Z2Leser {
 
 protected:
     // Liest eine Zeile aus einem Stream und entfernt Zeilenende-Zeichen.
-    static string liesZeile(istream &datei);
+    string liesZeile(istream &datei);
 
     // Liest eine Zeile mit einem Integer-Wert aus einem Stream.
     // Wirft std::invalid_argument, wenn keine Konversion durchgeführt werden konnte.
-    static int_fast32_t liesGanzzahl(istream &datei);
+    int_fast32_t liesGanzzahl(istream &datei);
 
     // Liest eine Zeile mit einem Gleitkomma-Wert (Dezimalkomma) aus einem Stream.
     // Wirft std::invalid_argument, wenn keine Konversion durchgeführt werden konnte.
-    static double liesGleitkommazahl(istream &datei);
+    double liesGleitkommazahl(istream &datei);
 
     // Konvertiert einen String mit Dezimalkomma in eine Gleitkommazahl.
-    static double konvertiereInGleitkommazahl(string zeile);
+    double konvertiereInGleitkommazahl(string zeile);
 
     // Liest einen durch "#" abgeschlossenen mehrzeiligen String aus der Datei. Das '#' und das
     // letzte Zeilenende werden dabei nicht in den String aufgenommen. Zeilenenden werden auf '\n'
     // normiert.
-    static string liesMehrzeiligenString(istream &datei);
+    string liesMehrzeiligenString(istream &datei);
+
+    // Die aktuelle Zeilennummer innerhalb der Datei. TODO: Threadsicherheit?
+    size_t zeilenNr;
 
 };
 

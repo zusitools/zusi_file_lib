@@ -7,6 +7,7 @@ using namespace std;
 string Z2Leser::liesZeile(istream &datei) {
     string result;
     getline(datei, result);
+    this->zeilenNr++;
     auto substrLaenge = result.size();
     while (substrLaenge > 0 &&
             (result.at(substrLaenge - 1) == '\r' || result.at(substrLaenge - 1) == '\n')) {
@@ -18,9 +19,13 @@ string Z2Leser::liesZeile(istream &datei) {
 int_fast32_t Z2Leser::liesGanzzahl(istream &datei) {
     string tmp = Z2Leser::liesZeile(datei);
     if (tmp.find_first_not_of("-0123456789") != string::npos) {
-        throw invalid_argument(tmp + " kann nicht in eine Ganzzahl konvertiert werden.");
+        throw invalid_argument("'" + tmp + "' kann nicht in eine Ganzzahl konvertiert werden.");
     } else {
-        return stoi(tmp);
+        try {
+            return stoi(tmp);
+        } catch (invalid_argument) {
+            throw invalid_argument("'" + tmp + "' kann nicht in eine Ganzzahl konvertiert werden.");
+        }
     }
 }
 

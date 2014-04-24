@@ -11,6 +11,29 @@ using namespace std;
 // Wert für Floating-Point-Vergleiche (in Prozent der zu vergleichenden Werte!)
 #define epsilon 0.00001
 
+void testVorgaengerNachfolger(unique_ptr<Strecke>& strecke, streckenelement_nr_t nr,
+    vector<streckenelement_nr_t> nrsVorgaenger, vector<streckenelement_nr_t> nrsNachfolger) {
+
+    BOOST_REQUIRE_EQUAL(
+        strecke->streckenelemente.at(nr)->nachfolger[Streckenelement::RICHTUNG_GEGEN].size(),
+        nrsVorgaenger.size());
+    BOOST_REQUIRE_EQUAL(
+        strecke->streckenelemente.at(nr)->nachfolger[Streckenelement::RICHTUNG_NORM].size(),
+        nrsNachfolger.size());
+
+    for (size_t i = 0; i < nrsVorgaenger.size(); i++) {
+        auto vorgaenger = strecke->streckenelemente.at(nr)->
+            nachfolger[Streckenelement::RICHTUNG_GEGEN].at(i).lock();
+        BOOST_CHECK_EQUAL(vorgaenger.get(), strecke->streckenelemente.at(nrsVorgaenger.at(i)).get());
+    }
+   
+    for (size_t i = 0; i < nrsNachfolger.size(); i++) {
+        auto nachfolger = strecke->streckenelemente.at(nr)->
+            nachfolger[Streckenelement::RICHTUNG_NORM].at(i).lock();
+        BOOST_CHECK_EQUAL(nachfolger.get(), strecke->streckenelemente.at(nrsNachfolger.at(i)).get());
+    }
+}
+
 BOOST_AUTO_TEST_CASE(leere_str_datei) {
     ifstream infile("./eingabe/zusi2/LeereStrecke.str");
     unique_ptr<Strecke> strecke = StrLeser().liesStrDatei(infile);
@@ -86,3 +109,14 @@ BOOST_AUTO_TEST_CASE(leere_str_datei_blickpunkte) {
 
     BOOST_CHECK_EQUAL(blickpunkt2->name, "#");
 }
+
+BOOST_AUTO_TEST_CASE(nachfolger_vorgaenger) {
+    ifstream infile("./eingabe/zusi2/NachfolgerVorgaengerTest.str");
+    unique_ptr<Strecke> strecke = StrLeser().liesStrDatei(infile);
+
+    BOOST_CHECK_EQUAL(strecke->streckenelemente.size(), 5);
+
+    // Die Nachfolger von Element 1 sind die Elemente 2 und 3. Keine Vorgänger.
+    testVorgaengerNachfolger(strecke, 1, {}, {2, 3});
+}
+
