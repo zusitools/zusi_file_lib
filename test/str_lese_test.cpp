@@ -13,7 +13,7 @@ using namespace std;
 
 BOOST_AUTO_TEST_CASE(leere_str_datei) {
     ifstream infile("./eingabe/zusi2/LeereStrecke.str");
-    unique_ptr<Strecke> strecke = StrLeser::liesStrDatei(infile);
+    unique_ptr<Strecke> strecke = StrLeser().liesStrDatei(infile);
     BOOST_CHECK(strecke.get() != NULL);
 
     // Dateiinformationen.
@@ -52,14 +52,14 @@ BOOST_AUTO_TEST_CASE(leere_str_datei) {
 
 BOOST_AUTO_TEST_CASE(leere_str_datei_kein_haltabstand) {
     ifstream infile("./eingabe/zusi2/LeereStrecke_KeinHaltabstand.str");
-    unique_ptr<Strecke> strecke = StrLeser::liesStrDatei(infile);
+    unique_ptr<Strecke> strecke = StrLeser().liesStrDatei(infile);
 
     BOOST_CHECK_EQUAL(strecke->signalHaltabstand, 0);
 }
 
 BOOST_AUTO_TEST_CASE(leere_str_datei_blickpunkte) {
     ifstream infile("./eingabe/zusi2/LeereStrecke_Blickpunkte.str");
-    unique_ptr<Strecke> strecke = StrLeser::liesStrDatei(infile);
+    unique_ptr<Strecke> strecke = StrLeser().liesStrDatei(infile);
 
     BOOST_CHECK_EQUAL(strecke->blickpunkte.size(), 2);
 
