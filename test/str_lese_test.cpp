@@ -128,3 +128,24 @@ BOOST_AUTO_TEST_CASE(nachfolger_vorgaenger) {
     testVorgaengerNachfolger(strecke, 5, {2, 4}, {});
 }
 
+BOOST_AUTO_TEST_CASE(aufgleispunkte) {
+    ifstream infile("./eingabe/zusi2/AufgleispunkteTest.str");
+    unique_ptr<Strecke> strecke = StrLeser().liesStrDatei(infile);
+
+    BOOST_REQUIRE_EQUAL(strecke->referenzpunkte.size(), 3);
+
+    auto& referenzpunkt1 = strecke->referenzpunkte.at(1);
+    auto& referenzpunkt2 = strecke->referenzpunkte.at(2);
+
+    BOOST_CHECK_EQUAL(referenzpunkt1->referenzNr, 1);
+    BOOST_CHECK_EQUAL(referenzpunkt1->referenzNrInModul, 1);
+    BOOST_CHECK_EQUAL(referenzpunkt1->referenzTyp, Referenzpunkt::Typ::Aufgleispunkt);
+    //BOOST_CHECK_EQUAL(referenzpunkt1->element, strecke->streckenelemente.at(4).get());
+    BOOST_CHECK_EQUAL(referenzpunkt1->beschreibung, "#");
+    
+    BOOST_CHECK_EQUAL(referenzpunkt2->referenzNr, 2);
+    BOOST_CHECK_EQUAL(referenzpunkt2->referenzNrInModul, 2);
+    BOOST_CHECK_EQUAL(referenzpunkt2->referenzTyp, Referenzpunkt::Typ::Aufgleispunkt);
+    //BOOST_CHECK_EQUAL(referenzpunkt2->element, strecke->streckenelemente.at(2).get());
+    BOOST_CHECK_EQUAL(referenzpunkt2->beschreibung, "Aufgleispunkt 1");
+}

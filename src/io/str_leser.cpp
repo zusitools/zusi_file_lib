@@ -42,7 +42,20 @@ unique_ptr<Strecke> StrLeser::liesStrDatei(istream& datei) {
         Z2Leser::liesZeile(datei);  // Pfad Landschaftsdatei
 
         // Referenzpunkte: Einsatzelemente
-        Z2Leser::liesMehrzeiligenString(datei);
+        tmp = liesZeile(datei);
+        while (tmp.compare("#") != 0) {
+            unique_ptr<Referenzpunkt> referenzpunkt(new Referenzpunkt());
+            referenzpunkt->referenzNr = konvertiereInGanzzahl(tmp);
+            referenzpunkt->referenzNrInModul = referenzpunkt->referenzNr;
+	    liesZeile(datei);
+	    referenzpunkt->beschreibung = liesZeile(datei);
+            tmp = liesZeile(datei);
+
+            if (result->referenzpunkte.size() <= referenzpunkt->referenzNr) {
+                result->referenzpunkte.resize(referenzpunkt->referenzNr + 1);
+            }
+            result->referenzpunkte.at(referenzpunkt->referenzNr) = std::move(referenzpunkt);
+        }
 
         // Streckenfeste Standorte (Blickpunkte).
         tmp = Z2Leser::liesZeile(datei);
