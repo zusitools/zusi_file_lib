@@ -149,3 +149,18 @@ BOOST_AUTO_TEST_CASE(aufgleispunkte) {
     //BOOST_CHECK_EQUAL(referenzpunkt2->element, strecke->streckenelemente.at(2).get());
     BOOST_CHECK_EQUAL(referenzpunkt2->beschreibung, "Aufgleispunkt 1");
 }
+
+BOOST_AUTO_TEST_CASE(element_koordinaten) {
+    ifstream infile("./eingabe/zusi2/ElementKoordinatenTest.str");
+    unique_ptr<Strecke> strecke = StrLeser().liesStrDatei(infile);
+
+    BOOST_REQUIRE_EQUAL(strecke->streckenelemente.size(), 2);
+
+    auto& element = strecke->streckenelemente.at(1);
+    BOOST_CHECK_CLOSE(element->p1.x, -10, epsilon);
+    BOOST_CHECK_CLOSE(element->p1.y, -23.5, epsilon);
+    BOOST_CHECK_CLOSE(element->p1.z, 5, epsilon);
+    BOOST_CHECK_CLOSE(element->p2.x, 10, epsilon);
+    BOOST_CHECK_CLOSE(element->p2.y, 20, epsilon);
+    BOOST_CHECK_CLOSE(element->p2.z, -30, epsilon);
+}

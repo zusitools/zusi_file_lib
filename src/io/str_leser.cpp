@@ -131,13 +131,13 @@ void StrLeser::liesStreckenelemente(istream& datei, unique_ptr<Strecke>& strecke
             ereignis->ereignisNr = ereignisNr;
         }
 
-        // xyz1, xyz2
-        liesZeile(datei);
-        liesZeile(datei);
-        liesZeile(datei);
-        liesZeile(datei);
-        liesZeile(datei);
-        liesZeile(datei);
+        // Element-Koordinaten
+        element->p1.x = liesGleitkommazahl(datei);
+        element->p1.y = liesGleitkommazahl(datei);
+        element->p1.z = liesGleitkommazahl(datei);
+        element->p2.x = liesGleitkommazahl(datei);
+        element->p2.y = liesGleitkommazahl(datei);
+        element->p2.z = liesGleitkommazahl(datei);
 
         // Überhöhung
         liesZeile(datei);
