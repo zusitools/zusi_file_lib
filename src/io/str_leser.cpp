@@ -300,7 +300,7 @@ unique_ptr<KombiSignal> StrLeser::liesKombiSignal(istream& datei) {
 
     liesMehrzeiligenString("Kombinationssignal-Landschaftsdateien", datei);
     signal->betriebsstelle = liesZeile("Kombinationssignal-Blockname", datei);
-    liesZeile("Kombinationssignal-Gleis", datei);
+    signal->signalbezeichnung = liesZeile("Kombinationssignal-Gleis", datei);
 
     size_t anzahlHsigZeilen = liesGanzzahl("Kombinationssignal Anzahl Hsig-Zeilen", datei) + 1;
     size_t anzahlVsigSpalten = liesGanzzahl("Kombinationssignal Anzahl Vsig-Spalten", datei) + 1;

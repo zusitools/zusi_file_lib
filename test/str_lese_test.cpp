@@ -250,12 +250,15 @@ BOOST_AUTO_TEST_CASE(signalnamen) {
     auto& element2 = strecke->streckenelemente.at(2)->richtungsInfo[Streckenelement::RICHTUNG_NORM];
     BOOST_REQUIRE(element2.signal.get() != nullptr);
     BOOST_CHECK_EQUAL(element2.signal->betriebsstelle, "Block A");
+    BOOST_CHECK_EQUAL(element2.signal->signalbezeichnung, "0");
 
     auto& element4 = strecke->streckenelemente.at(4)->richtungsInfo[Streckenelement::RICHTUNG_NORM];
     BOOST_REQUIRE(element4.signal.get() != nullptr);
     BOOST_CHECK_EQUAL(element4.signal->betriebsstelle, "Block B|");
+    BOOST_CHECK_EQUAL(element4.signal->signalbezeichnung, "1");
 
     auto& element6 = strecke->streckenelemente.at(6)->richtungsInfo[Streckenelement::RICHTUNG_NORM];
     BOOST_REQUIRE(element6.signal.get() != nullptr);
     BOOST_CHECK_EQUAL(element6.signal->betriebsstelle, "Block C...E50||");
+    BOOST_CHECK_EQUAL(element6.signal->signalbezeichnung, "Foobar");
 }
