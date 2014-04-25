@@ -16,6 +16,7 @@ typedef float koordinate_t;
 typedef float kruemmung_t;
 typedef uint_fast32_t objektid_t;
 typedef float meter_t;
+typedef uint_fast8_t nachfolger_index_t;
 typedef float ueberhoehung_t;
 typedef uint_fast32_t referenz_nr_t;
 typedef uint_fast8_t referenz_typ_t;

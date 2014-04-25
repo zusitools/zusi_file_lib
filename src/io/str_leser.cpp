@@ -248,16 +248,30 @@ void StrLeser::liesStreckenelemente(istream& datei, unique_ptr<Strecke>& strecke
         }
 
         shared_ptr<Streckenelement>& element = strecke->streckenelemente.at(i);
-        element->nachfolger[Streckenelement::RICHTUNG_NORM].resize(nachfolgerNrs.at(i).size());
+
         for (size_t j = 0; j < nachfolgerNrs.at(i).size(); j++) {
             streckenelement_nr_t elemNr = nachfolgerNrs.at(i).at(j);
-            if (elemNr == 0) {
+            if (elemNr == 0 || elemNr >= strecke->streckenelemente.size()) {
                 continue;
             }
-            element->nachfolger[Streckenelement::RICHTUNG_NORM].at(j) =
-                strecke->streckenelemente.at(elemNr);
-            strecke->streckenelemente.at(elemNr)->nachfolger[Streckenelement::RICHTUNG_GEGEN].
-                push_back(element);
+
+            shared_ptr<Streckenelement>& nachfolger = strecke->streckenelemente.at(elemNr);
+            if (nachfolger.get() == nullptr) {
+                continue;
+            }
+
+            StreckenelementUndRichtung nachfolgerRichtung;
+            nachfolgerRichtung.streckenelement = weak_ptr<Streckenelement>(nachfolger);
+            nachfolgerRichtung.richtung = Streckenelement::RICHTUNG_NORM;
+            element->setzeNachfolger(j, Streckenelement::RICHTUNG_NORM, nachfolgerRichtung);
+
+            StreckenelementUndRichtung elementRichtung;
+            elementRichtung.streckenelement = weak_ptr<Streckenelement>(element);
+            elementRichtung.richtung = Streckenelement::RICHTUNG_NORM;
+            nachfolger->setzeVorgaenger(
+                    nachfolger->nachfolgerElemente[Streckenelement::RICHTUNG_GEGEN].size(),
+                    Streckenelement::RICHTUNG_NORM,
+                    elementRichtung);
         }
     }
 }

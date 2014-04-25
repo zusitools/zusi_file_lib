@@ -4,6 +4,8 @@
 #include <boost/test/included/unit_test.hpp>
 #include <boost/test/floating_point_comparison.hpp>
 
+#include <iostream>
+
 #include <io/str_leser.hpp>
 
 using namespace std;
@@ -12,29 +14,30 @@ using namespace std;
 #define epsilon 0.00001
 
 void testVorgaengerNachfolger(unique_ptr<Strecke>& strecke, streckenelement_nr_t nr,
-    vector<streckenelement_nr_t> nrsVorgaenger, vector<streckenelement_nr_t> nrsNachfolger) {
+        vector<streckenelement_nr_t> nrsVorgaenger, vector<streckenelement_nr_t> nrsNachfolger) {
+    auto& element = strecke->streckenelemente.at(nr);
 
-    BOOST_CHECK_EQUAL(strecke->streckenelemente.at(nr)->nr, nr);
-    BOOST_CHECK_EQUAL(strecke->streckenelemente.at(nr)->nrInModul, nr);
+    BOOST_CHECK_EQUAL(element->nr, nr);
+    BOOST_CHECK_EQUAL(element->nrInModul, nr);
 
     BOOST_REQUIRE_EQUAL(
-        strecke->streckenelemente.at(nr)->nachfolger[Streckenelement::RICHTUNG_GEGEN].size(),
+        element->nachfolgerElemente[Streckenelement::RICHTUNG_GEGEN].size(),
         nrsVorgaenger.size());
     BOOST_REQUIRE_EQUAL(
-        strecke->streckenelemente.at(nr)->nachfolger[Streckenelement::RICHTUNG_NORM].size(),
+        element->nachfolgerElemente[Streckenelement::RICHTUNG_NORM].size(),
         nrsNachfolger.size());
 
     // TODO: Bei Zusi 2 hat die Liste der Vorgänger keine definierte Ordnung.
     for (size_t i = 0; i < nrsVorgaenger.size(); i++) {
-        auto vorgaenger = strecke->streckenelemente.at(nr)->
-            nachfolger[Streckenelement::RICHTUNG_GEGEN].at(i).lock();
-        BOOST_CHECK_EQUAL(vorgaenger.get(), strecke->streckenelemente.at(nrsVorgaenger.at(i)).get());
+        auto vorgaenger = element->vorgaenger(i);
+        BOOST_CHECK_EQUAL(vorgaenger.richtung, static_cast<streckenelement_richtung_t>(Streckenelement::RICHTUNG_NORM));
+        BOOST_CHECK(vorgaenger.streckenelement.lock() == strecke->streckenelemente.at(nrsVorgaenger.at(i)));
     }
-   
+
     for (size_t i = 0; i < nrsNachfolger.size(); i++) {
-        auto nachfolger = strecke->streckenelemente.at(nr)->
-            nachfolger[Streckenelement::RICHTUNG_NORM].at(i).lock();
-        BOOST_CHECK_EQUAL(nachfolger.get(), strecke->streckenelemente.at(nrsNachfolger.at(i)).get());
+        auto nachfolger = element->nachfolger(i);
+        BOOST_CHECK_EQUAL(nachfolger.richtung, static_cast<streckenelement_richtung_t>(Streckenelement::RICHTUNG_NORM));
+        BOOST_CHECK(nachfolger.streckenelement.lock() == strecke->streckenelemente.at(nrsNachfolger.at(i)));
     }
 }
 

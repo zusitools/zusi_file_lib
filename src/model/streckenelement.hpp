@@ -73,6 +73,8 @@ struct StreckenelementRichtungsInfo {
     // TODO: Koppelweiche
 };
 
+struct StreckenelementUndRichtung;
+
 // Ein Streckenelement.
 struct Streckenelement {
 
@@ -110,7 +112,7 @@ struct Streckenelement {
     // Der Name des Fahrleitungstyps.
     string fahrleitungTyp;
 
-    // Die Zwangshelligkeit des Streckenelments [0..1].
+    // Die Zwangshelligkeit des Streckenelements [0..1].
     helligkeit_t zwangshelligkeit;
 
     // Die Trassierungsgeschwindigkeit des Streckenelements [m/s].
@@ -120,14 +122,30 @@ struct Streckenelement {
     StreckenelementRichtungsInfo richtungsInfo[2];
 
     // Geordnete Liste von Nachfolgern in jeder Richtung.
-    vector<weak_ptr<Streckenelement>> nachfolger[2];
+    vector<StreckenelementUndRichtung> nachfolgerElemente[2];
 
-    // Element n dieses Vektors ist genau dann 1, wenn der Nachfolger
-    // in der entsprechenden Richtung die Gegenrichtung des nächsten
-    // Elements ist.
-    vector<bool> nachfolgerGegenrichtung[2];
-
+    // Die Funktionsflags.
     set<StreckenelementFlag> flags;
+
+    // ---
+
+    StreckenelementUndRichtung nachfolger(
+            const nachfolger_index_t index = 0,
+            const streckenelement_richtung_t richtung = Streckenelement::RICHTUNG_NORM);
+    StreckenelementUndRichtung vorgaenger(
+            const nachfolger_index_t index = 0,
+            const streckenelement_richtung_t richtung = Streckenelement::RICHTUNG_NORM);
+
+    void setzeNachfolger(const nachfolger_index_t index, const streckenelement_richtung_t richtung,
+            const StreckenelementUndRichtung& nachfolger);
+    void setzeVorgaenger(const nachfolger_index_t index, const streckenelement_richtung_t richtung,
+            const StreckenelementUndRichtung& vorgaenger);
+
+    inline static const streckenelement_richtung_t gegenrichtung(
+            const streckenelement_richtung_t richtung) {
+        return richtung == Streckenelement::RICHTUNG_NORM ?
+            Streckenelement::RICHTUNG_GEGEN : Streckenelement::RICHTUNG_NORM;
+    }
 };
 
 // Ein Verweis auf eine Richtung eines Streckenelements.
