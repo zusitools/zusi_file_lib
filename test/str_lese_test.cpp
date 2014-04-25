@@ -38,6 +38,16 @@ void testVorgaengerNachfolger(unique_ptr<Strecke>& strecke, streckenelement_nr_t
     }
 }
 
+void testEreignis(unique_ptr<Strecke>& strecke, streckenelement_nr_t nr,
+        EreignisTyp ereignisTyp, ereignis_wert_t wert = 0, string beschreibung = "") {
+    auto& richtungsInfo =
+        strecke->streckenelemente.at(nr)->richtungsInfo[Streckenelement::RICHTUNG_NORM];
+    BOOST_CHECK_EQUAL(richtungsInfo.ereignisse.size(), 1);
+    BOOST_CHECK_EQUAL(richtungsInfo.ereignisse.at(0)->ereignisTyp, ereignisTyp);
+    BOOST_CHECK_CLOSE(richtungsInfo.ereignisse.at(0)->wert, wert, epsilon);
+    BOOST_CHECK_EQUAL(richtungsInfo.ereignisse.at(0)->beschreibung, beschreibung);
+}
+
 template<typename T>
 void testSetEqual(set<T>& actual, set<T> expected) {
     BOOST_CHECK_EQUAL_COLLECTIONS(actual.begin(), actual.end(), expected.begin(), expected.end());
@@ -202,4 +212,28 @@ BOOST_AUTO_TEST_CASE(element_flags) {
     testSetEqual(strecke->streckenelemente.at(10)->flags,
         set<StreckenelementFlag>({StreckenelementFlag::Weichenbausatz,
             StreckenelementFlag::Steinbruecke, StreckenelementFlag::KeinSchienenbau}));
+}
+
+BOOST_AUTO_TEST_CASE(ereignisse) {
+    ifstream infile("./eingabe/zusi2/EreignisTest.str");
+    unique_ptr<Strecke> strecke = StrLeser().liesStrDatei(infile);
+
+    BOOST_REQUIRE(strecke->streckenelemente.size() > 15);
+
+    BOOST_CHECK_EQUAL(strecke->streckenelemente.at(1)->
+        richtungsInfo[Streckenelement::RICHTUNG_NORM].ereignisse.size(), 0);
+    testEreignis(strecke, 2, EreignisTyp::Indusi500Hz);
+    testEreignis(strecke, 3, EreignisTyp::Indusi1000Hz);
+    testEreignis(strecke, 4, EreignisTyp::Indusi2000Hz);
+    testEreignis(strecke, 5, EreignisTyp::Indusi1000Hz, 125.0/3.6);
+    testEreignis(strecke, 6, EreignisTyp::Indusi2000Hz, 499.0/3.6);
+    testEreignis(strecke, 7, EreignisTyp::VorherKeineFahrstrEntfernung, 1000);
+    testEreignis(strecke, 8, EreignisTyp::VorherKeineFahrstrEntfernung, 2000);
+    testEreignis(strecke, 9, EreignisTyp::VorherKeineFahrstrEntfernung, 3000);
+    testEreignis(strecke, 10, EreignisTyp::OhneFunktion);
+    testEreignis(strecke, 11, EreignisTyp::Bahnsteigmitte);
+    testEreignis(strecke, 12, EreignisTyp::Bahnsteigende);
+    testEreignis(strecke, 13, EreignisTyp::Betriebsstelle);
+    testEreignis(strecke, 14, EreignisTyp::RegisterNichtBelegen);
+    testEreignis(strecke, 15, EreignisTyp::GntGeschwindigkeitsErhoehung, 500.0/3.6);
 }
