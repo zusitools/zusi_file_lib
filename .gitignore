@@ -24,4 +24,4 @@
 *.app
 
 ### Other ###
-.swp # vi swap files
+*.swp # vi swap files
