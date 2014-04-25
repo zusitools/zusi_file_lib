@@ -51,7 +51,7 @@ struct StreckenelementRichtungsInfo {
     vector<unique_ptr<Ereignis>> ereignisse;
 
     // Die Nummer des zugeordneten Fahrstraßenregisters.
-    fahrstr_register_nr_t fahrstrRegisterNr;
+    shared_ptr<FahrstrRegister> fahrstrRegister;
 
     // Die zulässige Höchstgeschwindigkeit [m/s].
     geschwindigkeit_t vMax;

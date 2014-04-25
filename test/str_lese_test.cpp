@@ -262,3 +262,29 @@ BOOST_AUTO_TEST_CASE(signalnamen) {
     BOOST_CHECK_EQUAL(element6.signal->betriebsstelle, "Block C...E50||");
     BOOST_CHECK_EQUAL(element6.signal->signalbezeichnung, "Foobar");
 }
+
+
+BOOST_AUTO_TEST_CASE(fahrstr_register) {
+    ifstream infile("./eingabe/zusi2/RegisterTest.str");
+    unique_ptr<Strecke> strecke = StrLeser().liesStrDatei(infile);
+
+    BOOST_REQUIRE(strecke->streckenelemente.size() > 4);
+    BOOST_REQUIRE(strecke->fahrstrRegister.size() == 2);
+
+    BOOST_REQUIRE(strecke->fahrstrRegister[42].get() != nullptr);
+    BOOST_CHECK_EQUAL(strecke->fahrstrRegister[42]->registerNr, 42);
+    BOOST_CHECK_EQUAL(strecke->fahrstrRegister[42]->manuell, true);
+
+    BOOST_REQUIRE(strecke->fahrstrRegister[1024].get() != nullptr);
+    BOOST_CHECK_EQUAL(strecke->fahrstrRegister[1024]->registerNr, 1024);
+    BOOST_CHECK_EQUAL(strecke->fahrstrRegister[1024]->manuell, false);
+
+    auto& element1 = strecke->streckenelemente.at(1)->richtungsInfo[Streckenelement::RICHTUNG_NORM];
+    BOOST_CHECK(element1.fahrstrRegister.get() == nullptr);
+    auto& element2 = strecke->streckenelemente.at(2)->richtungsInfo[Streckenelement::RICHTUNG_NORM];
+    BOOST_CHECK_EQUAL(element2.fahrstrRegister.get(), strecke->fahrstrRegister[42].get());
+    auto& element3 = strecke->streckenelemente.at(3)->richtungsInfo[Streckenelement::RICHTUNG_NORM];
+    BOOST_CHECK_EQUAL(element3.fahrstrRegister.get(), strecke->fahrstrRegister[1024].get());
+    auto& element4 = strecke->streckenelemente.at(4)->richtungsInfo[Streckenelement::RICHTUNG_NORM];
+    BOOST_CHECK_EQUAL(element4.fahrstrRegister.get(), strecke->fahrstrRegister[42].get());
+}

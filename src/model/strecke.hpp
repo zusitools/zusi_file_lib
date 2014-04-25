@@ -2,8 +2,10 @@
 #define SRC_MODEL_STRECKE_HPP
 
 #include <memory>
+#include <unordered_map>
 
 #include <model/blickpunkt.hpp>
+#include <model/fahrstr_register.hpp>
 #include <model/referenzpunkt.hpp>
 #include <model/streckenelement.hpp>
 #include <model/zusiobjekt.hpp>
@@ -38,6 +40,8 @@ struct Strecke : public ZusiObjekt {
     // Streckenfeste Blickpunkte.
     vector<unique_ptr<Blickpunkt>> blickpunkte;
 
+    // Register.
+    unordered_map<fahrstr_register_nr_t, shared_ptr<FahrstrRegister>> fahrstrRegister;
 };
 
 #endif

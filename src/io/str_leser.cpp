@@ -209,7 +209,16 @@ void StrLeser::liesStreckenelemente(istream& datei, unique_ptr<Strecke>& strecke
             liesHauptsignal(datei, element);
         }
 
-        liesZeile("Fahrstraßenregister-Nummer", datei);
+        fahrstr_register_nr_t registerNr = liesGanzzahl("Fahrstraßenregister-Nummer", datei);
+        if (registerNr != 0) {
+            if (strecke->fahrstrRegister.find(registerNr) == strecke->fahrstrRegister.end()) {
+                shared_ptr<FahrstrRegister> fahrstrRegister(new FahrstrRegister());
+                fahrstrRegister->registerNr = registerNr;
+                fahrstrRegister->manuell = registerNr <= 1000;
+                strecke->fahrstrRegister[registerNr] = fahrstrRegister;
+            }
+            richtung.fahrstrRegister = strecke->fahrstrRegister[registerNr];
+        }
 
         if (strecke->streckenelemente.size() <= element->nr + 1) {
             strecke->streckenelemente.resize(element->nr + 1);
