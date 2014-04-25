@@ -1,4 +1,5 @@
 #define BOOST_TEST_MODULE ZusiOffizielleStreckenTest 
+#include <chrono>
 #include <cstdlib>
 #include <fstream>
 #include <boost/test/included/unit_test.hpp>
@@ -104,6 +105,10 @@ BOOST_AUTO_TEST_CASE(lies_strecken) {
     for (const string& dateiname : strDateiNamen) {
         BOOST_TEST_CHECKPOINT(dateiname);
         ifstream infile(zusiStreckenPfad + dateiname);
+        auto leseStart = chrono::high_resolution_clock::now();
         unique_ptr<Strecke> strecke = StrLeser().liesStrDatei(infile);
+        auto leseEnde = chrono::high_resolution_clock::now();
+        auto ms = chrono::duration_cast<chrono::milliseconds>(leseEnde - leseStart).count();
+        BOOST_MESSAGE(dateiname + ": " + to_string(ms) + " ms");
     }
 }
