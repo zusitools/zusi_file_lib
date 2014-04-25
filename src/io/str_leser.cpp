@@ -137,8 +137,7 @@ void StrLeser::liesStreckenelemente(istream& datei, unique_ptr<Strecke>& strecke
 
         ereignis_nr_t ereignisNr = liesGanzzahl("Ereignis-Nummer", datei);
         if (ereignisNr != 0) {
-            element->richtungsInfo[Streckenelement::RICHTUNG_NORM].ereignisse.push_back(
-                neuesEreignis(ereignisNr));
+            richtung.ereignisse.push_back(neuesEreignis(ereignisNr));
         }
 
         // Element-Koordinaten
@@ -202,8 +201,7 @@ void StrLeser::liesStreckenelemente(istream& datei, unique_ptr<Strecke>& strecke
         liesFahrstrSignal(datei, element, strecke);
 
         if (strecke->dateiInfo->formatMinVersion != "1.1") {
-            this->aktElement = "Kombinationssignal";
-            liesKombiSignal(datei, element);
+            richtung.signal = liesKombiSignal(datei);
         } else {
             this->aktElement = "Vorsignal";
             liesVorsignal(datei, element);
@@ -279,11 +277,13 @@ void StrLeser::liesFahrstrSignal(istream& datei, shared_ptr<Streckenelement>& el
     }
 }
 
-void StrLeser::liesKombiSignal(istream& datei, shared_ptr<Streckenelement>& element) {
+unique_ptr<KombiSignal> StrLeser::liesKombiSignal(istream& datei) {
     string tmp = liesZeile("Kombinationssignal", datei);
     if (tmp == "#") {
-        return;
+        return nullptr;
     }
+
+    unique_ptr<KombiSignal> signal(new KombiSignal());
 
     konvertiereInGleitkommazahl("Kombinationssignal-Standort X1", tmp);
     liesGleitkommazahl("Kombinationssignal-Standort Y1", datei);
@@ -299,7 +299,7 @@ void StrLeser::liesKombiSignal(istream& datei, shared_ptr<Streckenelement>& elem
     liesGleitkommazahl("Kombinationssignal-Standort Rotation Z2", datei);
 
     liesMehrzeiligenString("Kombinationssignal-Landschaftsdateien", datei);
-    liesZeile("Kombinationssignal-Blockname", datei);
+    signal->betriebsstelle = liesZeile("Kombinationssignal-Blockname", datei);
     liesZeile("Kombinationssignal-Gleis", datei);
 
     size_t anzahlHsigZeilen = liesGanzzahl("Kombinationssignal Anzahl Hsig-Zeilen", datei) + 1;
@@ -313,6 +313,8 @@ void StrLeser::liesKombiSignal(istream& datei, shared_ptr<Streckenelement>& elem
 
     liesMehrzeiligenString("Kombinationssignal: Zugeordnete Vorsignale", datei);
     liesZeile("Kombinationssignal: Reservierter Eintrag", datei);
+
+    return signal;
 }
 
 void StrLeser::liesHauptsignal(istream& datei, shared_ptr<Streckenelement>& element) {

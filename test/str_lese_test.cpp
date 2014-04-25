@@ -237,3 +237,25 @@ BOOST_AUTO_TEST_CASE(ereignisse) {
     testEreignis(strecke, 14, EreignisTyp::RegisterNichtBelegen);
     testEreignis(strecke, 15, EreignisTyp::GntGeschwindigkeitsErhoehung, 500.0/3.6);
 }
+
+BOOST_AUTO_TEST_CASE(signalnamen) {
+    ifstream infile("./eingabe/zusi2/SignalTest.str");
+    unique_ptr<Strecke> strecke = StrLeser().liesStrDatei(infile);
+
+    BOOST_REQUIRE(strecke->streckenelemente.size() > 6);
+
+    auto& element1 = strecke->streckenelemente.at(1)->richtungsInfo[Streckenelement::RICHTUNG_NORM];
+    BOOST_CHECK(element1.signal.get() == nullptr);
+
+    auto& element2 = strecke->streckenelemente.at(2)->richtungsInfo[Streckenelement::RICHTUNG_NORM];
+    BOOST_REQUIRE(element2.signal.get() != nullptr);
+    BOOST_CHECK_EQUAL(element2.signal->betriebsstelle, "Block A");
+
+    auto& element4 = strecke->streckenelemente.at(4)->richtungsInfo[Streckenelement::RICHTUNG_NORM];
+    BOOST_REQUIRE(element4.signal.get() != nullptr);
+    BOOST_CHECK_EQUAL(element4.signal->betriebsstelle, "Block B|");
+
+    auto& element6 = strecke->streckenelemente.at(6)->richtungsInfo[Streckenelement::RICHTUNG_NORM];
+    BOOST_REQUIRE(element6.signal.get() != nullptr);
+    BOOST_CHECK_EQUAL(element6.signal->betriebsstelle, "Block C...E50||");
+}

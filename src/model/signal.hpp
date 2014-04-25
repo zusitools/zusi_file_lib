@@ -7,6 +7,9 @@ struct FahrstrassenSignal {
 
 struct KombiSignal {
 
+    // Name der Betriebsstelle, zu der das Signal gehört.
+    string betriebsstelle;
+
 };
 
 #endif
