@@ -156,13 +156,21 @@ BOOST_AUTO_TEST_CASE(aufgleispunkte) {
     BOOST_CHECK_EQUAL(referenzpunkt1->referenzNr, 1);
     BOOST_CHECK_EQUAL(referenzpunkt1->referenzNrInModul, 1);
     BOOST_CHECK_EQUAL(referenzpunkt1->referenzTyp, Referenzpunkt::Typ::Aufgleispunkt);
-    //BOOST_CHECK_EQUAL(referenzpunkt1->element, strecke->streckenelemente.at(4).get());
+    BOOST_CHECK(
+        referenzpunkt1->streckenelement.lock().get() == strecke->streckenelemente.at(4).get());
+    BOOST_CHECK_EQUAL(referenzpunkt1->richtung,
+        static_cast<streckenelement_richtung_t>(Streckenelement::RICHTUNG_NORM));
+    BOOST_CHECK_EQUAL(referenzpunkt1->streckenelementNr, 4);
     BOOST_CHECK_EQUAL(referenzpunkt1->beschreibung, "#");
     
     BOOST_CHECK_EQUAL(referenzpunkt2->referenzNr, 2);
     BOOST_CHECK_EQUAL(referenzpunkt2->referenzNrInModul, 2);
     BOOST_CHECK_EQUAL(referenzpunkt2->referenzTyp, Referenzpunkt::Typ::Aufgleispunkt);
-    //BOOST_CHECK_EQUAL(referenzpunkt2->element, strecke->streckenelemente.at(2).get());
+    BOOST_CHECK(
+        referenzpunkt2->streckenelement.lock().get() == strecke->streckenelemente.at(2).get());
+    BOOST_CHECK_EQUAL(referenzpunkt2->richtung,
+        static_cast<streckenelement_richtung_t>(Streckenelement::RICHTUNG_NORM));
+    BOOST_CHECK_EQUAL(referenzpunkt2->streckenelementNr, 2);
     BOOST_CHECK_EQUAL(referenzpunkt2->beschreibung, "Aufgleispunkt 1");
 }
 

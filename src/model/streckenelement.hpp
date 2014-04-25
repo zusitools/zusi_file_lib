@@ -10,6 +10,8 @@ using namespace std;
 
 #include <common/types.hpp>
 #include <model/ereignis.hpp>
+#include <model/punkt3d.hpp>
+#include <model/fahrstr_register.hpp>
 #include <model/signal.hpp>
 
 // Funktions-Flags eines Streckenelements.
@@ -129,9 +131,14 @@ struct Streckenelement {
 };
 
 // Ein Verweis auf eine Richtung eines Streckenelements.
-struct StreckenelementReferenz {
+struct StreckenelementUndRichtung {
+
+    // Das Streckenelement, auf das sich die Referenz bezieht.
     weak_ptr<Streckenelement> streckenelement;
+
+    // Die Richtung des Streckenelements, auf das sich die Referenz bezieht.
     streckenelement_richtung_t richtung;
+
 };
 
 #endif

@@ -8,7 +8,9 @@
 
 using namespace std;
 
-// Ein Referenzpunkt einer Strecke.
+// Ein Referenzpunkt einer Strecke. Die Referenz kann aufgelöst sein (der
+// Streckenelement-Zeiger hat einen Wert) oder nicht (z.B. wenn das Element nicht existiert oder
+// in einem nicht geladenen Modul liegt).
 struct Referenzpunkt {
 
     // Konstanten für den Referenzpunkt-Typ.
@@ -31,8 +33,14 @@ struct Referenzpunkt {
     // Referenz-Typ.
     referenz_typ_t referenzTyp;
 
-    // Streckenelement, auf das sich die Referenz bezieht.
-    StreckenelementReferenz element;
+    // Das Streckenelement, auf das sich die Referenz bezieht.
+    weak_ptr<Streckenelement> streckenelement;
+
+    // Die Richtung des Streckenelements, auf das sich die Referenz bezieht.
+    streckenelement_richtung_t richtung;
+
+    // Die Nummer des Streckenelements, auf das sich die Referenz bezieht.
+    streckenelement_nr_t streckenelementNr;
 
     // Beschreibung.
     string beschreibung;

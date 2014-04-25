@@ -58,7 +58,7 @@ unique_ptr<Strecke> StrLeser::liesStrDatei(istream& datei) {
             if (result->dateiInfo->formatMinVersion != "1.1") {
                 referenzpunkt->referenzNr = konvertiereInGanzzahl("Aufgleisreferenz-Nr.", tmp);
                 referenzpunkt->referenzNrInModul = referenzpunkt->referenzNr;
-                liesZeile("Aufgleiselement-Nr.", datei);
+                referenzpunkt->streckenelementNr = liesGanzzahl("Aufgleiselement-Nr.", datei);
                 referenzpunkt->beschreibung = liesZeile("Aufgleispunkt-Beschreibung", datei);
 
                 if (result->referenzpunkte.size() <= referenzpunkt->referenzNr) {
@@ -68,7 +68,8 @@ unique_ptr<Strecke> StrLeser::liesStrDatei(istream& datei) {
             } else {
                 referenzpunkt->referenzNr = result->referenzpunkte.size();
                 referenzpunkt->referenzNrInModul = referenzpunkt->referenzNr;
-                konvertiereInGanzzahl("Aufgleiselement-Nr.", tmp);
+                referenzpunkt->streckenelementNr =
+                    konvertiereInGanzzahl("Aufgleiselement-Nr.", tmp);
                 result->referenzpunkte.push_back(std::move(referenzpunkt));
             }
 
@@ -100,6 +101,20 @@ unique_ptr<Strecke> StrLeser::liesStrDatei(istream& datei) {
         // Streckenelemente
         this->aktElement = "Streckenelemente";
         this->liesStreckenelemente(datei, result);
+
+        // Löse Element-Referenzen auf, soweit möglich.
+        for (auto& referenzpunkt : result->referenzpunkte) {
+            if (referenzpunkt.get() == nullptr) {
+                continue;
+            }
+
+            if (referenzpunkt->streckenelementNr >= result->streckenelemente.size()) {
+                continue;
+            }
+
+            referenzpunkt->streckenelement = weak_ptr<Streckenelement>(
+                result->streckenelemente.at(referenzpunkt->streckenelementNr));
+        }
 
         return result;
     } catch (const std::exception& ex) {
