@@ -16,8 +16,11 @@ public:
 
 private:
     void liesStreckenelemente(istream& datei, unique_ptr<Strecke>& strecke);
-    void liesFahrstrSignal(istream& datei, shared_ptr<Streckenelement>& element);
+    void liesFahrstrSignal(istream& datei, shared_ptr<Streckenelement>& element,
+        unique_ptr<Strecke>& strecke);
     void liesKombiSignal(istream& datei, shared_ptr<Streckenelement>& element);
+    void liesHauptsignal(istream& datei, shared_ptr<Streckenelement>& element);
+    void liesVorsignal(istream& datei, shared_ptr<Streckenelement>& element);
 };
 
 #endif
