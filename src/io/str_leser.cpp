@@ -164,7 +164,32 @@ void StrLeser::liesStreckenelemente(istream& datei, unique_ptr<Strecke>& strecke
         liesZeile(datei);
 
         // Flags
-        liesZeile(datei);
+        string flags = liesZeile(datei);
+        for (char& flag : flags) {
+            switch (flag) {
+                case 'T':
+                    element->flags.insert(StreckenelementFlag::Tunnel);
+                    break;
+                case 'W':
+                    element->flags.insert(StreckenelementFlag::Weichenbausatz);
+                    break;
+                case 'S':
+                    element->flags.insert(StreckenelementFlag::Steinbruecke);
+                    break;
+                case 'B':
+                    element->flags.insert(StreckenelementFlag::Stahlbruecke);
+                    break;
+                case 'K':
+                    element->flags.insert(StreckenelementFlag::KeineGleisfunktion);
+                    break;
+                case 'H':
+                    element->flags.insert(StreckenelementFlag::KeinSchienenbau);
+                    break;
+                case 'G':
+                    element->flags.insert(StreckenelementFlag::KeinWeichenbau);
+                    break;
+            }
+        }
 
         // Oberleitungsspannung
         liesZeile(datei);

@@ -16,28 +16,32 @@ using namespace std;
 enum StreckenelementFlag {
 
     // Tunnel. Zusi 2 und Zusi 3.
-    Tunnel,
+    Tunnel = 0,
 
-    // Weichenbausatz. Zusi 2 und Zusi 3. Entspricht bei Zusi 2 der Funktion "Weiche".
-    Weichenbausatz,
+    // Weichenbausatz. Zusi 2 und Zusi 3. Entspricht bei Zusi 2 der Funktion
+    // "Weiche"/"Weichensound".
+    Weichenbausatz = 1,
 
     // Steinbrücke. Nur Zusi 2.
-    Steinbruecke,
+    Steinbruecke = 2,
 
     // Stahlbrücke. Nur Zusi 2.
-    Stahlbruecke,
+    Stahlbruecke = 3,
 
     // Keine Gleisfunktion. Zusi 2 und Zusi 3.
-    KeineGleisfunktion,
+    KeineGleisfunktion = 4,
+
+    // Kein Schienenbau. Nur Zusi 2.
+    KeinSchienenbau = 5,
 
     // Kein Weichenbau. Nur Zusi 2.
-    KeinWeichenbau,
+    KeinWeichenbau = 6,
 
     // Keine Schulter rechts. Nur Zusi 3.
-    KeineSchulterRechts,
+    KeineSchulterRechts = 7,
 
     // Keine Schulter links. Nur Zusi 3.
-    KeineSchulterLinks,
+    KeineSchulterLinks = 8,
 };
 
 // Info über eine Richtung eines Streckenelements.

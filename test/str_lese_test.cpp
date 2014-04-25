@@ -38,6 +38,12 @@ void testVorgaengerNachfolger(unique_ptr<Strecke>& strecke, streckenelement_nr_t
     }
 }
 
+template<typename T>
+void testSetEqual(set<T>& actual, set<T> expected) {
+    BOOST_CHECK_EQUAL_COLLECTIONS(actual.begin(), actual.end(), expected.begin(), expected.end());
+}
+
+
 BOOST_AUTO_TEST_CASE(leere_str_datei) {
     ifstream infile("./eingabe/zusi2/LeereStrecke.str");
     unique_ptr<Strecke> strecke = StrLeser().liesStrDatei(infile);
@@ -163,4 +169,37 @@ BOOST_AUTO_TEST_CASE(element_koordinaten) {
     BOOST_CHECK_CLOSE(element->p2.x, 10, epsilon);
     BOOST_CHECK_CLOSE(element->p2.y, 20, epsilon);
     BOOST_CHECK_CLOSE(element->p2.z, -30, epsilon);
+}
+
+BOOST_AUTO_TEST_CASE(element_flags) {
+    ifstream infile("./eingabe/zusi2/ElementFlagsTest.str");
+    unique_ptr<Strecke> strecke = StrLeser().liesStrDatei(infile);
+
+    BOOST_REQUIRE_EQUAL(strecke->streckenelemente.size(), 11);
+
+    // Flag "Elektrifiziert" wird nicht in den Element-Flags gespeichert.
+    testSetEqual(strecke->streckenelemente.at(1)->flags,
+        set<StreckenelementFlag>({}));
+    testSetEqual(strecke->streckenelemente.at(2)->flags,
+        set<StreckenelementFlag>({StreckenelementFlag::Tunnel}));
+    testSetEqual(strecke->streckenelemente.at(3)->flags,
+        set<StreckenelementFlag>({StreckenelementFlag::Weichenbausatz}));
+    testSetEqual(strecke->streckenelemente.at(4)->flags,
+        set<StreckenelementFlag>({StreckenelementFlag::Stahlbruecke}));
+    testSetEqual(strecke->streckenelemente.at(5)->flags,
+        set<StreckenelementFlag>({StreckenelementFlag::Steinbruecke}));
+    testSetEqual(strecke->streckenelemente.at(6)->flags,
+        set<StreckenelementFlag>({StreckenelementFlag::KeineGleisfunktion}));
+    testSetEqual(strecke->streckenelemente.at(7)->flags,
+        set<StreckenelementFlag>({StreckenelementFlag::KeinSchienenbau}));
+    testSetEqual(strecke->streckenelemente.at(8)->flags,
+        set<StreckenelementFlag>({StreckenelementFlag::KeinWeichenbau}));
+    testSetEqual(strecke->streckenelemente.at(9)->flags,
+        set<StreckenelementFlag>({StreckenelementFlag::Tunnel, StreckenelementFlag::Weichenbausatz,
+            StreckenelementFlag::Steinbruecke, StreckenelementFlag::Stahlbruecke,
+            StreckenelementFlag::KeineGleisfunktion, StreckenelementFlag::KeinSchienenbau,
+            StreckenelementFlag::KeinWeichenbau}));
+    testSetEqual(strecke->streckenelemente.at(10)->flags,
+        set<StreckenelementFlag>({StreckenelementFlag::Weichenbausatz,
+            StreckenelementFlag::Steinbruecke, StreckenelementFlag::KeinSchienenbau}));
 }
