@@ -104,7 +104,7 @@ unique_ptr<Strecke> StrLeser::liesStrDatei(istream& datei) {
 
         // Löse Element-Referenzen auf, soweit möglich.
         for (auto& referenzpunkt : result->referenzpunkte) {
-            if (referenzpunkt.get() == nullptr) {
+            if (!referenzpunkt) {
                 continue;
             }
 
@@ -256,7 +256,7 @@ void StrLeser::liesStreckenelemente(istream& datei, unique_ptr<Strecke>& strecke
             }
 
             shared_ptr<Streckenelement>& nachfolger = strecke->streckenelemente.at(elemNr);
-            if (nachfolger.get() == nullptr) {
+            if (!nachfolger) {
                 continue;
             }
 
