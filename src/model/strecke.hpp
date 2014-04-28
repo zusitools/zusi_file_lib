@@ -35,10 +35,10 @@ struct Strecke : public ZusiObjekt {
     vector<shared_ptr<Streckenelement>> streckenelemente;
 
     // Referenzpunkte (Aufgleispunkte etc.)
-    vector<unique_ptr<Referenzpunkt>> referenzpunkte;
+    vector<shared_ptr<Referenzpunkt>> referenzpunkte;
 
     // Streckenfeste Blickpunkte.
-    vector<unique_ptr<Blickpunkt>> blickpunkte;
+    vector<shared_ptr<Blickpunkt>> blickpunkte;
 
     // Register.
     unordered_map<fahrstr_register_nr_t, shared_ptr<FahrstrRegister>> fahrstrRegister;

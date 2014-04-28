@@ -50,7 +50,7 @@ enum StreckenelementFlag {
 struct StreckenelementRichtungsInfo {
 
     // Durch das Befahren ausgelöste Ereignisse.
-    vector<unique_ptr<Ereignis>> ereignisse;
+    vector<shared_ptr<Ereignis>> ereignisse;
 
     // Die Nummer des zugeordneten Fahrstraßenregisters.
     shared_ptr<FahrstrRegister> fahrstrRegister;
@@ -65,10 +65,10 @@ struct StreckenelementRichtungsInfo {
     bool kmAufsteigend;
 
     // Fahrstraßensignal
-    unique_ptr<FahrstrassenSignal> fahrstrSignal;
+    shared_ptr<FahrstrassenSignal> fahrstrSignal;
 
     // Kombinationssignal
-    unique_ptr<KombiSignal> signal;
+    shared_ptr<KombiSignal> signal;
 
     // TODO: Koppelweiche
 };
@@ -79,8 +79,8 @@ struct StreckenelementUndRichtung;
 struct Streckenelement {
 
     // Konstanten für die Indizierung von richtungsspezifischen Daten, die in Arrays abgelegt sind.
-    static const streckenelement_richtung_t RICHTUNG_NORM = 0;
-    static const streckenelement_richtung_t RICHTUNG_GEGEN = 1;
+    static const streckenelement_richtung_t RICHTUNG_GEGEN = 0;
+    static const streckenelement_richtung_t RICHTUNG_NORM = 1;
 
     // Die Nummer des Streckenelements in der fertig zusammengesetzten Strecke.
     streckenelement_nr_t nr;

@@ -1,5 +1,8 @@
 #include "streckenelement.hpp"
 
+const streckenelement_richtung_t Streckenelement::RICHTUNG_NORM;
+const streckenelement_richtung_t Streckenelement::RICHTUNG_GEGEN;
+
 StreckenelementUndRichtung Streckenelement::nachfolger(
         const nachfolger_index_t index, const streckenelement_richtung_t richtung)  {
     return nachfolgerElemente[richtung].at(index);

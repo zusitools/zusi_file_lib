@@ -6,11 +6,8 @@
 // Ein allgemeines in Zusi verwendetes Objekt.
 struct ZusiObjekt {
 
-#ifdef SWIG
-%immutable;
-#endif
     // Allgemeine Informationen über die Datei.
-    unique_ptr<DateiInfo> dateiInfo;
+    shared_ptr<DateiInfo> dateiInfo;
 
     // Objekt-ID.
     objektid_t objektId;

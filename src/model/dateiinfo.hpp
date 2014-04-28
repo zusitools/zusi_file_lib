@@ -13,7 +13,7 @@ using namespace std;
 struct DateiInfo {
 
     // Autoren-Info.
-    vector<unique_ptr<AutorInfo>> autorInfo;
+    vector<shared_ptr<AutorInfo>> autorInfo;
 
     // Beschreibung des Objekts.
     string beschreibung;

@@ -6,6 +6,10 @@
 #include <io/z2_leser.hpp>
 #include <model/strecke.hpp>
 
+#ifdef SWIG
+#define unique_ptr shared_ptr
+#endif
+
 using namespace std;
 
 class StrLeser : public Z2Leser {
