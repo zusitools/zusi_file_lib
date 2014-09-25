@@ -58,7 +58,7 @@ enum EreignisTyp {
     Streckennummer = 39,
     HilfsHsig = 23,
     RegelgleisKennzeichnen = 39,
-    GegengleisKennzeichnen = 40,
+    GegengleisKennzeichnen = 28,
     EingleisigKennzeichnen = 40,
     Richtungsvoranzeiger = 38,
     RichtungsanzeigerZiel = 29,
