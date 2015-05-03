@@ -10,6 +10,7 @@ class St3Leser : public Z3Leser {
 
 public:
     unique_ptr<Strecke> liesSt3Datei(istream& datei);
+    unique_ptr<Strecke> liesSt3DateiMitDateiname(const string dateiname);
 
 };
 

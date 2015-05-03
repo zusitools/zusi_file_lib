@@ -1,6 +1,7 @@
 #include "st3_leser.hpp"
 
 #include <iostream>
+#include <fstream>
 
 #include "lib/rapidxml-1.13/rapidxml.hpp"
 
@@ -74,4 +75,9 @@ unique_ptr<Strecke> St3Leser::liesSt3Datei(istream& datei) {
     }
 
     return strecke;
+}
+
+unique_ptr<Strecke> St3Leser::liesSt3DateiMitDateiname(const string dateiname) {
+    ifstream datei(dateiname);
+    return St3Leser::liesSt3Datei(datei);
 }
