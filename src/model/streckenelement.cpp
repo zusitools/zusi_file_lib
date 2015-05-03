@@ -29,8 +29,8 @@ void Streckenelement::setzeNachfolger(const nachfolger_index_t index,
 void Streckenelement::setzeVorgaenger(const nachfolger_index_t index,
         const streckenelement_richtung_t richtung,
         const StreckenelementUndRichtung& vorgaenger) {
-    StreckenelementUndRichtung neueRichtung;
-    neueRichtung.streckenelement = vorgaenger.streckenelement;
-    neueRichtung.richtung = Streckenelement::gegenrichtung(vorgaenger.richtung);
+    StreckenelementUndRichtung neueRichtung(
+            vorgaenger.streckenelement,
+            Streckenelement::gegenrichtung(vorgaenger.richtung));
     setzeNachfolger(index, Streckenelement::gegenrichtung(richtung), neueRichtung);
 }

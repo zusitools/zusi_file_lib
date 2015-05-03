@@ -157,6 +157,34 @@ struct StreckenelementUndRichtung {
     // Die Richtung des Streckenelements, auf das sich die Referenz bezieht.
     streckenelement_richtung_t richtung;
 
+    StreckenelementUndRichtung nachfolger(const nachfolger_index_t index = 0) {
+        return this->streckenelement.lock()->nachfolger(index, this->richtung);
+    }
+
+    bool hatNachfolger() {
+        return !this->streckenelement.lock()->nachfolgerElemente[this->richtung].empty();
+    }
+
+    StreckenelementUndRichtung vorgaenger(const nachfolger_index_t index = 0) {
+        return this->streckenelement.lock()->vorgaenger(index, this->richtung);
+    }
+
+    bool hatVorgaenger() {
+        return !this->streckenelement.lock()->nachfolgerElemente[Streckenelement::gegenrichtung(this->richtung)].empty();
+    }
+
+    StreckenelementUndRichtung(weak_ptr<Streckenelement> streckenelement, streckenelement_richtung_t richtung) :
+            streckenelement(streckenelement), richtung(richtung) {
+    }
+
+    StreckenelementUndRichtung() :
+        streckenelement(weak_ptr<Streckenelement>()), richtung(Streckenelement::RICHTUNG_NORM) {
+    }
+
+    StreckenelementUndRichtung(const StreckenelementUndRichtung& other) :
+            streckenelement(other.streckenelement), richtung(other.richtung) {
+    }
+
 };
 
 #endif
