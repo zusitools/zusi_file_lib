@@ -55,6 +55,7 @@ unique_ptr<Strecke> StrLeser::liesStrDatei(istream& datei) {
         tmp = liesZeile("Aufgleispunkte", datei);
         while (tmp != "#") {
             unique_ptr<Referenzpunkt> referenzpunkt(new Referenzpunkt());
+            referenzpunkt->richtung = Streckenelement::RICHTUNG_NORM;
             if (result->dateiInfo->formatMinVersion != "1.1") {
                 referenzpunkt->referenzNr = konvertiereInGanzzahl("Aufgleisreferenz-Nr.", tmp);
                 referenzpunkt->referenzNrInModul = referenzpunkt->referenzNr;
