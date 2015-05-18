@@ -8,54 +8,12 @@
 
 #include <io/str_leser.hpp>
 
-using namespace std;
-
 // Wert für Floating-Point-Vergleiche (in Prozent der zu vergleichenden Werte!)
 #define epsilon 0.00001
 
-void testVorgaengerNachfolger(unique_ptr<Strecke>& strecke, streckenelement_nr_t nr,
-        vector<streckenelement_nr_t> nrsVorgaenger, vector<streckenelement_nr_t> nrsNachfolger) {
-    auto& element = strecke->streckenelemente.at(nr);
+#include "testhelpers.hpp"
 
-    BOOST_CHECK_EQUAL(element->nr, nr);
-    BOOST_CHECK_EQUAL(element->nrInModul, nr);
-
-    BOOST_REQUIRE_EQUAL(
-        element->nachfolgerElemente[Streckenelement::RICHTUNG_GEGEN].size(),
-        nrsVorgaenger.size());
-    BOOST_REQUIRE_EQUAL(
-        element->nachfolgerElemente[Streckenelement::RICHTUNG_NORM].size(),
-        nrsNachfolger.size());
-
-    // TODO: Bei Zusi 2 hat die Liste der Vorgänger keine definierte Ordnung.
-    for (size_t i = 0; i < nrsVorgaenger.size(); i++) {
-        auto vorgaenger = element->vorgaenger(i);
-        BOOST_CHECK_EQUAL(vorgaenger.richtung, static_cast<streckenelement_richtung_t>(Streckenelement::RICHTUNG_NORM));
-        BOOST_CHECK(vorgaenger.streckenelement.lock() == strecke->streckenelemente.at(nrsVorgaenger.at(i)));
-    }
-
-    for (size_t i = 0; i < nrsNachfolger.size(); i++) {
-        auto nachfolger = element->nachfolger(i);
-        BOOST_CHECK_EQUAL(nachfolger.richtung, static_cast<streckenelement_richtung_t>(Streckenelement::RICHTUNG_NORM));
-        BOOST_CHECK(nachfolger.streckenelement.lock() == strecke->streckenelemente.at(nrsNachfolger.at(i)));
-    }
-}
-
-void testEreignis(unique_ptr<Strecke>& strecke, streckenelement_nr_t nr,
-        EreignisTyp ereignisTyp, ereignis_wert_t wert = 0, string beschreibung = "") {
-    auto& richtungsInfo =
-        strecke->streckenelemente.at(nr)->richtungsInfo[Streckenelement::RICHTUNG_NORM];
-    BOOST_CHECK_EQUAL(richtungsInfo.ereignisse.size(), 1);
-    BOOST_CHECK_EQUAL(richtungsInfo.ereignisse.at(0)->ereignisTyp, ereignisTyp);
-    BOOST_CHECK_CLOSE(richtungsInfo.ereignisse.at(0)->wert, wert, epsilon);
-    BOOST_CHECK_EQUAL(richtungsInfo.ereignisse.at(0)->beschreibung, beschreibung);
-}
-
-template<typename T>
-void testSetEqual(set<T>& actual, set<T> expected) {
-    BOOST_CHECK_EQUAL_COLLECTIONS(actual.begin(), actual.end(), expected.begin(), expected.end());
-}
-
+using namespace std;
 
 BOOST_AUTO_TEST_CASE(leere_str_datei) {
     ifstream infile("./eingabe/zusi2/LeereStrecke.str");
@@ -140,11 +98,11 @@ BOOST_AUTO_TEST_CASE(nachfolger_vorgaenger) {
     BOOST_REQUIRE_EQUAL(strecke->streckenelemente.size(), 6);
 
     BOOST_CHECK(!strecke->streckenelemente.at(0));
-    testVorgaengerNachfolger(strecke, 1, {}, {2, 3});
-    testVorgaengerNachfolger(strecke, 2, {1}, {5});
-    testVorgaengerNachfolger(strecke, 3, {1}, {});
-    testVorgaengerNachfolger(strecke, 4, {}, {5});
-    testVorgaengerNachfolger(strecke, 5, {2, 4}, {});
+    testVorgaengerNachfolger(strecke, 1, {}, {}, {2, 3}, {Streckenelement::RICHTUNG_NORM, Streckenelement::RICHTUNG_NORM});
+    testVorgaengerNachfolger(strecke, 2, {1}, {Streckenelement::RICHTUNG_NORM}, {5}, {Streckenelement::RICHTUNG_NORM});
+    testVorgaengerNachfolger(strecke, 3, {1}, {Streckenelement::RICHTUNG_NORM}, {}, {});
+    testVorgaengerNachfolger(strecke, 4, {}, {}, {5}, {Streckenelement::RICHTUNG_NORM});
+    testVorgaengerNachfolger(strecke, 5, {2, 4}, {Streckenelement::RICHTUNG_NORM, Streckenelement::RICHTUNG_NORM}, {}, {});
 }
 
 BOOST_AUTO_TEST_CASE(aufgleispunkte) {

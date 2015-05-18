@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Zusi>
+<Info DateiTyp="Strecke" Version="A.1" MinVersion="A.1">
+<AutorEintrag/>
+</Info>
+<Strecke>
+<Datei/>
+<HintergrundDatei/>
+<BefehlsKonfiguration/>
+<Kachelpfad Dateiname="Kacheln\" NurInfo="1"/>
+<UTM/>
+<SkyDome>
+<HimmelTex Dateiname="_Setup\himmel\himmel.tga"/>
+<NebelTex Dateiname="_Setup\himmel\nebel.tga"/>
+<SonneTex Dateiname="_Setup\himmel\sonne.tga"/>
+<MondTex Dateiname="_Setup\himmel\mond.tga"/>
+<SternTex Dateiname="_Setup\himmel\stern.tga"/>
+</SkyDome>
+<StrElement Nr="1" spTrass="27.7778" Anschluss="1">
+<g/>
+<b X="10"/>
+<NachNorm Nr="2"/>
+<NachGegen Nr="4"/>
+</StrElement>
+<StrElement Nr="2" spTrass="27.7778" Anschluss="257" Oberbau="B55 SKL-Oberbau">
+<g X="20"/>
+<b X="10"/>
+<NachNorm Nr="1"/>
+<NachGegen Nr="3"/>
+</StrElement>
+<StrElement Nr="3" spTrass="27.7778" Oberbau="B55 SKL-Oberbau">
+<g X="30"/>
+<b X="20"/>
+<NachNorm Nr="2"/>
+</StrElement>
+<StrElement Nr="4" spTrass="27.7778" Oberbau="B55 SKL-Oberbau">
+<g/>
+<b X="-10" Y="0"/>
+<NachGegen Nr="1"/>
+</StrElement>
+</Strecke>
+</Zusi>

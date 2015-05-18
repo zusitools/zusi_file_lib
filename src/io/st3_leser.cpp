@@ -22,6 +22,37 @@ void liesXYZ(xml_node<> &node, float *x, float *y, float *z) {
     liesFloatAttr(node, "Z", z);
 }
 
+int liesInt(xml_node<> &node, const char* attrName) {
+    xml_attribute<> *attr = node.first_attribute(attrName);
+    if (attr != nullptr) {
+        // TODO: Fehlerbehandlung
+        return stoi(attr->value());
+    } else {
+        return 0;
+    }
+}
+
+void setzeVorgaengerNachfolger(unordered_map<int, vector<int> > &nachfolger, streckenelement_richtung_t richtung,
+        unordered_map<int, int> &anschluss, Strecke &strecke) {
+    for (auto &it : nachfolger) {
+        streckenelement_nr_t nr = it.first;
+        if (nr >= 0 && nr < strecke.streckenelemente.size()) {
+            auto streckenelement = strecke.streckenelemente.at(nr);
+            if (!streckenelement) continue;
+            nachfolger_index_t index = 0;
+            for (auto nachfolgerNr : it.second) {
+                auto nachfolger = strecke.streckenelemente.at(nachfolgerNr);
+                if (!nachfolger) continue;
+                int anschluss_shift = index + (richtung == Streckenelement::RICHTUNG_GEGEN ? 8 : 0);
+                streckenelement->setzeNachfolger(index++, richtung,
+                    StreckenelementUndRichtung(weak_ptr<Streckenelement>(nachfolger),
+                    ((anschluss[nr] >> anschluss_shift) & 1) == 0 ?
+                      Streckenelement::RICHTUNG_NORM : Streckenelement::RICHTUNG_GEGEN));
+            }
+        }
+    }
+}
+
 unique_ptr<Strecke> St3Leser::liesSt3Datei(istream& datei) {
     unique_ptr<Strecke> strecke(new Strecke());
 
@@ -37,6 +68,10 @@ unique_ptr<Strecke> St3Leser::liesSt3Datei(istream& datei) {
         strecke->dateiInfo = this->liesDateiInfo(*wurzel);
     }
 
+    unordered_map<int, vector<int> > nachNorm;
+    unordered_map<int, vector<int> > nachGegen;
+    unordered_map<int, int> anschluss;
+
     xml_node<> *str_node = wurzel->first_node("Strecke");
     if (str_node != nullptr)
     {
@@ -44,14 +79,7 @@ unique_ptr<Strecke> St3Leser::liesSt3Datei(istream& datei) {
         while (elem_node != nullptr)
         {
             shared_ptr<Streckenelement> element(new Streckenelement());
-
-            xml_attribute<> *nrAttr = elem_node->first_attribute("Nr");
-            if (nrAttr != nullptr) {
-                // TODO: Fehlerbehandlung
-                element->nr = stoi(nrAttr->value());
-            } else {
-                element->nr = 0;
-            }
+            element->nr = liesInt(*elem_node, "Nr");
 
             if (strecke->streckenelemente.size() <= element->nr + 1)
             {
@@ -70,8 +98,31 @@ unique_ptr<Strecke> St3Leser::liesSt3Datei(istream& datei) {
                 liesXYZ(*b_node, &element->p2.x, &element->p2.y, &element->p2.z);
             }
 
+            for (xml_node<> *nachnorm_node = elem_node->first_node("NachNorm");
+                    nachnorm_node != nullptr;
+                    nachnorm_node = nachnorm_node->next_sibling("NachNorm")) {
+                int nachfolgerNr = liesInt(*nachnorm_node, "Nr");
+                if (nachfolgerNr != 0) {
+                    nachNorm[element->nr].push_back(nachfolgerNr);
+                }
+            }
+            for (xml_node<> *nachgegen_node = elem_node->first_node("NachGegen");
+                    nachgegen_node != nullptr;
+                    nachgegen_node = nachgegen_node->next_sibling("NachGegen")) {
+                int nachfolgerNr = liesInt(*nachgegen_node, "Nr");
+                if (nachfolgerNr != 0) {
+                    nachGegen[element->nr].push_back(nachfolgerNr);
+                }
+            }
+
+            anschluss[element->nr] = liesInt(*elem_node, "Anschluss");
+
             elem_node = elem_node->next_sibling("StrElement");
         }
+
+        // Verknuepfungen zu Vorgaengern und Nachfolgern herstellen
+        setzeVorgaengerNachfolger(nachNorm, Streckenelement::RICHTUNG_NORM, anschluss, *strecke);
+        setzeVorgaengerNachfolger(nachGegen, Streckenelement::RICHTUNG_GEGEN, anschluss, *strecke);
     }
 
     return strecke;
