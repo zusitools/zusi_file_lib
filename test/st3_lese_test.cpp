@@ -49,3 +49,10 @@ BOOST_AUTO_TEST_CASE(vorgaenger_nachfolger) {
     testVorgaengerNachfolger(strecke, 4, {1}, {Streckenelement::RICHTUNG_GEGEN}, {},  {});
 }
 
+BOOST_AUTO_TEST_CASE(utm_punkt) {
+    ifstream infile("./eingabe/zusi3/UTMPunktTest.st3");
+    unique_ptr<Strecke> strecke = St3Leser().liesSt3Datei(infile);
+
+    BOOST_CHECK_EQUAL(strecke->utmPunkt.we, 42);
+    BOOST_CHECK_EQUAL(strecke->utmPunkt.ns, -90);
+}

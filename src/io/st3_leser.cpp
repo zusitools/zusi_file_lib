@@ -75,6 +75,13 @@ unique_ptr<Strecke> St3Leser::liesSt3Datei(istream& datei) {
     xml_node<> *str_node = wurzel->first_node("Strecke");
     if (str_node != nullptr)
     {
+        xml_node<> *utm_node = str_node->first_node("UTM");
+        if (utm_node != nullptr)
+        {
+            strecke->utmPunkt.we = liesInt(*utm_node, "UTM_WE");
+            strecke->utmPunkt.ns = liesInt(*utm_node, "UTM_NS");
+        }
+
         xml_node<> *elem_node = str_node->first_node("StrElement");
         while (elem_node != nullptr)
         {

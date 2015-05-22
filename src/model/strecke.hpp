@@ -8,6 +8,7 @@
 #include <model/fahrstr_register.hpp>
 #include <model/referenzpunkt.hpp>
 #include <model/streckenelement.hpp>
+#include <model/utmpunkt.hpp>
 #include <model/zusiobjekt.hpp>
 
 using namespace std;
@@ -25,7 +26,8 @@ struct Strecke : public ZusiObjekt {
 
     // Landschaftsdatei.
 
-    // UTM-Info.
+    // UTM-Punkt.
+    UTMPunkt utmPunkt;
 
     // Haltabstand vor Signalen (nur Zusi 2).
     meter_t signalHaltabstand;

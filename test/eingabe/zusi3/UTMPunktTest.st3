@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Zusi>
+<Info DateiTyp="Strecke" Version="A.1" MinVersion="A.1">
+<AutorEintrag/>
+</Info>
+<Strecke>
+<Datei/>
+<HintergrundDatei/>
+<BefehlsKonfiguration/>
+<Kachelpfad Dateiname="Kacheln\" NurInfo="1"/>
+<UTM UTM_WE="42" UTM_NS="-90" UTM_Zone="50" UTM_Zone2="X"/>
+<SkyDome>
+<HimmelTex Dateiname="_Setup\himmel\himmel.tga"/>
+<NebelTex Dateiname="_Setup\himmel\nebel.tga"/>
+<SonneTex Dateiname="_Setup\himmel\sonne.tga"/>
+<MondTex Dateiname="_Setup\himmel\mond.tga"/>
+<SternTex Dateiname="_Setup\himmel\stern.tga"/>
+</SkyDome>
+<StrElement Nr="1" spTrass="27.7778">
+<g/>
+<b X="10"/>
+</StrElement>
+</Strecke>
+</Zusi>
