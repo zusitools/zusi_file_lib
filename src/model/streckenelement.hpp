@@ -173,6 +173,10 @@ struct StreckenelementUndRichtung {
         return !this->streckenelement.lock()->nachfolgerElemente[Streckenelement::gegenrichtung(this->richtung)].empty();
     }
 
+    StreckenelementUndRichtung gegenrichtung() {
+        return StreckenelementUndRichtung(this->streckenelement, Streckenelement::gegenrichtung(this->richtung));
+    }
+
     StreckenelementUndRichtung(weak_ptr<Streckenelement> streckenelement, streckenelement_richtung_t richtung) :
             streckenelement(streckenelement), richtung(richtung) {
     }
