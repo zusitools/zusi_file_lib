@@ -131,17 +131,17 @@ struct Streckenelement {
 
     StreckenelementUndRichtung nachfolger(
             const nachfolger_index_t index = 0,
-            const streckenelement_richtung_t richtung = Streckenelement::RICHTUNG_NORM);
+            const streckenelement_richtung_t richtung = Streckenelement::RICHTUNG_NORM) const;
     StreckenelementUndRichtung vorgaenger(
             const nachfolger_index_t index = 0,
-            const streckenelement_richtung_t richtung = Streckenelement::RICHTUNG_NORM);
+            const streckenelement_richtung_t richtung = Streckenelement::RICHTUNG_NORM) const;
 
     void setzeNachfolger(const nachfolger_index_t index, const streckenelement_richtung_t richtung,
             const StreckenelementUndRichtung& nachfolger);
     void setzeVorgaenger(const nachfolger_index_t index, const streckenelement_richtung_t richtung,
             const StreckenelementUndRichtung& vorgaenger);
 
-    inline static const streckenelement_richtung_t gegenrichtung(
+    inline static streckenelement_richtung_t gegenrichtung(
             const streckenelement_richtung_t richtung) {
         return richtung == Streckenelement::RICHTUNG_NORM ?
             Streckenelement::RICHTUNG_GEGEN : Streckenelement::RICHTUNG_NORM;

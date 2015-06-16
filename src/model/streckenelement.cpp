@@ -3,13 +3,13 @@
 const streckenelement_richtung_t Streckenelement::RICHTUNG_NORM;
 const streckenelement_richtung_t Streckenelement::RICHTUNG_GEGEN;
 
-StreckenelementUndRichtung Streckenelement::nachfolger(
-        const nachfolger_index_t index, const streckenelement_richtung_t richtung)  {
+StreckenelementUndRichtung Streckenelement::nachfolger (
+        const nachfolger_index_t index, const streckenelement_richtung_t richtung) const {
     return nachfolgerElemente[richtung].at(index);
 }
 
 StreckenelementUndRichtung Streckenelement::vorgaenger(
-        const nachfolger_index_t index, const streckenelement_richtung_t richtung)  {
+        const nachfolger_index_t index, const streckenelement_richtung_t richtung) const {
     StreckenelementUndRichtung result =
         nachfolger(index, Streckenelement::gegenrichtung(richtung));
     result.richtung = Streckenelement::gegenrichtung(result.richtung);
