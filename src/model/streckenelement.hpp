@@ -141,6 +141,8 @@ struct Streckenelement {
     void setzeVorgaenger(const nachfolger_index_t index, const streckenelement_richtung_t richtung,
             const StreckenelementUndRichtung& vorgaenger);
 
+    inline bool hatFktFlag(StreckenelementFlag flag) { return flags.find(flag) != flags.end(); }
+
     inline static streckenelement_richtung_t gegenrichtung(
             const streckenelement_richtung_t richtung) {
         return richtung == Streckenelement::RICHTUNG_NORM ?

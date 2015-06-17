@@ -63,6 +63,7 @@ BOOST_AUTO_TEST_CASE(element_flags) {
 
     BOOST_REQUIRE_EQUAL(strecke->streckenelemente.size(), 8);
 
+    // Direkter Zugriff ueber set
     testSetEqual(strecke->streckenelemente.at(1)->flags,
         set<StreckenelementFlag>({}));
     testSetEqual(strecke->streckenelemente.at(2)->flags,
@@ -78,4 +79,21 @@ BOOST_AUTO_TEST_CASE(element_flags) {
     testSetEqual(strecke->streckenelemente.at(7)->flags,
         set<StreckenelementFlag>({StreckenelementFlag::Tunnel,
             StreckenelementFlag::Weichenbausatz, StreckenelementFlag::KeineSchulterLinks}));
+
+    // Zugriff ueber hatFktFlag-Methode
+    BOOST_CHECK_EQUAL(strecke->streckenelemente.at(1)->hatFktFlag(StreckenelementFlag::Tunnel), false);
+    BOOST_CHECK_EQUAL(strecke->streckenelemente.at(1)->hatFktFlag(StreckenelementFlag::KeineGleisfunktion), false);
+    BOOST_CHECK_EQUAL(strecke->streckenelemente.at(1)->hatFktFlag(StreckenelementFlag::Weichenbausatz), false);
+    BOOST_CHECK_EQUAL(strecke->streckenelemente.at(1)->hatFktFlag(StreckenelementFlag::KeineSchulterRechts), false);
+    BOOST_CHECK_EQUAL(strecke->streckenelemente.at(1)->hatFktFlag(StreckenelementFlag::KeineSchulterLinks), false);
+
+    BOOST_CHECK_EQUAL(strecke->streckenelemente.at(2)->hatFktFlag(StreckenelementFlag::Tunnel), true);
+    BOOST_CHECK_EQUAL(strecke->streckenelemente.at(3)->hatFktFlag(StreckenelementFlag::KeineGleisfunktion), true);
+    BOOST_CHECK_EQUAL(strecke->streckenelemente.at(4)->hatFktFlag(StreckenelementFlag::Weichenbausatz), true);
+    BOOST_CHECK_EQUAL(strecke->streckenelemente.at(5)->hatFktFlag(StreckenelementFlag::KeineSchulterRechts), true);
+    BOOST_CHECK_EQUAL(strecke->streckenelemente.at(6)->hatFktFlag(StreckenelementFlag::KeineSchulterLinks), true);
+
+    BOOST_CHECK_EQUAL(strecke->streckenelemente.at(7)->hatFktFlag(StreckenelementFlag::Tunnel), true);
+    BOOST_CHECK_EQUAL(strecke->streckenelemente.at(7)->hatFktFlag(StreckenelementFlag::Weichenbausatz), true);
+    BOOST_CHECK_EQUAL(strecke->streckenelemente.at(7)->hatFktFlag(StreckenelementFlag::KeineSchulterLinks), true);
 }
