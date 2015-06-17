@@ -56,3 +56,26 @@ BOOST_AUTO_TEST_CASE(utm_punkt) {
     BOOST_CHECK_EQUAL(strecke->utmPunkt.we, 42);
     BOOST_CHECK_EQUAL(strecke->utmPunkt.ns, -90);
 }
+
+BOOST_AUTO_TEST_CASE(element_flags) {
+    ifstream infile("./eingabe/zusi3/ElementFlagsTest.st3");
+    unique_ptr<Strecke> strecke = St3Leser().liesSt3Datei(infile);
+
+    BOOST_REQUIRE_EQUAL(strecke->streckenelemente.size(), 8);
+
+    testSetEqual(strecke->streckenelemente.at(1)->flags,
+        set<StreckenelementFlag>({}));
+    testSetEqual(strecke->streckenelemente.at(2)->flags,
+        set<StreckenelementFlag>({StreckenelementFlag::Tunnel}));
+    testSetEqual(strecke->streckenelemente.at(3)->flags,
+        set<StreckenelementFlag>({StreckenelementFlag::KeineGleisfunktion}));
+    testSetEqual(strecke->streckenelemente.at(4)->flags,
+        set<StreckenelementFlag>({StreckenelementFlag::Weichenbausatz}));
+    testSetEqual(strecke->streckenelemente.at(5)->flags,
+        set<StreckenelementFlag>({StreckenelementFlag::KeineSchulterRechts}));
+    testSetEqual(strecke->streckenelemente.at(6)->flags,
+        set<StreckenelementFlag>({StreckenelementFlag::KeineSchulterLinks}));
+    testSetEqual(strecke->streckenelemente.at(7)->flags,
+        set<StreckenelementFlag>({StreckenelementFlag::Tunnel,
+            StreckenelementFlag::Weichenbausatz, StreckenelementFlag::KeineSchulterLinks}));
+}

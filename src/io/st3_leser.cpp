@@ -94,6 +94,7 @@ unique_ptr<Strecke> St3Leser::liesSt3Datei(istream& datei) {
             }
             strecke->streckenelemente.at(element->nr) = element;
 
+            // Koordinaten
             xml_node<> *g_node = elem_node->first_node("g");
             if (g_node != nullptr)
             {
@@ -105,6 +106,7 @@ unique_ptr<Strecke> St3Leser::liesSt3Datei(istream& datei) {
                 liesXYZ(*b_node, &element->p2.x, &element->p2.y, &element->p2.z);
             }
 
+            // Nachfolger
             for (xml_node<> *nachnorm_node = elem_node->first_node("NachNorm");
                     nachnorm_node != nullptr;
                     nachnorm_node = nachnorm_node->next_sibling("NachNorm")) {
@@ -122,7 +124,16 @@ unique_ptr<Strecke> St3Leser::liesSt3Datei(istream& datei) {
                 }
             }
 
+            // Anschluss
             anschluss[element->nr] = liesInt(*elem_node, "Anschluss");
+
+            // Funktions-Flags
+            auto fkt_flags = liesInt(*elem_node, "Fkt");
+            if (fkt_flags & 1) element->flags.insert(StreckenelementFlag::Tunnel);
+            if (fkt_flags & 2) element->flags.insert(StreckenelementFlag::KeineGleisfunktion);
+            if (fkt_flags & 4) element->flags.insert(StreckenelementFlag::Weichenbausatz);
+            if (fkt_flags & 8) element->flags.insert(StreckenelementFlag::KeineSchulterRechts);
+            if (fkt_flags & 16) element->flags.insert(StreckenelementFlag::KeineSchulterLinks);
 
             elem_node = elem_node->next_sibling("StrElement");
         }
