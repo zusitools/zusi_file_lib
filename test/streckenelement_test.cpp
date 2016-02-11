@@ -1,4 +1,4 @@
-#define BOOST_TEST_MODULE ZusiOffizielleStreckenTest 
+#define BOOST_TEST_MODULE StreckenelementTest
 #include <cstdlib>
 #include <fstream>
 #include <boost/test/included/unit_test.hpp>
