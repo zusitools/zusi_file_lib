@@ -64,7 +64,7 @@ struct StreckenelementRichtungsInfo {
     // Ist die Kilometrierung in Richtung des Elementendes aufsteigend?
     bool kmAufsteigend;
 
-    // Fahrstraßensignal
+    // Fahrstraßensignal (nur Zusi 2)
     shared_ptr<FahrstrassenSignal> fahrstrSignal;
 
     // Kombinationssignal
@@ -73,7 +73,35 @@ struct StreckenelementRichtungsInfo {
     // TODO: Koppelweiche
 };
 
-struct StreckenelementUndRichtung;
+struct Streckenelement;
+
+// Ein Verweis auf eine Richtung eines Streckenelements.
+struct StreckenelementUndRichtung {
+
+    // Das Streckenelement, auf das sich die Referenz bezieht.
+    const Streckenelement& streckenelement;
+
+    // Die Richtung des Streckenelements, auf das sich die Referenz bezieht.
+    const streckenelement_richtung_t richtung;
+
+    StreckenelementUndRichtung nachfolger(const nachfolger_index_t index = 0) const;
+
+    bool hatNachfolger() const;
+
+    StreckenelementUndRichtung vorgaenger(const nachfolger_index_t index = 0) const;
+
+    bool hatVorgaenger() const;
+
+    StreckenelementUndRichtung gegenrichtung() const;
+
+    StreckenelementUndRichtung(const Streckenelement& streckenelement, const streckenelement_richtung_t richtung) :
+            streckenelement(streckenelement), richtung(richtung) {
+    }
+
+    StreckenelementUndRichtung() = delete;
+    StreckenelementUndRichtung(const StreckenelementUndRichtung&) = default;
+    StreckenelementUndRichtung& operator=(const StreckenelementUndRichtung&) = default;
+};
 
 // Ein Streckenelement.
 struct Streckenelement {
@@ -82,11 +110,8 @@ struct Streckenelement {
     static const streckenelement_richtung_t RICHTUNG_GEGEN = 0;
     static const streckenelement_richtung_t RICHTUNG_NORM = 1;
 
-    // Die Nummer des Streckenelements in der fertig zusammengesetzten Strecke.
-    streckenelement_nr_t nr;
-
     // Die Nummer des Streckenelements im Modul, in dem es definiert ist.
-    streckenelement_nr_t nrInModul;
+    streckenelement_nr_t nr;
 
     // Die Position von Element-Ende 1 (Normrichtung: 1-->2).
     Punkt3D p1;
@@ -122,75 +147,46 @@ struct Streckenelement {
     StreckenelementRichtungsInfo richtungsInfo[2];
 
     // Geordnete Liste von Nachfolgern in jeder Richtung.
-    vector<StreckenelementUndRichtung> nachfolgerElemente[2];
+    // Die Nachfolgerrichtung kann mittels "anschluss" berechnet werden.
+    vector<weak_ptr<Streckenelement>> nachfolgerElemente[2];
+
+    // Anschluss-Informationen für Norm- und Gegenrichtung.
+    // Eine 1 in Bit Nr. i bedeutet, dass Nachfolger i in Gegenrichtung liegt.
+    uint8_t anschluss[2];
 
     // Die Funktionsflags.
     set<StreckenelementFlag> flags;
 
     // ---
 
-    StreckenelementUndRichtung nachfolger(
-            const nachfolger_index_t index = 0,
-            const streckenelement_richtung_t richtung = Streckenelement::RICHTUNG_NORM) const;
-    StreckenelementUndRichtung vorgaenger(
-            const nachfolger_index_t index = 0,
-            const streckenelement_richtung_t richtung = Streckenelement::RICHTUNG_NORM) const;
+    inline StreckenelementUndRichtung richtung(const streckenelement_richtung_t richtung) {
+        return StreckenelementUndRichtung(*this, richtung);
+    }
+
+    inline StreckenelementUndRichtung normrichtung() {
+        return this->richtung(Streckenelement::RICHTUNG_NORM);
+    }
+
+    inline StreckenelementUndRichtung gegenrichtung() {
+        return this->richtung(Streckenelement::RICHTUNG_GEGEN);
+    }
 
     void setzeNachfolger(const nachfolger_index_t index, const streckenelement_richtung_t richtung,
-            const StreckenelementUndRichtung& nachfolger);
+            const shared_ptr<Streckenelement> nachfolger);
+    void setzeNachfolger(const nachfolger_index_t index, const streckenelement_richtung_t richtung,
+            const shared_ptr<Streckenelement> nachfolger, const streckenelement_richtung_t nachfolgerRichtung);
     void setzeVorgaenger(const nachfolger_index_t index, const streckenelement_richtung_t richtung,
-            const StreckenelementUndRichtung& vorgaenger);
+            const shared_ptr<Streckenelement> vorgaenger);
+    void setzeVorgaenger(const nachfolger_index_t index, const streckenelement_richtung_t richtung,
+            const shared_ptr<Streckenelement> vorgaenger, const streckenelement_richtung_t vorgaengerRichtung);
 
     inline bool hatFktFlag(StreckenelementFlag flag) { return flags.find(flag) != flags.end(); }
 
-    inline static streckenelement_richtung_t gegenrichtung(
+    inline static streckenelement_richtung_t richtungUmkehren(
             const streckenelement_richtung_t richtung) {
         return richtung == Streckenelement::RICHTUNG_NORM ?
             Streckenelement::RICHTUNG_GEGEN : Streckenelement::RICHTUNG_NORM;
     }
-};
-
-// Ein Verweis auf eine Richtung eines Streckenelements.
-struct StreckenelementUndRichtung {
-
-    // Das Streckenelement, auf das sich die Referenz bezieht.
-    weak_ptr<Streckenelement> streckenelement;
-
-    // Die Richtung des Streckenelements, auf das sich die Referenz bezieht.
-    streckenelement_richtung_t richtung;
-
-    StreckenelementUndRichtung nachfolger(const nachfolger_index_t index = 0) const {
-        return this->streckenelement.lock()->nachfolger(index, this->richtung);
-    }
-
-    bool hatNachfolger() const {
-        return !this->streckenelement.lock()->nachfolgerElemente[this->richtung].empty();
-    }
-
-    StreckenelementUndRichtung vorgaenger(const nachfolger_index_t index = 0) const {
-        return this->streckenelement.lock()->vorgaenger(index, this->richtung);
-    }
-
-    bool hatVorgaenger() const {
-        return !this->streckenelement.lock()->nachfolgerElemente[Streckenelement::gegenrichtung(this->richtung)].empty();
-    }
-
-    StreckenelementUndRichtung gegenrichtung() const {
-        return StreckenelementUndRichtung(this->streckenelement, Streckenelement::gegenrichtung(this->richtung));
-    }
-
-    StreckenelementUndRichtung(weak_ptr<Streckenelement> streckenelement, streckenelement_richtung_t richtung) :
-            streckenelement(streckenelement), richtung(richtung) {
-    }
-
-    StreckenelementUndRichtung() :
-        streckenelement(weak_ptr<Streckenelement>()), richtung(Streckenelement::RICHTUNG_NORM) {
-    }
-
-    StreckenelementUndRichtung(const StreckenelementUndRichtung& other) :
-            streckenelement(other.streckenelement), richtung(other.richtung) {
-    }
-
 };
 
 #endif

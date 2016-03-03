@@ -33,7 +33,7 @@ int liesInt(xml_node<> &node, const char* attrName) {
 }
 
 void setzeVorgaengerNachfolger(unordered_map<int, vector<int> > &nachfolger, streckenelement_richtung_t richtung,
-        unordered_map<int, int> &anschluss, Strecke &strecke) {
+        Strecke &strecke) {
     for (auto &it : nachfolger) {
         streckenelement_nr_t nr = it.first;
         if (nr >= 0 && nr < strecke.streckenelemente.size()) {
@@ -43,11 +43,7 @@ void setzeVorgaengerNachfolger(unordered_map<int, vector<int> > &nachfolger, str
             for (auto nachfolgerNr : it.second) {
                 auto nachfolger = strecke.streckenelemente.at(nachfolgerNr);
                 if (!nachfolger) continue;
-                int anschluss_shift = index + (richtung == Streckenelement::RICHTUNG_GEGEN ? 8 : 0);
-                streckenelement->setzeNachfolger(index++, richtung,
-                    StreckenelementUndRichtung(weak_ptr<Streckenelement>(nachfolger),
-                    ((anschluss[nr] >> anschluss_shift) & 1) == 0 ?
-                      Streckenelement::RICHTUNG_NORM : Streckenelement::RICHTUNG_GEGEN));
+                streckenelement->setzeNachfolger(index++, richtung, nachfolger);
             }
         }
     }
@@ -70,7 +66,6 @@ unique_ptr<Strecke> St3Leser::liesSt3Datei(istream& datei) {
 
     unordered_map<int, vector<int> > nachNorm;
     unordered_map<int, vector<int> > nachGegen;
-    unordered_map<int, int> anschluss;
 
     xml_node<> *str_node = wurzel->first_node("Strecke");
     if (str_node != nullptr)
@@ -125,7 +120,9 @@ unique_ptr<Strecke> St3Leser::liesSt3Datei(istream& datei) {
             }
 
             // Anschluss
-            anschluss[element->nr] = liesInt(*elem_node, "Anschluss");
+            auto anschluss = liesInt(*elem_node, "Anschluss");
+            element->anschluss[Streckenelement::RICHTUNG_NORM] = anschluss & 0xFF;
+            element->anschluss[Streckenelement::RICHTUNG_GEGEN] = (anschluss >> 8) & 0xFF;
 
             // Funktions-Flags
             auto fkt_flags = liesInt(*elem_node, "Fkt");
@@ -139,8 +136,8 @@ unique_ptr<Strecke> St3Leser::liesSt3Datei(istream& datei) {
         }
 
         // Verknuepfungen zu Vorgaengern und Nachfolgern herstellen
-        setzeVorgaengerNachfolger(nachNorm, Streckenelement::RICHTUNG_NORM, anschluss, *strecke);
-        setzeVorgaengerNachfolger(nachGegen, Streckenelement::RICHTUNG_GEGEN, anschluss, *strecke);
+        setzeVorgaengerNachfolger(nachNorm, Streckenelement::RICHTUNG_NORM, *strecke);
+        setzeVorgaengerNachfolger(nachGegen, Streckenelement::RICHTUNG_GEGEN, *strecke);
     }
 
     return strecke;

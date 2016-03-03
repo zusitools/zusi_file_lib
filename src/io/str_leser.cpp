@@ -145,7 +145,6 @@ void StrLeser::liesStreckenelemente(istream& datei, unique_ptr<Strecke>& strecke
         }
 
         element->nr = konvertiereInGanzzahl("Streckenelement-Nummer", tmp);
-        element->nrInModul = element->nr;
 
         liesZeile("Kilometrierung", datei);
         liesZeile("Zählrichtung Kilometrierung", datei);
@@ -261,18 +260,12 @@ void StrLeser::liesStreckenelemente(istream& datei, unique_ptr<Strecke>& strecke
                 continue;
             }
 
-            StreckenelementUndRichtung nachfolgerRichtung;
-            nachfolgerRichtung.streckenelement = weak_ptr<Streckenelement>(nachfolger);
-            nachfolgerRichtung.richtung = Streckenelement::RICHTUNG_NORM;
-            element->setzeNachfolger(j, Streckenelement::RICHTUNG_NORM, nachfolgerRichtung);
-
-            StreckenelementUndRichtung elementRichtung;
-            elementRichtung.streckenelement = weak_ptr<Streckenelement>(element);
-            elementRichtung.richtung = Streckenelement::RICHTUNG_NORM;
+            element->setzeNachfolger(j, Streckenelement::RICHTUNG_NORM, nachfolger, Streckenelement::RICHTUNG_NORM);
             nachfolger->setzeVorgaenger(
                     nachfolger->nachfolgerElemente[Streckenelement::RICHTUNG_GEGEN].size(),
                     Streckenelement::RICHTUNG_NORM,
-                    elementRichtung);
+                    element,
+                    Streckenelement::RICHTUNG_NORM);
         }
     }
 }
