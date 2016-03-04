@@ -186,7 +186,7 @@ struct Streckenelement {
     void setzeVorgaenger(const nachfolger_index_t index, const streckenelement_richtung_t richtung,
             const shared_ptr<Streckenelement> vorgaenger, const streckenelement_richtung_t vorgaengerRichtung);
 
-    inline bool hatFktFlag(StreckenelementFlag flag) { return flags.find(flag) != flags.end(); }
+    inline bool hatFktFlag(StreckenelementFlag flag) const { return flags.find(flag) != flags.end(); }
 
     inline static streckenelement_richtung_t richtungUmkehren(
             const streckenelement_richtung_t richtung) {
