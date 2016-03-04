@@ -76,11 +76,13 @@ struct StreckenelementRichtungsInfo {
 struct Streckenelement;
 
 // Ein Verweis auf eine Richtung eines Streckenelements.
+// Auf die Properties und Methoden des Streckenelements kann mit dem Operator -> zugegriffen werden.
 struct StreckenelementUndRichtung {
-
+private:
     // Das Streckenelement, auf das sich die Referenz bezieht.
-    const Streckenelement& streckenelement;
+    Streckenelement* streckenelement;
 
+public:
     // Die Richtung des Streckenelements, auf das sich die Referenz bezieht.
     const streckenelement_richtung_t richtung;
 
@@ -94,13 +96,19 @@ struct StreckenelementUndRichtung {
 
     StreckenelementUndRichtung gegenrichtung() const;
 
-    StreckenelementUndRichtung(const Streckenelement& streckenelement, const streckenelement_richtung_t richtung) :
+    StreckenelementUndRichtung(Streckenelement *streckenelement, streckenelement_richtung_t richtung) :
             streckenelement(streckenelement), richtung(richtung) {
     }
 
     StreckenelementUndRichtung() = delete;
     StreckenelementUndRichtung(const StreckenelementUndRichtung&) = default;
-    StreckenelementUndRichtung& operator=(const StreckenelementUndRichtung&) = default;
+    StreckenelementUndRichtung& operator=(StreckenelementUndRichtung& other) = default;
+
+    Streckenelement* operator->() {
+        return this->streckenelement;
+    }
+
+    Streckenelement& operator*();
 };
 
 // Ein Streckenelement.
@@ -166,7 +174,7 @@ struct Streckenelement {
     // ---
 
     inline StreckenelementUndRichtung richtung(const streckenelement_richtung_t richtung) {
-        return StreckenelementUndRichtung(*this, richtung);
+        return StreckenelementUndRichtung(this, richtung);
     }
 
     inline StreckenelementUndRichtung normrichtung() {

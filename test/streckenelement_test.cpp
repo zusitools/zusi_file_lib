@@ -17,11 +17,11 @@ BOOST_AUTO_TEST_CASE(setze_nachfolger) {
     BOOST_CHECK_EQUAL(element1->nachfolgerElemente[Streckenelement::RICHTUNG_GEGEN].size(), 0);
 
     StreckenelementUndRichtung e1nachnorm = element1->normrichtung().nachfolger(0);
-    BOOST_CHECK_EQUAL(&(e1nachnorm.streckenelement), element2.get());
+    BOOST_CHECK_EQUAL(&*e1nachnorm, element2.get());
     BOOST_CHECK_EQUAL(e1nachnorm.richtung,
             static_cast<streckenelement_richtung_t>(Streckenelement::RICHTUNG_NORM));
     StreckenelementUndRichtung e1vorgegen = element1->gegenrichtung().vorgaenger(0);
-    BOOST_CHECK_EQUAL(&(e1vorgegen.streckenelement), element2.get());
+    BOOST_CHECK_EQUAL(&*e1vorgegen, element2.get());
     BOOST_CHECK_EQUAL(e1vorgegen.richtung,
             static_cast<streckenelement_richtung_t>(Streckenelement::RICHTUNG_GEGEN));
 
@@ -30,11 +30,11 @@ BOOST_AUTO_TEST_CASE(setze_nachfolger) {
     BOOST_CHECK_EQUAL(element2->nachfolgerElemente[Streckenelement::RICHTUNG_GEGEN].size(), 1);
 
     StreckenelementUndRichtung e2nachgegen = element2->gegenrichtung().nachfolger(0);
-    BOOST_CHECK_EQUAL(&(e2nachgegen.streckenelement), element1.get());
+    BOOST_CHECK_EQUAL(&*e2nachgegen, element1.get());
     BOOST_CHECK_EQUAL(e2nachgegen.richtung,
             static_cast<streckenelement_richtung_t>(Streckenelement::RICHTUNG_GEGEN));
     StreckenelementUndRichtung e2vornorm = element2->normrichtung().vorgaenger(0);
-    BOOST_CHECK_EQUAL(&(e2vornorm.streckenelement), element1.get());
+    BOOST_CHECK_EQUAL(&*e2vornorm, element1.get());
     BOOST_CHECK_EQUAL(e2vornorm.richtung,
             static_cast<streckenelement_richtung_t>(Streckenelement::RICHTUNG_NORM));
 }
@@ -49,11 +49,11 @@ BOOST_AUTO_TEST_CASE(setze_vorgaenger) {
     BOOST_CHECK_EQUAL(element2->nachfolgerElemente[Streckenelement::RICHTUNG_NORM].size(), 0);
 
     StreckenelementUndRichtung e2vornorm = element2->normrichtung().vorgaenger(0);
-    BOOST_CHECK_EQUAL(&(e2vornorm.streckenelement), element1.get());
+    BOOST_CHECK_EQUAL(&*e2vornorm, element1.get());
     BOOST_CHECK_EQUAL(e2vornorm.richtung,
             static_cast<streckenelement_richtung_t>(Streckenelement::RICHTUNG_NORM));
     StreckenelementUndRichtung e2nachgegen = element2->gegenrichtung().nachfolger(0);
-    BOOST_CHECK_EQUAL(&(e2nachgegen.streckenelement), element1.get());
+    BOOST_CHECK_EQUAL(&*e2nachgegen, element1.get());
     BOOST_CHECK_EQUAL(e2nachgegen.richtung,
             static_cast<streckenelement_richtung_t>(Streckenelement::RICHTUNG_GEGEN));
 
@@ -62,23 +62,23 @@ BOOST_AUTO_TEST_CASE(setze_vorgaenger) {
     BOOST_CHECK_EQUAL(element1->nachfolgerElemente[Streckenelement::RICHTUNG_GEGEN].size(), 0);
 
     StreckenelementUndRichtung e1vorgegen = element1->gegenrichtung().vorgaenger(0);
-    BOOST_CHECK_EQUAL(&(e1vorgegen.streckenelement), element2.get());
+    BOOST_CHECK_EQUAL(&*e1vorgegen, element2.get());
     BOOST_CHECK_EQUAL(e1vorgegen.richtung,
             static_cast<streckenelement_richtung_t>(Streckenelement::RICHTUNG_GEGEN));
     StreckenelementUndRichtung e1nachnorm = element1->normrichtung().nachfolger(0);
-    BOOST_CHECK_EQUAL(&(e1nachnorm.streckenelement), element2.get());
+    BOOST_CHECK_EQUAL(&*e1nachnorm, element2.get());
     BOOST_CHECK_EQUAL(e1nachnorm.richtung,
             static_cast<streckenelement_richtung_t>(Streckenelement::RICHTUNG_NORM));
 }
 
 BOOST_AUTO_TEST_CASE(gegenrichtung) {
     shared_ptr<Streckenelement> element(new Streckenelement());
-    StreckenelementUndRichtung elementRichtung1(*element.get(), Streckenelement::RICHTUNG_NORM),
-                               elementRichtung2(*element.get(), Streckenelement::RICHTUNG_GEGEN);
+    StreckenelementUndRichtung elementRichtung1(element.get(), Streckenelement::RICHTUNG_NORM),
+                               elementRichtung2(element.get(), Streckenelement::RICHTUNG_GEGEN);
 
-    BOOST_CHECK_EQUAL(&(elementRichtung1.gegenrichtung().streckenelement), element.get());
+    BOOST_CHECK_EQUAL(&*elementRichtung1.gegenrichtung(), element.get());
     BOOST_CHECK_EQUAL(elementRichtung1.gegenrichtung().richtung, Streckenelement::RICHTUNG_GEGEN);
 
-    BOOST_CHECK_EQUAL(&(elementRichtung2.gegenrichtung().streckenelement), element.get());
+    BOOST_CHECK_EQUAL(&*elementRichtung2.gegenrichtung(), element.get());
     BOOST_CHECK_EQUAL(elementRichtung2.gegenrichtung().richtung, Streckenelement::RICHTUNG_NORM);
 }

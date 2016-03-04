@@ -43,8 +43,8 @@ void Streckenelement::setzeVorgaenger(const nachfolger_index_t index,
 
 StreckenelementUndRichtung StreckenelementUndRichtung::nachfolger(const nachfolger_index_t index) const {
     return StreckenelementUndRichtung(
-        *(this->streckenelement.nachfolgerElemente[this->richtung].at(index).lock().get()),
-        ((this->streckenelement.anschluss[this->richtung] >> index) & 1) == 0 ?
+        this->streckenelement->nachfolgerElemente[this->richtung].at(index).lock().get(),
+        ((this->streckenelement->anschluss[this->richtung] >> index) & 1) == 0 ?
             Streckenelement::RICHTUNG_NORM : Streckenelement::RICHTUNG_GEGEN);
 }
 
@@ -56,8 +56,8 @@ StreckenelementUndRichtung StreckenelementUndRichtung::vorgaenger(const nachfolg
     auto gegenrichtung = Streckenelement::richtungUmkehren(this->richtung);
 
     return StreckenelementUndRichtung(
-        *(this->streckenelement.nachfolgerElemente[gegenrichtung].at(index).lock().get()),
-        ((this->streckenelement.anschluss[gegenrichtung] >> index) & 1) == 0 ?
+        this->streckenelement->nachfolgerElemente[gegenrichtung].at(index).lock().get(),
+        ((this->streckenelement->anschluss[gegenrichtung] >> index) & 1) == 0 ?
             Streckenelement::RICHTUNG_GEGEN : Streckenelement::RICHTUNG_NORM);
 }
 
@@ -67,4 +67,8 @@ bool StreckenelementUndRichtung::hatVorgaenger(const nachfolger_index_t index) c
 
 StreckenelementUndRichtung StreckenelementUndRichtung::gegenrichtung() const {
     return StreckenelementUndRichtung(this->streckenelement, Streckenelement::richtungUmkehren(this->richtung));
+}
+
+Streckenelement& StreckenelementUndRichtung::operator*() {
+    return *(this->streckenelement);
 }
