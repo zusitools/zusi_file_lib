@@ -150,6 +150,12 @@ struct Streckenelement {
     // Die Nachfolgerrichtung kann mittels "anschluss" berechnet werden.
     vector<weak_ptr<Streckenelement>> nachfolgerElemente[2];
 
+    // Geordnete Liste von Nachfolger-Verweisen in jeder Richtung, zur Verwendung beim Ladevorgang.
+    // Jeder Eintrag ist ein Modulname und eine Nummer. Wenn der Modulname NULL ist, bezieht sich die
+    // Nummer auf ein Streckenelement in der aktuellen Strecke. Wenn nicht, ist die Nummer die eines
+    // Referenzpunktes im angegebenen Modul.
+    vector<std::pair<std::string*, streckenelement_nr_t>> nachfolgerElementeUnaufgeloest[2];
+
     // Anschluss-Informationen für Norm- und Gegenrichtung.
     // Eine 1 in Bit Nr. i bedeutet, dass Nachfolger i in Gegenrichtung liegt.
     uint8_t anschluss[2];
