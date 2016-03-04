@@ -86,11 +86,11 @@ struct StreckenelementUndRichtung {
 
     StreckenelementUndRichtung nachfolger(const nachfolger_index_t index = 0) const;
 
-    bool hatNachfolger() const;
+    bool hatNachfolger(const nachfolger_index_t index = 0) const;
 
     StreckenelementUndRichtung vorgaenger(const nachfolger_index_t index = 0) const;
 
-    bool hatVorgaenger() const;
+    bool hatVorgaenger(const nachfolger_index_t index = 0) const;
 
     StreckenelementUndRichtung gegenrichtung() const;
 

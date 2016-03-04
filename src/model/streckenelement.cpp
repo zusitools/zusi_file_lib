@@ -48,8 +48,8 @@ StreckenelementUndRichtung StreckenelementUndRichtung::nachfolger(const nachfolg
             Streckenelement::RICHTUNG_NORM : Streckenelement::RICHTUNG_GEGEN);
 }
 
-bool StreckenelementUndRichtung::hatNachfolger() const {
-    return !this->streckenelement.nachfolgerElemente[this->richtung].empty();
+bool StreckenelementUndRichtung::hatNachfolger(const nachfolger_index_t index) const {
+    return index <= this->streckenelement->nachfolgerElemente[this->richtung].size();
 }
 
 StreckenelementUndRichtung StreckenelementUndRichtung::vorgaenger(const nachfolger_index_t index) const {
@@ -61,8 +61,8 @@ StreckenelementUndRichtung StreckenelementUndRichtung::vorgaenger(const nachfolg
             Streckenelement::RICHTUNG_GEGEN : Streckenelement::RICHTUNG_NORM);
 }
 
-bool StreckenelementUndRichtung::hatVorgaenger() const {
-    return !this->streckenelement.nachfolgerElemente[Streckenelement::richtungUmkehren(this->richtung)].empty();
+bool StreckenelementUndRichtung::hatVorgaenger(const nachfolger_index_t index) const {
+    return index <= this->streckenelement->nachfolgerElemente[Streckenelement::richtungUmkehren(this->richtung)].size();
 }
 
 StreckenelementUndRichtung StreckenelementUndRichtung::gegenrichtung() const {
