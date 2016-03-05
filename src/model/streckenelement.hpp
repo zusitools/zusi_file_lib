@@ -104,11 +104,11 @@ public:
     StreckenelementUndRichtung(const StreckenelementUndRichtung&) = default;
     StreckenelementUndRichtung& operator=(StreckenelementUndRichtung& other) = default;
 
-    Streckenelement* operator->() {
+    Streckenelement* operator->() const {
         return this->streckenelement;
     }
 
-    Streckenelement& operator*();
+    Streckenelement& operator*() const;
 };
 
 // Ein Streckenelement.

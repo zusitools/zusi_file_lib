@@ -71,6 +71,6 @@ StreckenelementUndRichtung StreckenelementUndRichtung::gegenrichtung() const {
     return StreckenelementUndRichtung(this->streckenelement, Streckenelement::richtungUmkehren(this->richtung));
 }
 
-Streckenelement& StreckenelementUndRichtung::operator*() {
+Streckenelement& StreckenelementUndRichtung::operator*() const {
     return *(this->streckenelement);
 }
