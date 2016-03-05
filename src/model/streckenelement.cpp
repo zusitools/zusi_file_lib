@@ -49,7 +49,8 @@ StreckenelementUndRichtung StreckenelementUndRichtung::nachfolger(const nachfolg
 }
 
 bool StreckenelementUndRichtung::hatNachfolger(const nachfolger_index_t index) const {
-    return index <= this->streckenelement->nachfolgerElemente[this->richtung].size();
+    auto nachfolger = this->streckenelement->nachfolgerElemente[this->richtung];
+    return index < nachfolger.size() && !nachfolger[index].expired();
 }
 
 StreckenelementUndRichtung StreckenelementUndRichtung::vorgaenger(const nachfolger_index_t index) const {
@@ -62,7 +63,8 @@ StreckenelementUndRichtung StreckenelementUndRichtung::vorgaenger(const nachfolg
 }
 
 bool StreckenelementUndRichtung::hatVorgaenger(const nachfolger_index_t index) const {
-    return index <= this->streckenelement->nachfolgerElemente[Streckenelement::richtungUmkehren(this->richtung)].size();
+    auto nachfolger = this->streckenelement->nachfolgerElemente[Streckenelement::richtungUmkehren(this->richtung)];
+    return index < nachfolger.size() && !nachfolger[index].expired();
 }
 
 StreckenelementUndRichtung StreckenelementUndRichtung::gegenrichtung() const {
