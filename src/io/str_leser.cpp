@@ -101,7 +101,7 @@ unique_ptr<Strecke> StrLeser::liesStrDatei(istream& datei) {
 
         // Streckenelemente
         this->aktElement = "Streckenelemente";
-        this->liesStreckenelemente(datei, result);
+        this->liesStreckenelemente(datei, *result);
 
         // Löse Element-Referenzen auf, soweit möglich.
         for (auto& referenzpunkt : result->referenzpunkte) {
@@ -113,8 +113,7 @@ unique_ptr<Strecke> StrLeser::liesStrDatei(istream& datei) {
                 continue;
             }
 
-            referenzpunkt->streckenelement = weak_ptr<Streckenelement>(
-                result->streckenelemente.at(referenzpunkt->streckenelementNr));
+            referenzpunkt->streckenelement = result->streckenelemente.at(referenzpunkt->streckenelementNr).get();
         }
 
         return result;
@@ -129,12 +128,12 @@ unique_ptr<Strecke> StrLeser::liesStrDateiMitDateiname(const string dateiname) {
     return StrLeser::liesStrDatei(datei);
 }
 
-void StrLeser::liesStreckenelemente(istream& datei, unique_ptr<Strecke>& strecke) {
+void StrLeser::liesStreckenelemente(istream& datei, Strecke& strecke) {
     // Die Nachfolger-Nummern jedes Streckenelements.
     vector<vector<streckenelement_nr_t>> nachfolgerNrs;
 
     while (!datei.eof()) {
-        shared_ptr<Streckenelement> element(new Streckenelement());
+        unique_ptr<Streckenelement> element(new Streckenelement());
         StreckenelementRichtungsInfo& richtung =
             element->richtungsInfo[Streckenelement::RICHTUNG_NORM];
 
@@ -178,7 +177,7 @@ void StrLeser::liesStreckenelemente(istream& datei, unique_ptr<Strecke>& strecke
         }
 
         liesZeile("Element-vMax", datei);
-        if (strecke->dateiInfo->formatMinVersion != "1.1") {
+        if (strecke.dateiInfo->formatMinVersion != "1.1") {
             liesZeile("Reservierter Streckenelement-Eintrag", datei);
         }
         liesZeile("Name Bahnsteig/Betriebsstelle", datei);
@@ -213,65 +212,64 @@ void StrLeser::liesStreckenelemente(istream& datei, unique_ptr<Strecke>& strecke
         liesZeile("Oberleitungsspannung", datei);
 
         this->aktElement = "Fahrstraßensignal";
-        liesFahrstrSignal(datei, element, strecke);
+        liesFahrstrSignal(datei, *element, strecke);
 
-        if (strecke->dateiInfo->formatMinVersion != "1.1") {
+        if (strecke.dateiInfo->formatMinVersion != "1.1") {
             richtung.signal = liesKombiSignal(datei);
         } else {
             this->aktElement = "Vorsignal";
-            liesVorsignal(datei, element);
+            liesVorsignal(datei, *element);
             this->aktElement = "Hauptsignal";
-            liesHauptsignal(datei, element);
+            liesHauptsignal(datei, *element);
         }
 
         fahrstr_register_nr_t registerNr = liesGanzzahl("Fahrstraßenregister-Nummer", datei);
         if (registerNr != 0) {
-            if (strecke->fahrstrRegister.find(registerNr) == strecke->fahrstrRegister.end()) {
-                shared_ptr<FahrstrRegister> fahrstrRegister(new FahrstrRegister());
+            if (strecke.fahrstrRegister.find(registerNr) == strecke.fahrstrRegister.end()) {
+                unique_ptr<FahrstrRegister> fahrstrRegister(new FahrstrRegister());
                 fahrstrRegister->registerNr = registerNr;
                 fahrstrRegister->manuell = registerNr <= 1000;
-                strecke->fahrstrRegister[registerNr] = fahrstrRegister;
+                strecke.fahrstrRegister[registerNr] = std::move(fahrstrRegister);
             }
-            richtung.fahrstrRegister = strecke->fahrstrRegister[registerNr];
+            richtung.fahrstrRegister = strecke.fahrstrRegister[registerNr].get();
         }
 
-        if (strecke->streckenelemente.size() <= element->nr + 1) {
-            strecke->streckenelemente.resize(element->nr + 1);
+        if (strecke.streckenelemente.size() <= element->nr + 1) {
+            strecke.streckenelemente.resize(element->nr + 1);
         }
-        strecke->streckenelemente.at(element->nr) = element;
+        strecke.streckenelemente.at(element->nr) = std::move(element);
     }
 
     // Verknüpfe Streckenelemente mit ihren Nachfolgern und Vorgängern.
-    for (size_t i = 0; i < strecke->streckenelemente.size(); i++) {
-        if (!strecke->streckenelemente.at(i) || i >= nachfolgerNrs.size()) {
+    for (size_t i = 0; i < strecke.streckenelemente.size() && i < nachfolgerNrs.size(); i++) {
+        Streckenelement* element = strecke.streckenelemente.at(i).get();
+
+        if (element == nullptr) {
             continue;
         }
 
-        shared_ptr<Streckenelement>& element = strecke->streckenelemente.at(i);
-
         for (size_t j = 0; j < nachfolgerNrs.at(i).size(); j++) {
             streckenelement_nr_t elemNr = nachfolgerNrs.at(i).at(j);
-            if (elemNr == 0 || elemNr >= strecke->streckenelemente.size()) {
+            if (elemNr == 0 || elemNr >= strecke.streckenelemente.size()) {
                 continue;
             }
 
-            shared_ptr<Streckenelement>& nachfolger = strecke->streckenelemente.at(elemNr);
-            if (!nachfolger) {
+            Streckenelement* nachfolger = strecke.streckenelemente.at(elemNr).get();
+            if (nachfolger == nullptr) {
                 continue;
             }
 
-            element->setzeNachfolger(j, Streckenelement::RICHTUNG_NORM, nachfolger, Streckenelement::RICHTUNG_NORM);
+            element->setzeNachfolger(j, Streckenelement::RICHTUNG_NORM, *nachfolger, Streckenelement::RICHTUNG_NORM);
             nachfolger->setzeVorgaenger(
                     nachfolger->nachfolgerElemente[Streckenelement::RICHTUNG_GEGEN].size(),
                     Streckenelement::RICHTUNG_NORM,
-                    element,
+                    *element,
                     Streckenelement::RICHTUNG_NORM);
         }
     }
 }
 
-void StrLeser::liesFahrstrSignal(istream& datei, shared_ptr<Streckenelement>& element,
-        unique_ptr<Strecke>& strecke) {
+void StrLeser::liesFahrstrSignal(istream& datei, Streckenelement &element, Strecke &strecke) {
     string tmp = liesZeile(datei);
     if (tmp == "#") {
         return;
@@ -284,7 +282,7 @@ void StrLeser::liesFahrstrSignal(istream& datei, shared_ptr<Streckenelement>& el
     liesGleitkommazahl("Fahrstraßensignal-Standort Rotation Y", datei);
     liesGleitkommazahl("Fahrstraßensignal-Standort Rotation Z", datei);
 
-    if (strecke->dateiInfo->formatMinVersion != "1.1") {
+    if (strecke.dateiInfo->formatMinVersion != "1.1") {
         liesZeile("Fahrstraßensignal: ohne Funktion 1", datei);
         liesZeile("Fahrstraßensignal: ohne Funktion 2", datei);
         liesZeile("Fahrstraßensignal: ohne Funktion 3", datei);
@@ -295,7 +293,7 @@ void StrLeser::liesFahrstrSignal(istream& datei, shared_ptr<Streckenelement>& el
 
     liesZeile("Fahrstraßensignal: Landschaftsdatei", datei);
 
-    if (strecke->dateiInfo->formatMinVersion != "1.1") {
+    if (strecke.dateiInfo->formatMinVersion != "1.1") {
         liesZeile("Fahrstraßensignal: ohne Funktion 7", datei);
     }
 
@@ -304,7 +302,7 @@ void StrLeser::liesFahrstrSignal(istream& datei, shared_ptr<Streckenelement>& el
     liesZeile("Fahrstraßensignal: Ereignis", datei);
     liesZeile("Fahrstraßensignal: Angekündigte Geschwindigkeit", datei);
 
-    if (strecke->dateiInfo->formatMinVersion != "1.1") {
+    if (strecke.dateiInfo->formatMinVersion != "1.1") {
         liesZeile("Fahrstraßensignal: Verweis auf Masterelement", datei);
     }
 }
@@ -349,7 +347,7 @@ unique_ptr<KombiSignal> StrLeser::liesKombiSignal(istream& datei) {
     return signal;
 }
 
-void StrLeser::liesHauptsignal(istream& datei, shared_ptr<Streckenelement>& element) {
+void StrLeser::liesHauptsignal(istream& datei, Streckenelement& element) {
     string tmp = liesZeile("Hauptsignal", datei);
     if (tmp == "#") {
         return;
@@ -381,7 +379,7 @@ void StrLeser::liesHauptsignal(istream& datei, shared_ptr<Streckenelement>& elem
     liesZeile("Hauptsignal: Reservierter Eintrag 2", datei);
 }
 
-void StrLeser::liesVorsignal(istream& datei, shared_ptr<Streckenelement>& element) {
+void StrLeser::liesVorsignal(istream& datei, Streckenelement& element) {
     string tmp = liesZeile("Vorsignal", datei);
     if (tmp == "#") {
         return;

@@ -34,7 +34,7 @@ struct Referenzpunkt {
     referenz_typ_t referenzTyp;
 
     // Das Streckenelement, auf das sich die Referenz bezieht.
-    weak_ptr<Streckenelement> streckenelement;
+    Streckenelement* streckenelement;
 
     // Die Richtung des Streckenelements, auf das sich die Referenz bezieht.
     streckenelement_richtung_t richtung;

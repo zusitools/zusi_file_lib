@@ -19,12 +19,11 @@ public:
     unique_ptr<Strecke> liesStrDateiMitDateiname(const string dateiname);
 
 private:
-    void liesStreckenelemente(istream& datei, unique_ptr<Strecke>& strecke);
-    void liesFahrstrSignal(istream& datei, shared_ptr<Streckenelement>& element,
-        unique_ptr<Strecke>& strecke);
+    void liesStreckenelemente(istream& datei, Strecke& strecke);
+    void liesFahrstrSignal(istream& datei, Streckenelement& element, Strecke& strecke);
     unique_ptr<KombiSignal> liesKombiSignal(istream& datei);
-    void liesHauptsignal(istream& datei, shared_ptr<Streckenelement>& element);
-    void liesVorsignal(istream& datei, shared_ptr<Streckenelement>& element);
+    void liesHauptsignal(istream& datei, Streckenelement& element);
+    void liesVorsignal(istream& datei, Streckenelement& element);
     unique_ptr<Ereignis> neuesEreignis(ereignis_nr_t ereignisNr);
 };
 

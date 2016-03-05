@@ -43,7 +43,10 @@ void setzeVorgaengerNachfolger(Strecke &strecke) {
             for (size_t i = 0; i < streckenelement->nachfolgerElementeUnaufgeloest[richtung].size(); i++) {
                 auto &pair = streckenelement->nachfolgerElementeUnaufgeloest[richtung][i];
                 if (pair.first == nullptr) {
-                    streckenelement->setzeNachfolger(i, richtung, strecke.streckenelemente.at(pair.second));
+                    Streckenelement* nachfolger = strecke.streckenelemente.at(pair.second).get();
+                    if (nachfolger != nullptr) {
+                        streckenelement->setzeNachfolger(i, richtung, *nachfolger);
+                    }
                 }
             }
         }
@@ -82,14 +85,8 @@ unique_ptr<Strecke> St3Leser::liesSt3Datei(istream& datei) {
         xml_node<> *elem_node = str_node->first_node("StrElement");
         while (elem_node != nullptr)
         {
-            shared_ptr<Streckenelement> element(new Streckenelement());
+            unique_ptr<Streckenelement> element(new Streckenelement());
             element->nr = liesInt(*elem_node, "Nr");
-
-            if (strecke->streckenelemente.size() <= element->nr + 1)
-            {
-                strecke->streckenelemente.resize(element->nr + 1);
-            }
-            strecke->streckenelemente.at(element->nr) = element;
 
             // Koordinaten
             xml_node<> *g_node = elem_node->first_node("g");
@@ -144,6 +141,12 @@ unique_ptr<Strecke> St3Leser::liesSt3Datei(istream& datei) {
             if (fkt_flags & 16) element->flags.insert(StreckenelementFlag::KeineSchulterLinks);
 
             elem_node = elem_node->next_sibling("StrElement");
+
+            if (strecke->streckenelemente.size() <= element->nr + 1)
+            {
+                strecke->streckenelemente.resize(element->nr + 1);
+            }
+            strecke->streckenelemente.at(element->nr) = std::move(element);
         }
 
         // Verknuepfungen zu Vorgaengern und Nachfolgern herstellen

@@ -117,8 +117,7 @@ BOOST_AUTO_TEST_CASE(aufgleispunkte) {
     BOOST_CHECK_EQUAL(referenzpunkt1->referenzNr, 1);
     BOOST_CHECK_EQUAL(referenzpunkt1->referenzNrInModul, 1);
     BOOST_CHECK_EQUAL(referenzpunkt1->referenzTyp, Referenzpunkt::Typ::Aufgleispunkt);
-    BOOST_CHECK(
-        referenzpunkt1->streckenelement.lock().get() == strecke->streckenelemente.at(4).get());
+    BOOST_CHECK_EQUAL(referenzpunkt1->streckenelement, strecke->streckenelemente.at(4).get());
     BOOST_CHECK_EQUAL(referenzpunkt1->richtung,
         static_cast<streckenelement_richtung_t>(Streckenelement::RICHTUNG_NORM));
     BOOST_CHECK_EQUAL(referenzpunkt1->streckenelementNr, 4);
@@ -127,8 +126,7 @@ BOOST_AUTO_TEST_CASE(aufgleispunkte) {
     BOOST_CHECK_EQUAL(referenzpunkt2->referenzNr, 2);
     BOOST_CHECK_EQUAL(referenzpunkt2->referenzNrInModul, 2);
     BOOST_CHECK_EQUAL(referenzpunkt2->referenzTyp, Referenzpunkt::Typ::Aufgleispunkt);
-    BOOST_CHECK(
-        referenzpunkt2->streckenelement.lock().get() == strecke->streckenelemente.at(2).get());
+    BOOST_CHECK_EQUAL(referenzpunkt2->streckenelement, strecke->streckenelemente.at(2).get());
     BOOST_CHECK_EQUAL(referenzpunkt2->richtung,
         static_cast<streckenelement_richtung_t>(Streckenelement::RICHTUNG_NORM));
     BOOST_CHECK_EQUAL(referenzpunkt2->streckenelementNr, 2);
@@ -251,9 +249,9 @@ BOOST_AUTO_TEST_CASE(fahrstr_register) {
     auto& element1 = strecke->streckenelemente.at(1)->richtungsInfo[Streckenelement::RICHTUNG_NORM];
     BOOST_CHECK(!element1.fahrstrRegister);
     auto& element2 = strecke->streckenelemente.at(2)->richtungsInfo[Streckenelement::RICHTUNG_NORM];
-    BOOST_CHECK_EQUAL(element2.fahrstrRegister.get(), strecke->fahrstrRegister[42].get());
+    BOOST_CHECK_EQUAL(element2.fahrstrRegister, strecke->fahrstrRegister[42].get());
     auto& element3 = strecke->streckenelemente.at(3)->richtungsInfo[Streckenelement::RICHTUNG_NORM];
-    BOOST_CHECK_EQUAL(element3.fahrstrRegister.get(), strecke->fahrstrRegister[1024].get());
+    BOOST_CHECK_EQUAL(element3.fahrstrRegister, strecke->fahrstrRegister[1024].get());
     auto& element4 = strecke->streckenelemente.at(4)->richtungsInfo[Streckenelement::RICHTUNG_NORM];
-    BOOST_CHECK_EQUAL(element4.fahrstrRegister.get(), strecke->fahrstrRegister[42].get());
+    BOOST_CHECK_EQUAL(element4.fahrstrRegister, strecke->fahrstrRegister[42].get());
 }

@@ -9,10 +9,10 @@ using namespace std;
 
 BOOST_AUTO_TEST_CASE(setze_nachfolger) {
     // ==1==>==2==>
-    shared_ptr<Streckenelement> element1(new Streckenelement()),
+    unique_ptr<Streckenelement> element1(new Streckenelement()),
         element2(new Streckenelement());
 
-    element1->setzeNachfolger(0, Streckenelement::RICHTUNG_NORM, element2, Streckenelement::RICHTUNG_NORM);
+    element1->setzeNachfolger(0, Streckenelement::RICHTUNG_NORM, *element2, Streckenelement::RICHTUNG_NORM);
     BOOST_CHECK_EQUAL(element1->nachfolgerElemente[Streckenelement::RICHTUNG_NORM].size(), 1);
     BOOST_CHECK_EQUAL(element1->nachfolgerElemente[Streckenelement::RICHTUNG_GEGEN].size(), 0);
 
@@ -25,7 +25,7 @@ BOOST_AUTO_TEST_CASE(setze_nachfolger) {
     BOOST_CHECK_EQUAL(e1vorgegen.richtung,
             static_cast<streckenelement_richtung_t>(Streckenelement::RICHTUNG_GEGEN));
 
-    element2->setzeNachfolger(0, Streckenelement::RICHTUNG_GEGEN, element1, Streckenelement::RICHTUNG_GEGEN);
+    element2->setzeNachfolger(0, Streckenelement::RICHTUNG_GEGEN, *element1, Streckenelement::RICHTUNG_GEGEN);
     BOOST_CHECK_EQUAL(element2->nachfolgerElemente[Streckenelement::RICHTUNG_NORM].size(), 0);
     BOOST_CHECK_EQUAL(element2->nachfolgerElemente[Streckenelement::RICHTUNG_GEGEN].size(), 1);
 
@@ -41,10 +41,10 @@ BOOST_AUTO_TEST_CASE(setze_nachfolger) {
 
 BOOST_AUTO_TEST_CASE(setze_vorgaenger) {
     // ==1==>==2==>
-    shared_ptr<Streckenelement> element1(new Streckenelement()),
+    unique_ptr<Streckenelement> element1(new Streckenelement()),
         element2(new Streckenelement());
 
-    element2->setzeVorgaenger(0, Streckenelement::RICHTUNG_NORM, element1, Streckenelement::RICHTUNG_NORM);
+    element2->setzeVorgaenger(0, Streckenelement::RICHTUNG_NORM, *element1, Streckenelement::RICHTUNG_NORM);
     BOOST_CHECK_EQUAL(element2->nachfolgerElemente[Streckenelement::RICHTUNG_GEGEN].size(), 1);
     BOOST_CHECK_EQUAL(element2->nachfolgerElemente[Streckenelement::RICHTUNG_NORM].size(), 0);
 
@@ -57,7 +57,7 @@ BOOST_AUTO_TEST_CASE(setze_vorgaenger) {
     BOOST_CHECK_EQUAL(e2nachgegen.richtung,
             static_cast<streckenelement_richtung_t>(Streckenelement::RICHTUNG_GEGEN));
 
-    element1->setzeVorgaenger(0, Streckenelement::RICHTUNG_GEGEN, element2, Streckenelement::RICHTUNG_GEGEN);
+    element1->setzeVorgaenger(0, Streckenelement::RICHTUNG_GEGEN, *element2, Streckenelement::RICHTUNG_GEGEN);
     BOOST_CHECK_EQUAL(element1->nachfolgerElemente[Streckenelement::RICHTUNG_NORM].size(), 1);
     BOOST_CHECK_EQUAL(element1->nachfolgerElemente[Streckenelement::RICHTUNG_GEGEN].size(), 0);
 
@@ -72,7 +72,7 @@ BOOST_AUTO_TEST_CASE(setze_vorgaenger) {
 }
 
 BOOST_AUTO_TEST_CASE(gegenrichtung) {
-    shared_ptr<Streckenelement> element(new Streckenelement());
+    unique_ptr<Streckenelement> element(new Streckenelement());
     StreckenelementUndRichtung elementRichtung1(element.get(), Streckenelement::RICHTUNG_NORM),
                                elementRichtung2(element.get(), Streckenelement::RICHTUNG_GEGEN);
 

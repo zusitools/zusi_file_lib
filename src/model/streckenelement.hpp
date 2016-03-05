@@ -50,10 +50,10 @@ enum StreckenelementFlag {
 struct StreckenelementRichtungsInfo {
 
     // Durch das Befahren ausgelöste Ereignisse.
-    vector<shared_ptr<Ereignis>> ereignisse;
+    vector<unique_ptr<Ereignis>> ereignisse;
 
     // Die Nummer des zugeordneten Fahrstraßenregisters.
-    shared_ptr<FahrstrRegister> fahrstrRegister;
+    FahrstrRegister* fahrstrRegister;
 
     // Die zulässige Höchstgeschwindigkeit [m/s].
     geschwindigkeit_t vMax;
@@ -65,10 +65,10 @@ struct StreckenelementRichtungsInfo {
     bool kmAufsteigend;
 
     // Fahrstraßensignal (nur Zusi 2)
-    shared_ptr<FahrstrassenSignal> fahrstrSignal;
+    unique_ptr<FahrstrassenSignal> fahrstrSignal;
 
     // Kombinationssignal
-    shared_ptr<KombiSignal> signal;
+    unique_ptr<KombiSignal> signal;
 
     // TODO: Koppelweiche
 };
@@ -160,7 +160,7 @@ struct Streckenelement {
 
     // Geordnete Liste von Nachfolgern in jeder Richtung.
     // Die Nachfolgerrichtung kann mittels "anschluss" berechnet werden.
-    vector<weak_ptr<Streckenelement>> nachfolgerElemente[2];
+    vector<Streckenelement*> nachfolgerElemente[2];
 
     // Geordnete Liste von Nachfolger-Verweisen in jeder Richtung, zur Verwendung beim Ladevorgang.
     // Jeder Eintrag ist ein Modulname und eine Nummer. Wenn der Modulname NULL ist, bezieht sich die
@@ -190,13 +190,13 @@ struct Streckenelement {
     }
 
     void setzeNachfolger(const nachfolger_index_t index, const streckenelement_richtung_t richtung,
-            const shared_ptr<Streckenelement> nachfolger);
+            Streckenelement& nachfolger);
     void setzeNachfolger(const nachfolger_index_t index, const streckenelement_richtung_t richtung,
-            const shared_ptr<Streckenelement> nachfolger, const streckenelement_richtung_t nachfolgerRichtung);
+            Streckenelement& nachfolger, const streckenelement_richtung_t nachfolgerRichtung);
     void setzeVorgaenger(const nachfolger_index_t index, const streckenelement_richtung_t richtung,
-            const shared_ptr<Streckenelement> vorgaenger);
+            Streckenelement& vorgaenger);
     void setzeVorgaenger(const nachfolger_index_t index, const streckenelement_richtung_t richtung,
-            const shared_ptr<Streckenelement> vorgaenger, const streckenelement_richtung_t vorgaengerRichtung);
+            Streckenelement& vorgaenger, const streckenelement_richtung_t vorgaengerRichtung);
 
     inline bool hatFktFlag(StreckenelementFlag flag) const { return flags.find(flag) != flags.end(); }
 

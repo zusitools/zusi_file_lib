@@ -34,16 +34,16 @@ struct Strecke : public ZusiObjekt {
 
     // Die in der Strecke enthaltenen Elemente. Die Position innerhalb der
     // Liste entspricht der Nummer des Streckenelements.
-    vector<shared_ptr<Streckenelement>> streckenelemente;
+    vector<unique_ptr<Streckenelement>> streckenelemente;
 
     // Referenzpunkte (Aufgleispunkte etc.)
-    vector<shared_ptr<Referenzpunkt>> referenzpunkte;
+    vector<unique_ptr<Referenzpunkt>> referenzpunkte;
 
     // Streckenfeste Blickpunkte.
-    vector<shared_ptr<Blickpunkt>> blickpunkte;
+    vector<unique_ptr<Blickpunkt>> blickpunkte;
 
     // Register.
-    unordered_map<fahrstr_register_nr_t, shared_ptr<FahrstrRegister>> fahrstrRegister;
+    unordered_map<fahrstr_register_nr_t, unique_ptr<FahrstrRegister>> fahrstrRegister;
 };
 
 #endif
