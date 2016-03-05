@@ -3,6 +3,7 @@
 #include <iostream>
 #include <fstream>
 #include <cstring>
+#include <clocale>
 
 #include "lib/rapidxml-1.13/rapidxml.hpp"
 
@@ -12,7 +13,7 @@ void liesFloatAttr(xml_node<> &node, const char *name, float *wert) {
         xml_attribute<> *attr = node.first_attribute(name);
         if (attr != nullptr)
         {
-            *wert = stof(attr->value());
+            *wert = atof(attr->value());
         }
     }
 }
@@ -51,6 +52,10 @@ void setzeVorgaengerNachfolger(Strecke &strecke) {
 
 unique_ptr<Strecke> St3Leser::liesSt3Datei(istream& datei) {
     unique_ptr<Strecke> strecke(new Strecke());
+
+    // TODO: Locale auch zuruecksetzen, wenn hier irgendwo ein Fehler fliegt
+    char *oldlocale = setlocale(LC_NUMERIC, nullptr);
+    setlocale(LC_NUMERIC, "C");
 
     vector<char> buffer((istreambuf_iterator<char>(datei)), istreambuf_iterator<char>());
     buffer.push_back('\0');
@@ -145,6 +150,7 @@ unique_ptr<Strecke> St3Leser::liesSt3Datei(istream& datei) {
         setzeVorgaengerNachfolger(*strecke);
     }
 
+    setlocale(LC_NUMERIC, oldlocale);
     return strecke;
 }
 
