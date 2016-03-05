@@ -84,7 +84,7 @@ private:
 
 public:
     // Die Richtung des Streckenelements, auf das sich die Referenz bezieht.
-    const streckenelement_richtung_t richtung;
+    streckenelement_richtung_t richtung;
 
     StreckenelementUndRichtung nachfolger(const nachfolger_index_t index = 0) const;
 
@@ -102,7 +102,11 @@ public:
 
     StreckenelementUndRichtung() = delete;
     StreckenelementUndRichtung(const StreckenelementUndRichtung&) = default;
-    StreckenelementUndRichtung& operator=(StreckenelementUndRichtung& other) = default;
+    StreckenelementUndRichtung& operator=(StreckenelementUndRichtung other) {
+        this->streckenelement = other.streckenelement;
+        this->richtung = other.richtung;
+        return *this;
+    }
 
     Streckenelement* operator->() const {
         return this->streckenelement;
