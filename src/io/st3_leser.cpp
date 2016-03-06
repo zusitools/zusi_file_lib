@@ -34,20 +34,23 @@ int liesInt(xml_node<> &node, const char* attrName) {
     }
 }
 
+unsigned int liesUint(xml_node<> &node, const char* attrName) {
+    xml_attribute<> *attr = node.first_attribute(attrName);
+    if (attr != nullptr) {
+        // TODO: Fehlerbehandlung
+        return strtoul(attr->value(), nullptr, 10);
+    } else {
+        return 0;
+    }
+}
+
 void setzeVorgaengerNachfolger(Strecke &strecke) {
-    for (auto &streckenelement : strecke.streckenelemente) {
+    for (auto& streckenelement : strecke.streckenelemente) {
         if (!streckenelement) continue;
-        for (auto &richtung : {Streckenelement::RICHTUNG_NORM, Streckenelement::RICHTUNG_GEGEN}) {
-            streckenelement->nachfolgerElemente[richtung].resize(
-                    streckenelement->nachfolgerElementeUnaufgeloest[richtung].size());
-            for (size_t i = 0; i < streckenelement->nachfolgerElementeUnaufgeloest[richtung].size(); i++) {
-                auto &pair = streckenelement->nachfolgerElementeUnaufgeloest[richtung][i];
-                if (pair.first == nullptr) {
-                    Streckenelement* nachfolger = strecke.streckenelemente.at(pair.second).get();
-                    if (nachfolger != nullptr) {
-                        streckenelement->setzeNachfolger(i, richtung, *nachfolger);
-                    }
-                }
+        for (auto& aufloeseInfo : streckenelement->nachfolgerElementeUnaufgeloest) {
+            auto& nachfolger = strecke.streckenelemente.at(aufloeseInfo.nr.nr_se);
+            if (nachfolger) {
+                streckenelement->setzeNachfolger(aufloeseInfo.nachfolger_index, aufloeseInfo.richtung, *nachfolger);
             }
         }
     }
@@ -101,29 +104,53 @@ unique_ptr<Strecke> St3Leser::liesSt3Datei(istream& datei) {
             }
 
             // Nachfolger
+            size_t nachnorm_idx = 0;
+            size_t nachgegen_idx = 0;
             for (xml_node<> *nachfolger_node = elem_node->first_node();
                     nachfolger_node != nullptr;
                     nachfolger_node = nachfolger_node->next_sibling()) {
 
                 if (!strncmp(nachfolger_node->name(), "NachNorm", nachfolger_node->name_size())) {
-                    int nachfolgerNr = liesInt(*nachfolger_node, "Nr");
-                    element->nachfolgerElementeUnaufgeloest[Streckenelement::RICHTUNG_NORM].push_back(
-                            std::pair<std::string*, streckenelement_nr_t>(nullptr, nachfolgerNr));
+                    unsigned int nachfolgerNr = liesUint(*nachfolger_node, "Nr");
+                    bool aufgeloest = false;
+                    if (nachfolgerNr < strecke->streckenelemente.size()) {
+                        auto& nachfolger = strecke->streckenelemente[nachfolgerNr];
+                        if (nachfolger) {
+                            element->setzeNachfolger(nachnorm_idx, Streckenelement::RICHTUNG_NORM, *nachfolger.get());
+                            aufgeloest = true;
+                        }
+                    }
+
+                    if (!aufgeloest) {
+                        element->nachfolgerElementeUnaufgeloest.push_back(
+                                StreckenelementAufloeseInfo(Streckenelement::RICHTUNG_NORM, nachgegen_idx, nachfolgerNr));
+                    }
+                    nachnorm_idx++;
 
                 } else if (!strncmp(nachfolger_node->name(), "NachGegen", nachfolger_node->name_size())) {
-                    int nachfolgerNr = liesInt(*nachfolger_node, "Nr");
-                    element->nachfolgerElementeUnaufgeloest[Streckenelement::RICHTUNG_GEGEN].push_back(
-                            std::pair<std::string*, streckenelement_nr_t>(nullptr, nachfolgerNr));
+                    unsigned int nachfolgerNr = liesUint(*nachfolger_node, "Nr");
+                    bool aufgeloest = false;
+                    if (nachfolgerNr < strecke->streckenelemente.size()) {
+                        auto& nachfolger = strecke->streckenelemente[nachfolgerNr];
+                        if (nachfolger) {
+                            element->setzeNachfolger(nachnorm_idx, Streckenelement::RICHTUNG_GEGEN, *nachfolger.get());
+                            aufgeloest = true;
+                        }
+                    }
+
+                    if (!aufgeloest) {
+                        element->nachfolgerElementeUnaufgeloest.push_back(
+                                StreckenelementAufloeseInfo(Streckenelement::RICHTUNG_GEGEN, nachgegen_idx, nachfolgerNr));
+                    }
+                    nachgegen_idx++;
 
                 } else if (!strncmp(nachfolger_node->name(), "NachNormModul", nachfolger_node->name_size())) {
                     // TODO
-                    element->nachfolgerElementeUnaufgeloest[Streckenelement::RICHTUNG_NORM].push_back(
-                            std::pair<std::string*, streckenelement_nr_t>());
+                    nachnorm_idx++;
 
                 } else if (!strncmp(nachfolger_node->name(), "NachGegenModul", nachfolger_node->name_size())) {
                     // TODO
-                    element->nachfolgerElementeUnaufgeloest[Streckenelement::RICHTUNG_GEGEN].push_back(
-                            std::pair<std::string*, streckenelement_nr_t>());
+                    nachgegen_idx++;
                 }
             }
 

@@ -73,6 +73,24 @@ struct StreckenelementRichtungsInfo {
     // TODO: Koppelweiche
 };
 
+// Ein Verweis auf ein evtl. (noch nicht geladenes) Streckenelement.
+// Die Nummer ist entweder eine Streckenelementnummer (wenn der Verweis im aktuellen Modul liegt)
+// oder eine Referenzpunkt-Nummer (wenn der Verweis in einem anderen Modul liegt).
+struct StreckenelementAufloeseInfo {
+    streckenelement_richtung_t richtung;
+    nachfolger_index_t nachfolger_index;
+    // std::string* modul // TODO
+    union {
+        streckenelement_nr_t nr_se;
+        referenz_nr_t nr_ref;
+    } nr;
+
+    StreckenelementAufloeseInfo(const streckenelement_richtung_t richtung, const nachfolger_index_t nachfolger_index, const streckenelement_nr_t nr_se)
+                : richtung(richtung), nachfolger_index(nachfolger_index) /*, modul(nullptr) */ {
+        nr.nr_se = nr_se;
+    }
+};
+
 struct Streckenelement;
 
 // Ein Verweis auf eine Richtung eines Streckenelements.
@@ -162,11 +180,8 @@ struct Streckenelement {
     // Die Nachfolgerrichtung kann mittels "anschluss" berechnet werden.
     vector<Streckenelement*> nachfolgerElemente[2];
 
-    // Geordnete Liste von Nachfolger-Verweisen in jeder Richtung, zur Verwendung beim Ladevorgang.
-    // Jeder Eintrag ist ein Modulname und eine Nummer. Wenn der Modulname NULL ist, bezieht sich die
-    // Nummer auf ein Streckenelement in der aktuellen Strecke. Wenn nicht, ist die Nummer die eines
-    // Referenzpunktes im angegebenen Modul.
-    vector<std::pair<std::string*, streckenelement_nr_t>> nachfolgerElementeUnaufgeloest[2];
+    // Verweise auf nicht aufgeloeste Nachfolgerelemente;
+    vector<StreckenelementAufloeseInfo> nachfolgerElementeUnaufgeloest;
 
     // Anschluss-Informationen für Norm- und Gegenrichtung.
     // Eine 1 in Bit Nr. i bedeutet, dass Nachfolger i in Gegenrichtung liegt.
