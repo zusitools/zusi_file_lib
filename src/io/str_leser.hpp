@@ -21,7 +21,7 @@ public:
 private:
     void liesStreckenelemente(istream& datei, Strecke& strecke);
     void liesFahrstrSignal(istream& datei, Streckenelement& element, Strecke& strecke);
-    unique_ptr<KombiSignal> liesKombiSignal(istream& datei);
+    unique_ptr<Signal> liesKombiSignal(istream& datei);
     void liesHauptsignal(istream& datei, Streckenelement& element);
     void liesVorsignal(istream& datei, Streckenelement& element);
     unique_ptr<Ereignis> neuesEreignis(ereignis_nr_t ereignisNr);

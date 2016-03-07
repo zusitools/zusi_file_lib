@@ -307,13 +307,13 @@ void StrLeser::liesFahrstrSignal(istream& datei, Streckenelement &element, Strec
     }
 }
 
-unique_ptr<KombiSignal> StrLeser::liesKombiSignal(istream& datei) {
+unique_ptr<Signal> StrLeser::liesKombiSignal(istream& datei) {
     string tmp = liesZeile("Kombinationssignal", datei);
     if (tmp == "#") {
         return nullptr;
     }
 
-    unique_ptr<KombiSignal> signal(new KombiSignal());
+    unique_ptr<Signal> signal(new Signal());
 
     konvertiereInGleitkommazahl("Kombinationssignal-Standort X1", tmp);
     liesGleitkommazahl("Kombinationssignal-Standort Y1", datei);

@@ -97,3 +97,28 @@ BOOST_AUTO_TEST_CASE(element_flags) {
     BOOST_CHECK_EQUAL(strecke->streckenelemente.at(7)->hatFktFlag(StreckenelementFlag::Weichenbausatz), true);
     BOOST_CHECK_EQUAL(strecke->streckenelemente.at(7)->hatFktFlag(StreckenelementFlag::KeineSchulterLinks), true);
 }
+
+BOOST_AUTO_TEST_CASE(signale) {
+    ifstream infile("./eingabe/zusi3/SignalTest.st3");
+    unique_ptr<Strecke> strecke = St3Leser().liesSt3Datei(infile);
+
+    BOOST_REQUIRE_EQUAL(strecke->streckenelemente.size(), 5);
+
+    auto& signal2 = strecke->streckenelemente.at(2)->richtungsInfo[Streckenelement::RICHTUNG_NORM].signal;
+    BOOST_CHECK(signal2);
+    BOOST_CHECK_EQUAL(signal2->betriebsstelle, "Anfang");
+    BOOST_CHECK_EQUAL(signal2->stellwerk, "Anfang Af");
+    BOOST_CHECK_EQUAL(signal2->signalbezeichnung, "a");
+
+    auto& signal3norm = strecke->streckenelemente.at(3)->richtungsInfo[Streckenelement::RICHTUNG_NORM].signal;
+    BOOST_CHECK(signal3norm);
+    BOOST_CHECK_EQUAL(signal3norm->betriebsstelle, "Anfang");
+    BOOST_CHECK_EQUAL(signal3norm->stellwerk, "Anfang Af");
+    BOOST_CHECK_EQUAL(signal3norm->signalbezeichnung, "A");
+
+    auto& signal3gegen = strecke->streckenelemente.at(3)->richtungsInfo[Streckenelement::RICHTUNG_GEGEN].signal;
+    BOOST_CHECK(signal3gegen);
+    BOOST_CHECK_EQUAL(signal3gegen->betriebsstelle, "Aheim");
+    BOOST_CHECK_EQUAL(signal3gegen->stellwerk, "Aheim Af");
+    BOOST_CHECK_EQUAL(signal3gegen->signalbezeichnung, "H-Tafel");
+}

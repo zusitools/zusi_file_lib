@@ -56,6 +56,36 @@ void setzeVorgaengerNachfolger(Strecke &strecke) {
     }
 }
 
+void liesRichtungsInfo(xml_node<>& ri_node, Streckenelement& element, const streckenelement_richtung_t richtung) {
+    auto& richtungsInfo = element.richtungsInfo[richtung];
+
+    for (xml_node<> *n = ri_node.first_node();
+            n != nullptr;
+            n = n->next_sibling()) {
+        auto n_namesize = n->name_size();
+
+        if (!strncmp(n->name(), "Signal", n_namesize)) {
+            richtungsInfo.signal.reset(new Signal());
+
+            for (xml_attribute<> *attr = n->first_attribute();
+                    attr != nullptr;
+                    attr = attr->next_attribute()) {
+                auto attr_namesize = attr->name_size();
+
+                if (!strncmp(attr->name(), "NameBetriebsstelle", attr_namesize)) {
+                    richtungsInfo.signal->betriebsstelle = std::string(attr->value());
+
+                } else if (!strncmp(attr->name(), "Stellwerk", attr_namesize)) {
+                    richtungsInfo.signal->stellwerk = std::string(attr->value());
+
+                } else if (!strncmp(attr->name(), "Signalname", attr_namesize)) {
+                    richtungsInfo.signal->signalbezeichnung = std::string(attr->value());
+                }
+            }
+        }
+    }
+}
+
 unique_ptr<Strecke> St3Leser::liesSt3Datei(istream& datei) {
     unique_ptr<Strecke> strecke(new Strecke());
 
@@ -91,27 +121,23 @@ unique_ptr<Strecke> St3Leser::liesSt3Datei(istream& datei) {
             unique_ptr<Streckenelement> element(new Streckenelement());
             element->nr = liesInt(*elem_node, "Nr");
 
-            // Koordinaten
-            xml_node<> *g_node = elem_node->first_node("g");
-            if (g_node != nullptr)
-            {
-                liesXYZ(*g_node, &element->p1.x, &element->p1.y, &element->p1.z);
-            }
-            xml_node<> *b_node = elem_node->first_node("b");
-            if (b_node != nullptr)
-            {
-                liesXYZ(*b_node, &element->p2.x, &element->p2.y, &element->p2.z);
-            }
-
-            // Nachfolger
             size_t nachnorm_idx = 0;
             size_t nachgegen_idx = 0;
-            for (xml_node<> *nachfolger_node = elem_node->first_node();
-                    nachfolger_node != nullptr;
-                    nachfolger_node = nachfolger_node->next_sibling()) {
 
-                if (!strncmp(nachfolger_node->name(), "NachNorm", nachfolger_node->name_size())) {
-                    unsigned int nachfolgerNr = liesUint(*nachfolger_node, "Nr");
+            for (xml_node<> *n = elem_node->first_node();
+                    n != nullptr;
+                    n = n->next_sibling()) {
+                auto n_namesize = n->name_size();
+
+                // Koordinaten
+                if (!strncmp(n->name(), "g", n_namesize)) {
+                    liesXYZ(*n, &element->p1.x, &element->p1.y, &element->p1.z);
+                } else if (!strncmp(n->name(), "b", n_namesize)) {
+                    liesXYZ(*n, &element->p2.x, &element->p2.y, &element->p2.z);
+
+                // Nachfolger
+                } else if (!strncmp(n->name(), "NachNorm", n_namesize)) {
+                    unsigned int nachfolgerNr = liesUint(*n, "Nr");
                     bool aufgeloest = false;
                     if (nachfolgerNr < strecke->streckenelemente.size()) {
                         auto& nachfolger = strecke->streckenelemente[nachfolgerNr];
@@ -127,8 +153,8 @@ unique_ptr<Strecke> St3Leser::liesSt3Datei(istream& datei) {
                     }
                     nachnorm_idx++;
 
-                } else if (!strncmp(nachfolger_node->name(), "NachGegen", nachfolger_node->name_size())) {
-                    unsigned int nachfolgerNr = liesUint(*nachfolger_node, "Nr");
+                } else if (!strncmp(n->name(), "NachGegen", n_namesize)) {
+                    unsigned int nachfolgerNr = liesUint(*n, "Nr");
                     bool aufgeloest = false;
                     if (nachfolgerNr < strecke->streckenelemente.size()) {
                         auto& nachfolger = strecke->streckenelemente[nachfolgerNr];
@@ -144,13 +170,20 @@ unique_ptr<Strecke> St3Leser::liesSt3Datei(istream& datei) {
                     }
                     nachgegen_idx++;
 
-                } else if (!strncmp(nachfolger_node->name(), "NachNormModul", nachfolger_node->name_size())) {
+                } else if (!strncmp(n->name(), "NachNormModul", n_namesize)) {
                     // TODO
                     nachnorm_idx++;
 
-                } else if (!strncmp(nachfolger_node->name(), "NachGegenModul", nachfolger_node->name_size())) {
+                } else if (!strncmp(n->name(), "NachGegenModul", n_namesize)) {
                     // TODO
                     nachgegen_idx++;
+
+                // Richtungsinfo
+                } else if (!strncmp(n->name(), "InfoNormRichtung", n_namesize)) {
+                    liesRichtungsInfo(*n, *element, Streckenelement::RICHTUNG_NORM);
+
+                } else if (!strncmp(n->name(), "InfoGegenRichtung", n_namesize)) {
+                    liesRichtungsInfo(*n, *element, Streckenelement::RICHTUNG_GEGEN);
                 }
             }
 

@@ -67,8 +67,8 @@ struct StreckenelementRichtungsInfo {
     // Fahrstraßensignal (nur Zusi 2)
     unique_ptr<FahrstrassenSignal> fahrstrSignal;
 
-    // Kombinationssignal
-    unique_ptr<KombiSignal> signal;
+    // (Kombinations-)Signal
+    unique_ptr<Signal> signal;
 
     // TODO: Koppelweiche
 };

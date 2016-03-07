@@ -1,0 +1,237 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Zusi>
+<Info DateiTyp="Strecke" Version="A.1" MinVersion="A.1"/>
+<Strecke>
+<Datei/>
+<HintergrundDatei/>
+<BefehlsKonfiguration/>
+<Kachelpfad Dateiname="Kacheln\" NurInfo="1"/>
+<UTM/>
+<SkyDome>
+<HimmelTex Dateiname="_Setup\sky\sky.dds"/>
+<SonneTex Dateiname="_Setup\sky\sun.dds"/>
+<SonneHorizontTex Dateiname="_Setup\sky\sun_horizon.dds"/>
+<MondTex Dateiname="_Setup\sky\moon.dds"/>
+<SternTex Dateiname="_Setup\sky\star.dds"/>
+</SkyDome>
+<StrElement Nr="1" spTrass="27.7778">
+<g/>
+<b X="10"/>
+<NachNorm Nr="2"/>
+</StrElement>
+<StrElement Nr="2" spTrass="27.7778" Anschluss="256" Oberbau="B55 SKL-Oberbau">
+<g X="10"/>
+<b X="20"/>
+<InfoNormRichtung vMax="-1">
+<Signal NameBetriebsstelle="Anfang" Stellwerk="Anfang Af" Signalname="a" SignalTyp="6" BoundingR="10">
+<p X="20" Y="-3.1"/>
+<phi/>
+<SignalFrame>
+<p/>
+<phi/>
+<Datei Dateiname="Signals\Deutschland\Signalordnung_1959_DB\Lichtsignale_Einheitsbauform_51\Mast51_4m10.lod.ls3"/>
+</SignalFrame>
+<SignalFrame>
+<p X="-0.41" Z="4.2"/>
+<phi/>
+<Datei Dateiname="Signals\Deutschland\Signalordnung_1959_DB\Lichtsignale_Einheitsbauform_51\Vsig51.lod.ls3"/>
+</SignalFrame>
+<SignalFrame>
+<p X="0.8"/>
+<phi/>
+<Datei Dateiname="Signals\Deutschland\Signalordnung_1959_DB\Formsignale_Einheitsbauform\Objekte\Aufschuettungen_Formsignale\Aufschuettung_Erde.lod.ls3"/>
+</SignalFrame>
+<SignalFrame>
+<p Y="3.1"/>
+<phi/>
+<Datei Dateiname="signals\Deutschland\Indusi\Indusi-Sie_gr.lod.ls3"/>
+</SignalFrame>
+<SignalFrame>
+<p X="-0.17" Z="0.7"/>
+<phi/>
+<Datei Dateiname="Signals\Deutschland\Signalordnung_1959_DB\Lichtsignale_Einheitsbauform_69\Vr-Tafel69.lod.ls3"/>
+</SignalFrame>
+<SignalFrame>
+<p/>
+<phi/>
+<Datei Dateiname="Signals\Deutschland\Signalordnung_1959_DB\Lichtsignale_Einheitsbauform_51\Schaltkasten51-einfach.lod.ls3"/>
+</SignalFrame>
+<HsigBegriff HsigGeschw="-1" FahrstrTyp="4"/>
+<VsigBegriff VsigGeschw="-1"/>
+<VsigBegriff/>
+<VsigBegriff VsigGeschw="2.7778"/>
+<VsigBegriff VsigGeschw="5.5556"/>
+<VsigBegriff VsigGeschw="8.3333"/>
+<VsigBegriff VsigGeschw="11.1111"/>
+<VsigBegriff VsigGeschw="13.8889"/>
+<VsigBegriff VsigGeschw="16.6667"/>
+<VsigBegriff VsigGeschw="19.4444"/>
+<VsigBegriff VsigGeschw="22.2222"/>
+<VsigBegriff VsigGeschw="25"/>
+<VsigBegriff VsigGeschw="27.7778"/>
+<VsigBegriff VsigGeschw="30.5556"/>
+<VsigBegriff VsigGeschw="33.3333"/>
+<VsigBegriff VsigGeschw="36.1111"/>
+<VsigBegriff VsigGeschw="38.8889"/>
+<VsigBegriff VsigGeschw="41.6667"/>
+<VsigBegriff VsigGeschw="-2"/>
+<MatrixEintrag Signalbild="245" MatrixGeschw="-1"/>
+<MatrixEintrag Signalbild="243" MatrixGeschw="-1">
+<Ereignis Er="1000"/>
+</MatrixEintrag>
+<MatrixEintrag Signalbild="249" MatrixGeschw="-1">
+<Ereignis Er="1000"/>
+</MatrixEintrag>
+<MatrixEintrag Signalbild="249" MatrixGeschw="-1">
+<Ereignis Er="1000"/>
+</MatrixEintrag>
+<MatrixEintrag Signalbild="249" MatrixGeschw="-1">
+<Ereignis Er="1000"/>
+</MatrixEintrag>
+<MatrixEintrag Signalbild="249" MatrixGeschw="-1">
+<Ereignis Er="1000"/>
+</MatrixEintrag>
+<MatrixEintrag Signalbild="249" MatrixGeschw="-1">
+<Ereignis Er="1000"/>
+</MatrixEintrag>
+<MatrixEintrag Signalbild="249" MatrixGeschw="-1">
+<Ereignis Er="1000"/>
+</MatrixEintrag>
+<MatrixEintrag Signalbild="245" MatrixGeschw="-1"/>
+<MatrixEintrag Signalbild="245" MatrixGeschw="-1"/>
+<MatrixEintrag Signalbild="245" MatrixGeschw="-1"/>
+<MatrixEintrag Signalbild="245" MatrixGeschw="-1"/>
+<MatrixEintrag Signalbild="245" MatrixGeschw="-1"/>
+<MatrixEintrag Signalbild="245" MatrixGeschw="-1"/>
+<MatrixEintrag Signalbild="245" MatrixGeschw="-1"/>
+<MatrixEintrag Signalbild="245" MatrixGeschw="-1"/>
+<MatrixEintrag Signalbild="245" MatrixGeschw="-1"/>
+<MatrixEintrag Signalbild="241" MatrixGeschw="-1">
+<Ereignis Er="2000"/>
+</MatrixEintrag>
+</Signal>
+</InfoNormRichtung>
+<NachNorm Nr="3"/>
+<NachGegen Nr="1"/>
+</StrElement>
+<StrElement Nr="3" spTrass="27.7778" Anschluss="256" Oberbau="B55 SKL-Oberbau">
+<g X="20"/>
+<b X="30"/>
+<InfoNormRichtung vMax="-1">
+<Signal NameBetriebsstelle="Anfang" Stellwerk="Anfang Af" Signalname="A" SignalTyp="7" BoundingR="10">
+<p X="30" Y="-3.1"/>
+<phi/>
+<SignalFrame>
+<p/>
+<phi/>
+<Datei Dateiname="Signals\Deutschland\Signalordnung_1959_DB\Lichtsignale_Einheitsbauform_51\Mast51_5m10.lod.ls3"/>
+</SignalFrame>
+<SignalFrame>
+<p X="-0.23" Z="6.2"/>
+<phi/>
+<Datei Dateiname="Signals\Deutschland\Signalordnung_1959_DB\Lichtsignale_Einheitsbauform_51\Esig51.lod.ls3"/>
+</SignalFrame>
+<SignalFrame>
+<p X="0.8"/>
+<phi/>
+<Datei Dateiname="Signals\Deutschland\Signalordnung_1959_DB\Formsignale_Einheitsbauform\Objekte\Aufschuettungen_Formsignale\Aufschuettung_Erde.lod.ls3"/>
+</SignalFrame>
+<SignalFrame>
+<p Y="3.1"/>
+<phi/>
+<Datei Dateiname="signals\Deutschland\Indusi\Indusi-Sie_gr.lod.ls3"/>
+</SignalFrame>
+<SignalFrame>
+<p X="-0.23" Z="6.2"/>
+<phi/>
+<Datei Dateiname="Signals\Deutschland\Signalordnung_1959_DB\Lichtsignale_Einheitsbauform_51\Zs1_8-51.lod.ls3"/>
+</SignalFrame>
+<SignalFrame>
+<p/>
+<phi/>
+<Datei Dateiname="Signals\Deutschland\Signalordnung_1959_DB\Lichtsignale_Einheitsbauform_51\Mastschild51Hp.lod.ls3"/>
+</SignalFrame>
+<SignalFrame>
+<p/>
+<phi/>
+<Datei Dateiname="Signals\Deutschland\Signalordnung_1959_DB\Lichtsignale_Einheitsbauform_51\Schaltkasten51-einfach.lod.ls3"/>
+</SignalFrame>
+<HsigBegriff HsigGeschw="-1" FahrstrTyp="4"/>
+<HsigBegriff FahrstrTyp="6"/>
+<HsigBegriff HsigGeschw="2.7778" FahrstrTyp="4"/>
+<HsigBegriff HsigGeschw="5.5556" FahrstrTyp="4"/>
+<HsigBegriff HsigGeschw="8.3333" FahrstrTyp="4"/>
+<HsigBegriff HsigGeschw="11.1111" FahrstrTyp="4"/>
+<HsigBegriff HsigGeschw="13.8889" FahrstrTyp="4"/>
+<HsigBegriff HsigGeschw="16.6667" FahrstrTyp="4"/>
+<HsigBegriff HsigGeschw="19.4444" FahrstrTyp="4"/>
+<HsigBegriff HsigGeschw="22.2222" FahrstrTyp="4"/>
+<HsigBegriff HsigGeschw="25" FahrstrTyp="4"/>
+<HsigBegriff HsigGeschw="27.7778" FahrstrTyp="4"/>
+<HsigBegriff HsigGeschw="30.5556" FahrstrTyp="4"/>
+<HsigBegriff HsigGeschw="33.3333" FahrstrTyp="4"/>
+<HsigBegriff HsigGeschw="36.1111" FahrstrTyp="4"/>
+<HsigBegriff HsigGeschw="38.8889" FahrstrTyp="4"/>
+<HsigBegriff HsigGeschw="41.6667" FahrstrTyp="4"/>
+<VsigBegriff VsigGeschw="-1"/>
+<MatrixEintrag Signalbild="821" MatrixGeschw="-1"/>
+<MatrixEintrag Signalbild="819">
+<Ereignis Er="2000"/>
+</MatrixEintrag>
+<MatrixEintrag Signalbild="825" MatrixGeschw="11.1111"/>
+<MatrixEintrag Signalbild="825" MatrixGeschw="11.1111"/>
+<MatrixEintrag Signalbild="825" MatrixGeschw="11.1111"/>
+<MatrixEintrag Signalbild="825" MatrixGeschw="11.1111"/>
+<MatrixEintrag Signalbild="825" MatrixGeschw="11.1111"/>
+<MatrixEintrag Signalbild="825" MatrixGeschw="11.1111"/>
+<MatrixEintrag Signalbild="821" MatrixGeschw="-1"/>
+<MatrixEintrag Signalbild="821" MatrixGeschw="-1"/>
+<MatrixEintrag Signalbild="821" MatrixGeschw="-1"/>
+<MatrixEintrag Signalbild="821" MatrixGeschw="-1"/>
+<MatrixEintrag Signalbild="821" MatrixGeschw="-1"/>
+<MatrixEintrag Signalbild="821" MatrixGeschw="-1"/>
+<MatrixEintrag Signalbild="821" MatrixGeschw="-1"/>
+<MatrixEintrag Signalbild="821" MatrixGeschw="-1"/>
+<MatrixEintrag Signalbild="821" MatrixGeschw="-1"/>
+<Ersatzsignal ErsatzsigBezeichnung="Zs1">
+<MatrixEintrag Signalbild="883" MatrixGeschw="11.1111">
+<Ereignis Er="2000"/>
+</MatrixEintrag>
+</Ersatzsignal>
+<Ersatzsignal ErsatzsigBezeichnung="Zs8" ErsatzsigID="00000001">
+<MatrixEintrag Signalbild="947" MatrixGeschw="11.1111">
+<Ereignis Er="2000"/>
+<Ereignis Er="28" Wert="6"/>
+</MatrixEintrag>
+</Ersatzsignal>
+</Signal>
+</InfoNormRichtung>
+<InfoGegenRichtung vMax="-1">
+<Signal NameBetriebsstelle="Aheim" Stellwerk="Aheim Af" Signalname="H-Tafel" SignalTyp="1" BoundingR="10">
+<p X="20"/>
+<phi Z="-3.141593"/>
+<SignalFrame>
+<p/>
+<phi/>
+<Datei Dateiname="Signals\Deutschland\Signalordnung_1959_DB\Nebensignale\DB_Ne5_weiss.lod.ls3"/>
+</SignalFrame>
+<SignalFrame>
+<p Z="0.3"/>
+<phi/>
+<Datei Dateiname="Signals\Deutschland\Signalordnung_1935\Kennzeichen\Betonpfosten-oA.lod.ls3"/>
+</SignalFrame>
+<HsigBegriff HsigGeschw="-1"/>
+<VsigBegriff VsigGeschw="-1"/>
+<MatrixEintrag Signalbild="119" MatrixGeschw="-1"/>
+</Signal>
+</InfoGegenRichtung>
+<NachNorm Nr="4"/>
+<NachGegen Nr="2"/>
+</StrElement>
+<StrElement Nr="4" spTrass="27.7778" Anschluss="256" Oberbau="B55 SKL-Oberbau">
+<g X="30"/>
+<b X="40"/>
+<NachGegen Nr="3"/>
+</StrElement>
+</Strecke>
+</Zusi>
