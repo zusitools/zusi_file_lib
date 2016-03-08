@@ -1,8 +1,5 @@
 #include "streckenelement.hpp"
 
-const streckenelement_richtung_t Streckenelement::RICHTUNG_NORM;
-const streckenelement_richtung_t Streckenelement::RICHTUNG_GEGEN;
-
 void Streckenelement::setzeNachfolger(const nachfolger_index_t index,
         const streckenelement_richtung_t richtung,
         Streckenelement& nachfolger) {
