@@ -106,10 +106,12 @@ unique_ptr<Strecke> St3Leser::liesSt3Datei(istream& datei) {
     dok.parse<0>(&buffer[0]);
 
     xml_node<> *wurzel = dok.first_node("Zusi");
-    if (wurzel != nullptr)
+    if (wurzel == nullptr)
     {
-        strecke->dateiInfo = this->liesDateiInfo(*wurzel);
+        throw std::invalid_argument("Keine gültige Zusi-Datei (Zusi-Wurzelknoten nicht gefunden)");
     }
+
+    strecke->dateiInfo = this->liesDateiInfo(*wurzel);
 
     xml_node<> *str_node = wurzel->first_node("Strecke");
     if (str_node != nullptr)
