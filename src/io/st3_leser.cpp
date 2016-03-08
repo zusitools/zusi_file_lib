@@ -80,6 +80,12 @@ void liesRichtungsInfo(xml_node<>& ri_node, Streckenelement& element, const stre
 
                 } else if (!strncmp(attr->name(), "Signalname", attr_namesize)) {
                     richtungsInfo.signal->signalbezeichnung = std::string(attr->value());
+
+                } else if (!strncmp(attr->name(), "SignalTyp", attr_namesize)) {
+                    unsigned int signaltyp = strtoul(attr->value(), nullptr, 10);
+                    if (signaltyp <= 14) {
+                        richtungsInfo.signal->signaltyp = (SignalTyp)signaltyp;
+                    }
                 }
             }
         }

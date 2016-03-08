@@ -109,16 +109,19 @@ BOOST_AUTO_TEST_CASE(signale) {
     BOOST_CHECK_EQUAL(signal2->betriebsstelle, "Anfang");
     BOOST_CHECK_EQUAL(signal2->stellwerk, "Anfang Af");
     BOOST_CHECK_EQUAL(signal2->signalbezeichnung, "a");
+    BOOST_CHECK_EQUAL(signal2->signaltyp, SignalTyp::Vorsignal);
 
     auto& signal3norm = strecke->streckenelemente.at(3)->richtungsInfo[Streckenelement::RICHTUNG_NORM].signal;
     BOOST_CHECK(signal3norm);
     BOOST_CHECK_EQUAL(signal3norm->betriebsstelle, "Anfang");
     BOOST_CHECK_EQUAL(signal3norm->stellwerk, "Anfang Af");
     BOOST_CHECK_EQUAL(signal3norm->signalbezeichnung, "A");
+    BOOST_CHECK_EQUAL(signal3norm->signaltyp, SignalTyp::Einfahrsignal);
 
     auto& signal3gegen = strecke->streckenelemente.at(3)->richtungsInfo[Streckenelement::RICHTUNG_GEGEN].signal;
     BOOST_CHECK(signal3gegen);
     BOOST_CHECK_EQUAL(signal3gegen->betriebsstelle, "Aheim");
     BOOST_CHECK_EQUAL(signal3gegen->stellwerk, "Aheim Af");
     BOOST_CHECK_EQUAL(signal3gegen->signalbezeichnung, "H-Tafel");
+    BOOST_CHECK_EQUAL(signal3gegen->signaltyp, SignalTyp::Tafel);
 }
