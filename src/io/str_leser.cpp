@@ -1,5 +1,6 @@
 #include <fstream>
 #include <string>
+#include <clocale>
 
 #include <model/autorinfo.hpp>
 #include <model/dateiinfo.hpp>
@@ -9,10 +10,13 @@
 using namespace std;
 
 unique_ptr<Strecke> StrLeser::liesStrDatei(istream& datei) {
+    char *oldlocale = setlocale(LC_NUMERIC, nullptr);
+    setlocale(LC_NUMERIC, "C");
+
+    unique_ptr<Strecke> result(new Strecke());
+
     try {
         this->zeilenNr = 0;
-        unique_ptr<Strecke> result(new Strecke());
-
         string tmp;
 
         // Dateiformat-Version.
@@ -115,12 +119,13 @@ unique_ptr<Strecke> StrLeser::liesStrDatei(istream& datei) {
 
             referenzpunkt->streckenelement = result->streckenelemente.at(referenzpunkt->streckenelementNr).get();
         }
-
-        return result;
     } catch (const std::exception& ex) {
         throw invalid_argument("Fehler beim Einlesen von Zeile " + to_string(this->zeilenNr) + " ("
             + this->aktElement + "): " + ex.what());
     }
+
+    setlocale(LC_NUMERIC, oldlocale);
+    return result;
 }
 
 unique_ptr<Strecke> StrLeser::liesStrDateiMitDateiname(const string dateiname) {
