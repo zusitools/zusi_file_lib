@@ -36,9 +36,9 @@ void testEreignis(unique_ptr<Strecke>& strecke, streckenelement_nr_t nr,
     auto& richtungsInfo =
         strecke->streckenelemente.at(nr)->richtungsInfo[Streckenelement::RICHTUNG_NORM];
     BOOST_CHECK_EQUAL(richtungsInfo.ereignisse.size(), 1);
-    BOOST_CHECK_EQUAL(richtungsInfo.ereignisse.at(0)->ereignisTyp, ereignisTyp);
-    BOOST_CHECK_CLOSE(richtungsInfo.ereignisse.at(0)->wert, wert, epsilon);
-    BOOST_CHECK_EQUAL(richtungsInfo.ereignisse.at(0)->beschreibung, beschreibung);
+    BOOST_CHECK_EQUAL(richtungsInfo.ereignisse.at(0).ereignisTyp, ereignisTyp);
+    BOOST_CHECK_CLOSE(richtungsInfo.ereignisse.at(0).wert, wert, epsilon);
+    BOOST_CHECK_EQUAL(richtungsInfo.ereignisse.at(0).beschreibung, beschreibung);
 }
 
 template<typename T>

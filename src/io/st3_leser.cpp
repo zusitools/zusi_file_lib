@@ -88,6 +88,26 @@ void liesRichtungsInfo(xml_node<>& ri_node, Streckenelement& element, const stre
                     }
                 }
             }
+
+        } else if (!strncmp(n->name(), "Ereignis", n_namesize)) {
+            richtungsInfo.ereignisse.emplace_back();
+            auto& ereignis = richtungsInfo.ereignisse.back();
+
+            for (xml_attribute<> *attr = n->first_attribute();
+                    attr != nullptr;
+                    attr = attr->next_attribute()) {
+                auto attr_namesize = attr->name_size();
+
+                if (!strncmp(attr->name(), "Er", attr_namesize)) {
+                    ereignis.ereignisTyp = (EreignisTyp)strtoul(attr->value(), nullptr, 10);
+
+                } else if (!strncmp(attr->name(), "Wert", attr_namesize)) {
+                    ereignis.wert = atof(attr->value());
+
+                } else if (!strncmp(attr->name(), "Beschr", attr_namesize)) {
+                    ereignis.beschreibung = std::string(attr->value());
+                }
+            }
         }
     }
 }

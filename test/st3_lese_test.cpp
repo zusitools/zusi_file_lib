@@ -125,3 +125,32 @@ BOOST_AUTO_TEST_CASE(signale) {
     BOOST_CHECK_EQUAL(signal3gegen->signalbezeichnung, "H-Tafel");
     BOOST_CHECK_EQUAL(signal3gegen->signaltyp, SignalTyp::Tafel);
 }
+
+BOOST_AUTO_TEST_CASE(ereignisse) {
+    ifstream infile("./eingabe/zusi3/EreignisTest.st3");
+    unique_ptr<Strecke> strecke = St3Leser().liesSt3Datei(infile);
+
+    BOOST_REQUIRE_EQUAL(strecke->streckenelemente.size(), 5);
+
+    BOOST_CHECK_EQUAL(strecke->streckenelemente.at(1)->richtungsInfo[Streckenelement::RICHTUNG_NORM].ereignisse.size(), 0);
+    BOOST_CHECK_EQUAL(strecke->streckenelemente.at(1)->richtungsInfo[Streckenelement::RICHTUNG_GEGEN].ereignisse.size(), 0);
+
+    BOOST_CHECK_EQUAL(strecke->streckenelemente.at(2)->richtungsInfo[Streckenelement::RICHTUNG_NORM].ereignisse.size(), 1);
+    BOOST_CHECK_EQUAL(strecke->streckenelemente.at(2)->richtungsInfo[Streckenelement::RICHTUNG_NORM].ereignisse.at(0).ereignisTyp, EreignisTyp::BahnsteiganfangRechts);
+    BOOST_CHECK_EQUAL(strecke->streckenelemente.at(2)->richtungsInfo[Streckenelement::RICHTUNG_NORM].ereignisse.at(0).wert, -123.45f);
+    BOOST_CHECK_EQUAL(strecke->streckenelemente.at(2)->richtungsInfo[Streckenelement::RICHTUNG_NORM].ereignisse.at(0).beschreibung, "Test");
+    BOOST_CHECK_EQUAL(strecke->streckenelemente.at(2)->richtungsInfo[Streckenelement::RICHTUNG_GEGEN].ereignisse.size(), 0);
+
+    BOOST_CHECK_EQUAL(strecke->streckenelemente.at(3)->richtungsInfo[Streckenelement::RICHTUNG_NORM].ereignisse.size(), 2);
+    BOOST_CHECK_EQUAL(strecke->streckenelemente.at(3)->richtungsInfo[Streckenelement::RICHTUNG_NORM].ereignisse.at(0).ereignisTyp, EreignisTyp::FahrstrAufloesen);
+    BOOST_CHECK_EQUAL(strecke->streckenelemente.at(3)->richtungsInfo[Streckenelement::RICHTUNG_NORM].ereignisse.at(0).wert, 0.0f);
+    BOOST_CHECK_EQUAL(strecke->streckenelemente.at(3)->richtungsInfo[Streckenelement::RICHTUNG_NORM].ereignisse.at(0).beschreibung, "");
+    BOOST_CHECK_EQUAL(strecke->streckenelemente.at(3)->richtungsInfo[Streckenelement::RICHTUNG_NORM].ereignisse.at(1).ereignisTyp, EreignisTyp::FahrstrAnfordern);
+    BOOST_CHECK_EQUAL(strecke->streckenelemente.at(3)->richtungsInfo[Streckenelement::RICHTUNG_NORM].ereignisse.at(1).wert, 0.0f);
+    BOOST_CHECK_EQUAL(strecke->streckenelemente.at(3)->richtungsInfo[Streckenelement::RICHTUNG_NORM].ereignisse.at(1).beschreibung, "Test 2");
+
+    BOOST_CHECK_EQUAL(strecke->streckenelemente.at(3)->richtungsInfo[Streckenelement::RICHTUNG_GEGEN].ereignisse.size(), 1);
+    BOOST_CHECK_EQUAL(strecke->streckenelemente.at(3)->richtungsInfo[Streckenelement::RICHTUNG_GEGEN].ereignisse.at(0).ereignisTyp, EreignisTyp::KeineZugFahrstrEinrichten);
+    BOOST_CHECK_EQUAL(strecke->streckenelemente.at(3)->richtungsInfo[Streckenelement::RICHTUNG_GEGEN].ereignisse.at(0).wert, 0.0f);
+    BOOST_CHECK_EQUAL(strecke->streckenelemente.at(3)->richtungsInfo[Streckenelement::RICHTUNG_GEGEN].ereignisse.at(0).beschreibung, "");
+}

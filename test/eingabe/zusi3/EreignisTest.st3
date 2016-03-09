@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Zusi>
+<Info DateiTyp="Strecke" Version="A.1" MinVersion="A.1"/>
+<Strecke>
+<Datei/>
+<HintergrundDatei/>
+<BefehlsKonfiguration/>
+<Kachelpfad Dateiname="Kacheln\" NurInfo="1"/>
+<UTM/>
+<SkyDome>
+<HimmelTex Dateiname="_Setup\sky\sky.dds"/>
+<SonneTex Dateiname="_Setup\sky\sun.dds"/>
+<SonneHorizontTex Dateiname="_Setup\sky\sun_horizon.dds"/>
+<MondTex Dateiname="_Setup\sky\moon.dds"/>
+<SternTex Dateiname="_Setup\sky\star.dds"/>
+</SkyDome>
+<StrElement Nr="1" spTrass="27.7778">
+<g/>
+<b X="10"/>
+<NachNorm Nr="2"/>
+</StrElement>
+<StrElement Nr="2" spTrass="27.7778" Anschluss="256" Oberbau="B55 SKL-Oberbau">
+<g X="10"/>
+<b X="20"/>
+<InfoNormRichtung vMax="-1">
+<Ereignis Er="1000007" Beschr="Test" Wert="-123.45"/>
+</InfoNormRichtung>
+<NachNorm Nr="3"/>
+<NachGegen Nr="1"/>
+</StrElement>
+<StrElement Nr="3" spTrass="27.7778" Anschluss="256" Oberbau="B55 SKL-Oberbau">
+<g X="20"/>
+<b X="30"/>
+<InfoNormRichtung vMax="-1">
+<Ereignis Er="4"/>
+<Ereignis Er="5" Beschr="Test 2"/>
+</InfoNormRichtung>
+<InfoGegenRichtung vMax="-1">
+<Ereignis Er="21"/>
+</InfoGegenRichtung>
+<NachNorm Nr="4"/>
+<NachGegen Nr="2"/>
+</StrElement>
+<StrElement Nr="4" spTrass="27.7778" Anschluss="256" Oberbau="B55 SKL-Oberbau">
+<g X="30"/>
+<b X="40"/>
+<NachGegen Nr="3"/>
+</StrElement>
+</Strecke>
+</Zusi>

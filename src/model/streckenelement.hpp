@@ -50,7 +50,7 @@ enum StreckenelementFlag {
 struct StreckenelementRichtungsInfo {
 
     // Durch das Befahren ausgelöste Ereignisse.
-    vector<unique_ptr<Ereignis>> ereignisse;
+    vector<Ereignis> ereignisse;
 
     // Die Nummer des zugeordneten Fahrstraßenregisters.
     FahrstrRegister* fahrstrRegister;

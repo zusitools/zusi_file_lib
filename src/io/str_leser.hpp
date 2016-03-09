@@ -24,7 +24,7 @@ private:
     unique_ptr<Signal> liesKombiSignal(istream& datei);
     void liesHauptsignal(istream& datei, Streckenelement& element);
     void liesVorsignal(istream& datei, Streckenelement& element);
-    unique_ptr<Ereignis> neuesEreignis(ereignis_nr_t ereignisNr);
+    void neuesEreignis(ereignis_nr_t ereignisNr, Ereignis& ereignis);
 };
 
 #endif
