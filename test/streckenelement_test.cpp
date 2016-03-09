@@ -77,8 +77,10 @@ BOOST_AUTO_TEST_CASE(gegenrichtung) {
                                elementRichtung2(element.get(), Streckenelement::RICHTUNG_GEGEN);
 
     BOOST_CHECK_EQUAL(&*elementRichtung1.gegenrichtung(), element.get());
-    BOOST_CHECK_EQUAL(elementRichtung1.gegenrichtung().richtung, Streckenelement::RICHTUNG_GEGEN);
+    BOOST_CHECK_EQUAL(elementRichtung1.gegenrichtung().richtung,
+            static_cast<streckenelement_richtung_t>(Streckenelement::RICHTUNG_GEGEN));
 
     BOOST_CHECK_EQUAL(&*elementRichtung2.gegenrichtung(), element.get());
-    BOOST_CHECK_EQUAL(elementRichtung2.gegenrichtung().richtung, Streckenelement::RICHTUNG_NORM);
+    BOOST_CHECK_EQUAL(elementRichtung2.gegenrichtung().richtung,
+            static_cast<streckenelement_richtung_t>(Streckenelement::RICHTUNG_NORM));
 }
