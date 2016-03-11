@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Zusi>
+<Info DateiTyp="Fahrplan" Version="A.1" MinVersion="A.1" />
+<Fahrplan AnfangsZeit="2013-08-21 12:00:00">
+<StrModul>
+<Datei Dateiname="Routes\Deutschland\32U_0005_0057\000483_005730_Paderborn\Paderborn_1985.st3"/>
+<p/>
+<phi/>
+</StrModul>
+<StrModul>
+<Datei Dateiname="Langeland_1985.st3"/>
+<p/>
+<phi/>
+</StrModul>
+</Fahrplan>
+</Zusi>
