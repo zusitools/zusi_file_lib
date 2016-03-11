@@ -189,7 +189,7 @@ BOOST_AUTO_TEST_CASE(lies_z3_strecken) {
         BOOST_TEST_CHECKPOINT(dateiname);
         ifstream infile(zusiStreckenPfad + dateiname);
         auto leseStart = chrono::high_resolution_clock::now();
-        unique_ptr<Strecke> strecke = St3Leser().liesSt3Datei(infile);
+        unique_ptr<Strecke> strecke = St3Leser().liesDatei(infile);
         auto leseEnde = chrono::high_resolution_clock::now();
         auto ms = chrono::duration_cast<chrono::milliseconds>(leseEnde - leseStart).count();
         BOOST_MESSAGE(dateiname + ": " + to_string(ms) + " ms");

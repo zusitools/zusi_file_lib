@@ -6,11 +6,10 @@
 
 using namespace std;
 
-class St3Leser : public Z3Leser {
+class St3Leser : public Z3Leser<Strecke> {
 
-public:
-    unique_ptr<Strecke> liesSt3Datei(istream& datei);
-    unique_ptr<Strecke> liesSt3DateiMitDateiname(const string dateiname);
+protected:
+    virtual unique_ptr<Strecke> parseWurzel(xml_node<>& wurzel) override;
 
 };
 

@@ -6,11 +6,10 @@
 
 using namespace std;
 
-class FpnLeser : public Z3Leser {
+class FpnLeser : public Z3Leser<Fahrplan> {
 
 public:
-    unique_ptr<Fahrplan> liesFpnDatei(istream& datei);
-    unique_ptr<Fahrplan> liesFpnDateiMitDateiname(const string dateiname);
+    virtual unique_ptr<Fahrplan> parseWurzel(xml_node<>& wurzel) override;
 
 };
 

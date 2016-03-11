@@ -1,9 +1,6 @@
 #include "st3_leser.hpp"
 
-#include <iostream>
-#include <fstream>
 #include <cstring>
-#include <clocale>
 
 #include "lib/rapidxml-1.13/rapidxml.hpp"
 
@@ -112,28 +109,11 @@ void liesRichtungsInfo(xml_node<>& ri_node, Streckenelement& element, const stre
     }
 }
 
-unique_ptr<Strecke> St3Leser::liesSt3Datei(istream& datei) {
+unique_ptr<Strecke> St3Leser::parseWurzel(xml_node<>& wurzel) {
     unique_ptr<Strecke> strecke(new Strecke());
+    strecke->dateiInfo = this->liesDateiInfo(wurzel);
 
-    // TODO: Locale auch zuruecksetzen, wenn hier irgendwo ein Fehler fliegt
-    char *oldlocale = setlocale(LC_NUMERIC, nullptr);
-    setlocale(LC_NUMERIC, "C");
-
-    vector<char> buffer((istreambuf_iterator<char>(datei)), istreambuf_iterator<char>());
-    buffer.push_back('\0');
-
-    xml_document<> dok;
-    dok.parse<0>(&buffer[0]);
-
-    xml_node<> *wurzel = dok.first_node("Zusi");
-    if (wurzel == nullptr)
-    {
-        throw std::invalid_argument("Keine gültige Zusi-Datei (Zusi-Wurzelknoten nicht gefunden)");
-    }
-
-    strecke->dateiInfo = this->liesDateiInfo(*wurzel);
-
-    xml_node<> *str_node = wurzel->first_node("Strecke");
+    xml_node<> *str_node = wurzel.first_node("Strecke");
     if (str_node != nullptr)
     {
         xml_node<> *utm_node = str_node->first_node("UTM");
@@ -241,11 +221,6 @@ unique_ptr<Strecke> St3Leser::liesSt3Datei(istream& datei) {
         setzeVorgaengerNachfolger(*strecke);
     }
 
-    setlocale(LC_NUMERIC, oldlocale);
     return strecke;
 }
 
-unique_ptr<Strecke> St3Leser::liesSt3DateiMitDateiname(const string dateiname) {
-    ifstream datei(dateiname);
-    return St3Leser::liesSt3Datei(datei);
-}

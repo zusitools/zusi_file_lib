@@ -13,7 +13,7 @@ using namespace std;
 
 BOOST_AUTO_TEST_CASE(leere_st3_datei) {
     ifstream infile("./eingabe/zusi3/LeereSt3Datei.st3");
-    unique_ptr<Strecke> strecke = St3Leser().liesSt3Datei(infile);
+    unique_ptr<Strecke> strecke = St3Leser().liesDatei(infile);
     BOOST_CHECK(strecke);
 
     BOOST_CHECK(strecke->dateiInfo);
@@ -24,7 +24,7 @@ BOOST_AUTO_TEST_CASE(leere_st3_datei) {
 
 BOOST_AUTO_TEST_CASE(element_koordinaten) {
     ifstream infile("./eingabe/zusi3/ElementKoordinatenTest.st3");
-    unique_ptr<Strecke> strecke = St3Leser().liesSt3Datei(infile);
+    unique_ptr<Strecke> strecke = St3Leser().liesDatei(infile);
 
     BOOST_REQUIRE_EQUAL(strecke->streckenelemente.size(), 2);
 
@@ -39,7 +39,7 @@ BOOST_AUTO_TEST_CASE(element_koordinaten) {
 
 BOOST_AUTO_TEST_CASE(vorgaenger_nachfolger) {
     ifstream infile("./eingabe/zusi3/VorgaengerNachfolgerTest.st3");
-    unique_ptr<Strecke> strecke = St3Leser().liesSt3Datei(infile);
+    unique_ptr<Strecke> strecke = St3Leser().liesDatei(infile);
 
     // Es werden die Vorgaenger verglichen, nicht die Nachfolger in Gegenrichtung
     // (wichtig fuer die Richtungsangaben).
@@ -51,7 +51,7 @@ BOOST_AUTO_TEST_CASE(vorgaenger_nachfolger) {
 
 BOOST_AUTO_TEST_CASE(utm_punkt) {
     ifstream infile("./eingabe/zusi3/UTMPunktTest.st3");
-    unique_ptr<Strecke> strecke = St3Leser().liesSt3Datei(infile);
+    unique_ptr<Strecke> strecke = St3Leser().liesDatei(infile);
 
     BOOST_CHECK_EQUAL(strecke->utmPunkt.we, 42);
     BOOST_CHECK_EQUAL(strecke->utmPunkt.ns, -90);
@@ -59,7 +59,7 @@ BOOST_AUTO_TEST_CASE(utm_punkt) {
 
 BOOST_AUTO_TEST_CASE(element_flags) {
     ifstream infile("./eingabe/zusi3/ElementFlagsTest.st3");
-    unique_ptr<Strecke> strecke = St3Leser().liesSt3Datei(infile);
+    unique_ptr<Strecke> strecke = St3Leser().liesDatei(infile);
 
     BOOST_REQUIRE_EQUAL(strecke->streckenelemente.size(), 8);
 
@@ -100,7 +100,7 @@ BOOST_AUTO_TEST_CASE(element_flags) {
 
 BOOST_AUTO_TEST_CASE(signale) {
     ifstream infile("./eingabe/zusi3/SignalTest.st3");
-    unique_ptr<Strecke> strecke = St3Leser().liesSt3Datei(infile);
+    unique_ptr<Strecke> strecke = St3Leser().liesDatei(infile);
 
     BOOST_REQUIRE_EQUAL(strecke->streckenelemente.size(), 5);
 
@@ -128,7 +128,7 @@ BOOST_AUTO_TEST_CASE(signale) {
 
 BOOST_AUTO_TEST_CASE(ereignisse) {
     ifstream infile("./eingabe/zusi3/EreignisTest.st3");
-    unique_ptr<Strecke> strecke = St3Leser().liesSt3Datei(infile);
+    unique_ptr<Strecke> strecke = St3Leser().liesDatei(infile);
 
     BOOST_REQUIRE_EQUAL(strecke->streckenelemente.size(), 5);
 

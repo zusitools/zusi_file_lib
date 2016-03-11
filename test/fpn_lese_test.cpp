@@ -11,7 +11,7 @@ using namespace std;
 
 BOOST_AUTO_TEST_CASE(leere_fpn_datei) {
     ifstream infile("./eingabe/zusi3/LeereFpnDatei.fpn");
-    unique_ptr<Fahrplan> fahrplan = FpnLeser().liesFpnDatei(infile);
+    unique_ptr<Fahrplan> fahrplan = FpnLeser().liesDatei(infile);
     BOOST_REQUIRE(fahrplan);
 
     BOOST_CHECK(fahrplan->dateiInfo);
@@ -22,7 +22,7 @@ BOOST_AUTO_TEST_CASE(leere_fpn_datei) {
 
 BOOST_AUTO_TEST_CASE(streckenmodule) {
     ifstream infile("./eingabe/zusi3/StreckenmoduleTest.fpn");
-    unique_ptr<Fahrplan> fahrplan = FpnLeser().liesFpnDatei(infile);
+    unique_ptr<Fahrplan> fahrplan = FpnLeser().liesDatei(infile);
     BOOST_REQUIRE(fahrplan);
 
     BOOST_CHECK_EQUAL(fahrplan->streckenmodule.size(), 2);
