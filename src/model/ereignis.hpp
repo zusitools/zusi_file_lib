@@ -34,7 +34,7 @@ enum EreignisTyp {
     HilfsHsig = 23,
     TuerschliessauftragSignal = 24,
     Abfahrsignal = 25,
-    BedingteEntgleisung = 53, // + Geschwindigkeitswert
+    BedingteEntgleisung = 52, // + Geschwindigkeitswert
     BueOeffnen = 1000027,
     BueSchliessen = 27,
     GegengleisKennzeichnen = 28,
