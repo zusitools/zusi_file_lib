@@ -14,6 +14,12 @@ using namespace std;
 #include <model/fahrstr_register.hpp>
 #include <model/signal.hpp>
 
+#ifdef ZUSI_FILE_LIB_NOINLINE
+#define _ZUSI_FILE_LIB_INLINE
+#else
+#define _ZUSI_FILE_LIB_INLINE inline
+#endif
+
 // Funktions-Flags eines Streckenelements.
 enum StreckenelementFlag {
 
@@ -104,15 +110,15 @@ public:
     // Die Richtung des Streckenelements, auf das sich die Referenz bezieht.
     streckenelement_richtung_t richtung;
 
-    StreckenelementUndRichtung nachfolger(const nachfolger_index_t index = 0) const;
+    _ZUSI_FILE_LIB_INLINE StreckenelementUndRichtung nachfolger(const nachfolger_index_t index = 0) const;
 
-    bool hatNachfolger(const nachfolger_index_t index = 0) const;
+    _ZUSI_FILE_LIB_INLINE bool hatNachfolger(const nachfolger_index_t index = 0) const;
 
-    StreckenelementUndRichtung vorgaenger(const nachfolger_index_t index = 0) const;
+    _ZUSI_FILE_LIB_INLINE StreckenelementUndRichtung vorgaenger(const nachfolger_index_t index = 0) const;
 
-    bool hatVorgaenger(const nachfolger_index_t index = 0) const;
+    _ZUSI_FILE_LIB_INLINE bool hatVorgaenger(const nachfolger_index_t index = 0) const;
 
-    StreckenelementUndRichtung gegenrichtung() const;
+    _ZUSI_FILE_LIB_INLINE StreckenelementUndRichtung gegenrichtung() const;
 
     StreckenelementUndRichtung(Streckenelement *streckenelement, streckenelement_richtung_t richtung) :
             streckenelement(streckenelement), richtung(richtung) {
@@ -130,7 +136,7 @@ public:
         return this->streckenelement;
     }
 
-    Streckenelement& operator*() const;
+    _ZUSI_FILE_LIB_INLINE Streckenelement& operator*() const;
 };
 
 // Ein Streckenelement.
@@ -204,13 +210,13 @@ struct Streckenelement {
         return this->richtung(Streckenelement::RICHTUNG_GEGEN);
     }
 
-    void setzeNachfolger(const nachfolger_index_t index, const streckenelement_richtung_t richtung,
+    _ZUSI_FILE_LIB_INLINE void setzeNachfolger(const nachfolger_index_t index, const streckenelement_richtung_t richtung,
             Streckenelement& nachfolger);
-    void setzeNachfolger(const nachfolger_index_t index, const streckenelement_richtung_t richtung,
+    _ZUSI_FILE_LIB_INLINE void setzeNachfolger(const nachfolger_index_t index, const streckenelement_richtung_t richtung,
             Streckenelement& nachfolger, const streckenelement_richtung_t nachfolgerRichtung);
-    void setzeVorgaenger(const nachfolger_index_t index, const streckenelement_richtung_t richtung,
+    _ZUSI_FILE_LIB_INLINE void setzeVorgaenger(const nachfolger_index_t index, const streckenelement_richtung_t richtung,
             Streckenelement& vorgaenger);
-    void setzeVorgaenger(const nachfolger_index_t index, const streckenelement_richtung_t richtung,
+    _ZUSI_FILE_LIB_INLINE void setzeVorgaenger(const nachfolger_index_t index, const streckenelement_richtung_t richtung,
             Streckenelement& vorgaenger, const streckenelement_richtung_t vorgaengerRichtung);
 
     inline bool hatFktFlag(StreckenelementFlag flag) const { return flags.find(flag) != flags.end(); }
@@ -221,5 +227,11 @@ struct Streckenelement {
             Streckenelement::RICHTUNG_GEGEN : Streckenelement::RICHTUNG_NORM;
     }
 };
+
+#undef _ZUSI_FILE_LIB_INLINE
+
+#ifndef ZUSI_FILE_LIB_NOINLINE
+#include "streckenelement.cpp"
+#endif
 
 #endif
