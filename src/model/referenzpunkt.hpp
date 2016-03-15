@@ -9,8 +9,7 @@
 using namespace std;
 
 // Ein Referenzpunkt einer Strecke. Die Referenz kann aufgelöst sein (der
-// Streckenelement-Zeiger hat einen Wert) oder nicht (z.B. wenn das Element nicht existiert oder
-// in einem nicht geladenen Modul liegt).
+// Streckenelement-Zeiger hat einen Wert) oder nicht (z.B. wenn das Element nicht existiert).
 struct Referenzpunkt {
 
     // Konstanten für den Referenzpunkt-Typ.
@@ -24,11 +23,8 @@ struct Referenzpunkt {
         Signalhaltfall = 6
     };
 
-    // Referenz-Nummer in der fertig zusammengesetzten Strecke.
-    referenz_nr_t referenzNr;
-
     // Referenz-Nummer innerhalb des Moduls, in dem die Referenz deklariert ist.
-    referenz_nr_t referenzNrInModul;
+    referenz_nr_t referenzNr;
 
     // Referenz-Typ.
     referenz_typ_t referenzTyp;

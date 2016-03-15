@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Zusi>
+<Info DateiTyp="Strecke" Version="A.1" MinVersion="A.1">
+<AutorEintrag AutorID="36" AutorName="Johannes Jung"/>
+</Info>
+<Strecke>
+<Datei/>
+<HintergrundDatei/>
+<BefehlsKonfiguration/>
+<Kachelpfad Dateiname="Kacheln\" NurInfo="1"/>
+<UTM/>
+<SkyDome>
+<HimmelTex Dateiname="_Setup\sky\sky.dds"/>
+<SonneTex Dateiname="_Setup\sky\sun.dds"/>
+<SonneHorizontTex Dateiname="_Setup\sky\sun_horizon.dds"/>
+<MondTex Dateiname="_Setup\sky\moon.dds"/>
+<SternTex Dateiname="_Setup\sky\star.dds"/>
+</SkyDome>
+<ReferenzElemente ReferenzNr="15" StrElement="5" RefTyp="6" Info="Signalhaltfall"/>
+<ReferenzElemente ReferenzNr="5" StrElement="5" RefTyp="5"/>
+<ReferenzElemente ReferenzNr="6" StrElement="42" StrNorm="1" RefTyp="4" Info="Bla bla"/>
+<ReferenzElemente ReferenzNr="4" StrElement="3" StrNorm="1" RefTyp="3" Info="123"/>
+<ReferenzElemente ReferenzNr="3" StrElement="2" RefTyp="2" Info="Nr. 456"/>
+<ReferenzElemente ReferenzNr="2" StrElement="1" RefTyp="1" Info="Modulgrenze"/>
+<ReferenzElemente ReferenzNr="1" StrElement="1" StrNorm="1" Info="Aufgleispunkt"/>
+<StrElement Nr="1" spTrass="27.7778">
+<g/>
+<b X="10"/>
+<NachNorm Nr="2"/>
+</StrElement>
+<StrElement Nr="2" spTrass="27.7778" Anschluss="256" Oberbau="B55 SKL-Oberbau">
+<g X="10"/>
+<b X="20"/>
+<NachNorm Nr="3"/>
+<NachGegen Nr="1"/>
+</StrElement>
+<StrElement Nr="3" spTrass="27.7778" Anschluss="256" Oberbau="B55 SKL-Oberbau">
+<g X="20"/>
+<b X="30"/>
+<NachNorm Nr="4"/>
+<NachGegen Nr="2"/>
+</StrElement>
+<StrElement Nr="4" spTrass="27.7778" Anschluss="256" Oberbau="B55 SKL-Oberbau">
+<g X="30"/>
+<b X="40"/>
+<NachNorm Nr="5"/>
+<NachGegen Nr="3"/>
+</StrElement>
+<StrElement Nr="5" spTrass="27.7778" Anschluss="256" Oberbau="B55 SKL-Oberbau">
+<g X="40"/>
+<b X="50"/>
+<NachGegen Nr="4"/>
+</StrElement>
+</Strecke>
+</Zusi>

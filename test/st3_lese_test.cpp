@@ -3,6 +3,7 @@
 #include <boost/test/floating_point_comparison.hpp>
 
 #include "io/st3_leser.hpp"
+#include "model/streckenelement.hpp"
 
 using namespace std;
 
@@ -153,4 +154,65 @@ BOOST_AUTO_TEST_CASE(ereignisse) {
     BOOST_CHECK_EQUAL(strecke->streckenelemente.at(3)->richtungsInfo[Streckenelement::RICHTUNG_GEGEN].ereignisse.at(0).ereignisTyp, EreignisTyp::KeineZugFahrstrEinrichten);
     BOOST_CHECK_EQUAL(strecke->streckenelemente.at(3)->richtungsInfo[Streckenelement::RICHTUNG_GEGEN].ereignisse.at(0).wert, 0.0f);
     BOOST_CHECK_EQUAL(strecke->streckenelemente.at(3)->richtungsInfo[Streckenelement::RICHTUNG_GEGEN].ereignisse.at(0).beschreibung, "");
+}
+
+BOOST_AUTO_TEST_CASE(referenzpunkte) {
+    ifstream infile("./eingabe/zusi3/ReferenzpunkteTest.st3");
+    unique_ptr<Strecke> strecke = St3Leser().liesDatei(infile);
+
+    BOOST_REQUIRE_EQUAL(strecke->streckenelemente.size(), 5+1);
+    BOOST_REQUIRE_EQUAL(strecke->referenzpunkte.size(), 15+1);
+
+    BOOST_CHECK(!strecke->referenzpunkte.at(0));
+
+    BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(1)->referenzNr, 1);
+    BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(1)->referenzTyp, Referenzpunkt::Typ::Aufgleispunkt);
+    BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(1)->streckenelementNr, 1);
+    BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(1)->richtung, static_cast<streckenelement_richtung_t>(Streckenelement::RICHTUNG_NORM));
+    BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(1)->streckenelement, strecke->streckenelemente.at(1).get());
+    BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(1)->beschreibung, "Aufgleispunkt");
+
+    BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(2)->referenzNr, 2);
+    BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(2)->referenzTyp, Referenzpunkt::Typ::Modulgrenze);
+    BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(2)->streckenelementNr, 1);
+    BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(2)->richtung, static_cast<streckenelement_richtung_t>(Streckenelement::RICHTUNG_GEGEN));
+    BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(2)->streckenelement, strecke->streckenelemente.at(1).get());
+    BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(2)->beschreibung, "Modulgrenze");
+
+    BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(3)->referenzNr, 3);
+    BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(3)->referenzTyp, Referenzpunkt::Typ::Register);
+    BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(3)->streckenelementNr, 2);
+    BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(3)->richtung, static_cast<streckenelement_richtung_t>(Streckenelement::RICHTUNG_GEGEN));
+    BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(3)->streckenelement, strecke->streckenelemente.at(2).get());
+    BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(3)->beschreibung, "Nr. 456");
+
+    BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(4)->referenzNr, 4);
+    BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(4)->referenzTyp, Referenzpunkt::Typ::Weiche);
+    BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(4)->streckenelementNr, 3);
+    BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(4)->richtung, static_cast<streckenelement_richtung_t>(Streckenelement::RICHTUNG_NORM));
+    BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(4)->streckenelement, strecke->streckenelemente.at(3).get());
+    BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(4)->beschreibung, "123");
+
+    BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(5)->referenzNr, 5);
+    BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(5)->referenzTyp, Referenzpunkt::Typ::Aufloesepunkt);
+    BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(5)->streckenelementNr, 5);
+    BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(5)->richtung, static_cast<streckenelement_richtung_t>(Streckenelement::RICHTUNG_GEGEN));
+    BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(5)->streckenelement, strecke->streckenelemente.at(5).get());
+    BOOST_CHECK(strecke->referenzpunkte.at(5)->beschreibung.empty());
+
+    BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(6)->referenzNr, 6);
+    BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(6)->referenzTyp, Referenzpunkt::Typ::Signal);
+    BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(6)->streckenelementNr, 42);
+    BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(6)->richtung, static_cast<streckenelement_richtung_t>(Streckenelement::RICHTUNG_NORM));
+    BOOST_CHECK(strecke->referenzpunkte.at(6)->streckenelement == nullptr);
+    BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(6)->beschreibung, "Bla bla");
+
+    BOOST_CHECK(!strecke->referenzpunkte.at(7));
+
+    BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(15)->referenzNr, 15);
+    BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(15)->referenzTyp, Referenzpunkt::Typ::Signalhaltfall);
+    BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(15)->streckenelementNr, 5);
+    BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(15)->richtung, static_cast<streckenelement_richtung_t>(Streckenelement::RICHTUNG_GEGEN));
+    BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(15)->streckenelement, strecke->streckenelemente.at(5).get());
+    BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(15)->beschreibung, "Signalhaltfall");
 }

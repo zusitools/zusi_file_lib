@@ -109,6 +109,39 @@ void liesRichtungsInfo(xml_node<>& ri_node, Streckenelement& element, const stre
     }
 }
 
+void liesRefPunkt(xml_node<>& refpkt_node, Strecke& strecke) {
+    unique_ptr<Referenzpunkt> refpunkt(new Referenzpunkt());
+
+    for (xml_attribute<> *attr = refpkt_node.first_attribute();
+            attr != nullptr;
+            attr = attr->next_attribute()) {
+        auto attr_namesize = attr->name_size();
+
+        if (!strncmp(attr->name(), "ReferenzNr", attr_namesize)) {
+            refpunkt->referenzNr = strtoul(attr->value(), nullptr, 10);
+
+        } else if (!strncmp(attr->name(), "RefTyp", attr_namesize)) {
+            refpunkt->referenzTyp = (Referenzpunkt::Typ)strtoul(attr->value(), nullptr, 10);
+
+        } else if (!strncmp(attr->name(), "StrElement", attr_namesize)) {
+            refpunkt->streckenelementNr = (Referenzpunkt::Typ)strtoul(attr->value(), nullptr, 10);
+
+        } else if (!strncmp(attr->name(), "StrNorm", attr_namesize)) {
+            refpunkt->richtung = stoi(attr->value()) == 1 ? Streckenelement::RICHTUNG_NORM : Streckenelement::RICHTUNG_GEGEN;
+
+        } else if (!strncmp(attr->name(), "Info", attr_namesize)) {
+            refpunkt->beschreibung = std::string(attr->value());
+
+        }
+    }
+
+    if (strecke.referenzpunkte.size() <= refpunkt->referenzNr + 1)
+    {
+        strecke.referenzpunkte.resize(refpunkt->referenzNr + 1);
+    }
+    strecke.referenzpunkte.at(refpunkt->referenzNr) = std::move(refpunkt);
+}
+
 unique_ptr<Strecke> St3Leser::parseWurzel(xml_node<>& wurzel) {
     unique_ptr<Strecke> strecke(new Strecke());
     strecke->dateiInfo = this->liesDateiInfo(wurzel);
@@ -121,6 +154,13 @@ unique_ptr<Strecke> St3Leser::parseWurzel(xml_node<>& wurzel) {
         {
             strecke->utmPunkt.we = liesInt(*utm_node, "UTM_WE");
             strecke->utmPunkt.ns = liesInt(*utm_node, "UTM_NS");
+        }
+
+        for (xml_node<>* refpkt_node = str_node->first_node("ReferenzElemente");
+                refpkt_node != nullptr;
+                refpkt_node = refpkt_node->next_sibling("ReferenzElemente"))
+        {
+            liesRefPunkt(*refpkt_node, *strecke);
         }
 
         xml_node<> *elem_node = str_node->first_node("StrElement");
@@ -219,6 +259,12 @@ unique_ptr<Strecke> St3Leser::parseWurzel(xml_node<>& wurzel) {
 
         // Verknuepfungen zu Vorgaengern und Nachfolgern herstellen
         setzeVorgaengerNachfolger(*strecke);
+    }
+
+    for (auto& refpunkt : strecke->referenzpunkte) {
+        if (refpunkt && refpunkt->referenzNr >= 0 && refpunkt->streckenelementNr < strecke->streckenelemente.size()) {
+            refpunkt->streckenelement = strecke->streckenelemente.at(refpunkt->streckenelementNr).get();
+        }
     }
 
     return strecke;
