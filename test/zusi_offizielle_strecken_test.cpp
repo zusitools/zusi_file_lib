@@ -110,7 +110,7 @@ BOOST_AUTO_TEST_CASE(lies_z2_strecken) {
         unique_ptr<Strecke> strecke = StrLeser().liesStrDatei(infile);
         auto leseEnde = chrono::high_resolution_clock::now();
         auto ms = chrono::duration_cast<chrono::milliseconds>(leseEnde - leseStart).count();
-        BOOST_MESSAGE(dateiname + ": " + to_string(ms) + " ms");
+        BOOST_TEST_MESSAGE(dateiname + ": " + to_string(ms) + " ms");
     }
 }
 
@@ -192,9 +192,9 @@ BOOST_AUTO_TEST_CASE(lies_z3_strecken) {
         unique_ptr<Strecke> strecke = St3Leser().liesDatei(infile);
         auto leseEnde = chrono::high_resolution_clock::now();
         auto ms = chrono::duration_cast<chrono::milliseconds>(leseEnde - leseStart).count();
-        BOOST_MESSAGE(dateiname + ": " + to_string(ms) + " ms");
+        BOOST_TEST_MESSAGE(dateiname + ": " + to_string(ms) + " ms");
     }
     auto globalLeseEnde = chrono::high_resolution_clock::now();
     auto ms = chrono::duration_cast<chrono::milliseconds>(globalLeseEnde - globalLeseStart).count();
-    BOOST_MESSAGE("Gesamt: " + to_string(ms) + " ms");
+    BOOST_TEST_MESSAGE("Gesamt: " + to_string(ms) + " ms");
 }
