@@ -207,7 +207,7 @@ unique_ptr<Strecke> St3Leser::parseWurzel(xml_node<>& wurzel) {
                     if (nachfolgerNr < strecke->streckenelemente.size()) {
                         auto& nachfolger = strecke->streckenelemente[nachfolgerNr];
                         if (nachfolger) {
-                            element->setzeNachfolger(nachnorm_idx, Streckenelement::RICHTUNG_GEGEN, *nachfolger.get());
+                            element->setzeNachfolger(nachgegen_idx, Streckenelement::RICHTUNG_GEGEN, *nachfolger.get());
                             aufgeloest = true;
                         }
                     }
