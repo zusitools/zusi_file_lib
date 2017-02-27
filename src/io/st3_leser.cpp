@@ -44,10 +44,12 @@ unsigned int liesUint(xml_node<> &node, const char* attrName) {
 void setzeVorgaengerNachfolger(Strecke &strecke) {
     for (auto& streckenelement : strecke.streckenelemente) {
         if (!streckenelement) continue;
-        for (auto& aufloeseInfo : streckenelement->nachfolgerElementeUnaufgeloest) {
+        for (size_t idx = 0, len = streckenelement->nachfolgerElementeUnaufgeloest.size(); idx < len; idx++) {
+            auto& aufloeseInfo = streckenelement->nachfolgerElementeUnaufgeloest[len - 1 - idx];
             auto& nachfolger = strecke.streckenelemente.at(aufloeseInfo.nr.nr_se);
             if (nachfolger) {
                 streckenelement->setzeNachfolger(aufloeseInfo.nachfolger_index, aufloeseInfo.richtung, *nachfolger);
+                streckenelement->nachfolgerElementeUnaufgeloest.erase(streckenelement->nachfolgerElementeUnaufgeloest.begin() + (len - 1 - idx));
             }
         }
     }
