@@ -62,7 +62,6 @@ unique_ptr<Strecke> StrLeser::liesStrDatei(istream& datei) {
             referenzpunkt->richtung = Streckenelement::RICHTUNG_NORM;
             if (result->dateiInfo->formatMinVersion != "1.1") {
                 referenzpunkt->referenzNr = konvertiereInGanzzahl("Aufgleisreferenz-Nr.", tmp);
-                referenzpunkt->referenzNrInModul = referenzpunkt->referenzNr;
                 referenzpunkt->streckenelementNr = liesGanzzahl("Aufgleiselement-Nr.", datei);
                 referenzpunkt->beschreibung = liesZeile("Aufgleispunkt-Beschreibung", datei);
 
@@ -72,7 +71,6 @@ unique_ptr<Strecke> StrLeser::liesStrDatei(istream& datei) {
                 result->referenzpunkte.at(referenzpunkt->referenzNr) = std::move(referenzpunkt);
             } else {
                 referenzpunkt->referenzNr = result->referenzpunkte.size();
-                referenzpunkt->referenzNrInModul = referenzpunkt->referenzNr;
                 referenzpunkt->streckenelementNr =
                     konvertiereInGanzzahl("Aufgleiselement-Nr.", tmp);
                 result->referenzpunkte.push_back(std::move(referenzpunkt));
