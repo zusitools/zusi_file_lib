@@ -16,21 +16,21 @@ template<typename R>
 class Z3Leser {
 
 protected:
-    unique_ptr<DateiInfo> liesDateiInfo(xml_node<>& wurzel) {
-        unique_ptr<DateiInfo> result(new DateiInfo());
+    DateiInfo liesDateiInfo(xml_node<>& wurzel) {
+        DateiInfo result = { };
         xml_node<> *dateiInfoNode = wurzel.first_node("Info");
         if (dateiInfoNode != nullptr) {
             xml_attribute<> *versionAttr = dateiInfoNode->first_attribute("Version");
             if (versionAttr != nullptr) {
-                result->formatVersion = versionAttr->value();
+                result.formatVersion = versionAttr->value();
             }
             xml_attribute<> *minVersionAttr = dateiInfoNode->first_attribute("MinVersion");
             if (minVersionAttr != nullptr) {
-                result->formatMinVersion = minVersionAttr->value();
+                result.formatMinVersion = minVersionAttr->value();
             }
         }
 
-        return std::move(result);
+        return result;
     }
 
     virtual unique_ptr<R> parseWurzel(xml_node<>& wurzel) = 0; // Hier wird das dateispezifische Parsen implementiert.

@@ -10,6 +10,10 @@ using namespace std;
 struct Fahrplan : public ZusiObjekt {
     // TODO: p/phi unterstuetzen, wenn dereinst notwendig
     vector<string> streckenmodule;
+
+    Fahrplan(string formatVersion, string formatMinVersion)
+        : ZusiObjekt(formatVersion, formatMinVersion), streckenmodule() {}
+    virtual ~Fahrplan() {}
 };
 
 #endif

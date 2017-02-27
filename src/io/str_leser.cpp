@@ -13,35 +13,35 @@ unique_ptr<Strecke> StrLeser::liesStrDatei(istream& datei) {
     char *oldlocale = setlocale(LC_NUMERIC, nullptr);
     setlocale(LC_NUMERIC, "C");
 
-    unique_ptr<Strecke> result(new Strecke());
+    unique_ptr<Strecke> result;
 
     try {
         this->zeilenNr = 0;
         string tmp;
 
         // Dateiformat-Version.
-        unique_ptr<DateiInfo> dateiInfo(new DateiInfo());
-        dateiInfo->formatVersion = Z2Leser::liesZeile("Dateiformat-Version", datei);
+        string formatVersion = Z2Leser::liesZeile("Dateiformat-Version", datei);
 
-        if (dateiInfo->formatVersion == "1.1" || dateiInfo->formatVersion == "2.0" || dateiInfo->formatVersion == "2.1") {
-            dateiInfo->formatMinVersion = "1.1";
+        string formatMinVersion;
+        if (formatVersion == "1.1" || formatVersion == "2.0" || formatVersion == "2.1") {
+            formatMinVersion = "1.1";
         } else {
-            dateiInfo->formatMinVersion = dateiInfo->formatVersion;
+            formatMinVersion = result->formatVersion;
         }
+        result = unique_ptr<Strecke>(new Strecke(formatVersion, formatMinVersion));
 
         // Autor-Information.
         unique_ptr<AutorInfo> autorInfo(new AutorInfo());
         autorInfo->name = Z2Leser::liesZeile("Autor-Name", datei);
-        dateiInfo->autorInfo.push_back(std::move(autorInfo));
+        result->autorInfo.push_back(std::move(autorInfo));
 
         result->breitengrad = Z2Leser::liesGanzzahl("Breitengrad", datei);
         result->rekursionstiefe = Z2Leser::liesGanzzahl("Rekursionstiefe", datei);
         result->gebietsschema = Z2Leser::liesZeile("Gebietsschema", datei);
 
-        dateiInfo->beschreibung = Z2Leser::liesMehrzeiligenString("Dateibeschreibung", datei);
-        result->dateiInfo = std::move(dateiInfo);
+        result->beschreibung = Z2Leser::liesMehrzeiligenString("Dateibeschreibung", datei);
 
-        if (result->dateiInfo->formatMinVersion != "1.1") {
+        if (result->formatMinVersion != "1.1") {
             Z2Leser::liesMehrzeiligenString("UTM-Info", datei);
         }
 
@@ -60,7 +60,7 @@ unique_ptr<Strecke> StrLeser::liesStrDatei(istream& datei) {
         while (tmp != "#") {
             unique_ptr<Referenzpunkt> referenzpunkt(new Referenzpunkt());
             referenzpunkt->richtung = Streckenelement::RICHTUNG_NORM;
-            if (result->dateiInfo->formatMinVersion != "1.1") {
+            if (result->formatMinVersion != "1.1") {
                 referenzpunkt->referenzNr = konvertiereInGanzzahl("Aufgleisreferenz-Nr.", tmp);
                 referenzpunkt->streckenelementNr = liesGanzzahl("Aufgleiselement-Nr.", datei);
                 referenzpunkt->beschreibung = liesZeile("Aufgleispunkt-Beschreibung", datei);
@@ -181,7 +181,7 @@ void StrLeser::liesStreckenelemente(istream& datei, Strecke& strecke) {
         }
 
         liesZeile("Element-vMax", datei);
-        if (strecke.dateiInfo->formatMinVersion != "1.1") {
+        if (strecke.formatMinVersion != "1.1") {
             liesZeile("Reservierter Streckenelement-Eintrag", datei);
         }
         liesZeile("Name Bahnsteig/Betriebsstelle", datei);
@@ -218,7 +218,7 @@ void StrLeser::liesStreckenelemente(istream& datei, Strecke& strecke) {
         this->aktElement = "Fahrstraßensignal";
         liesFahrstrSignal(datei, *element, strecke);
 
-        if (strecke.dateiInfo->formatMinVersion != "1.1") {
+        if (strecke.formatMinVersion != "1.1") {
             richtung.signal = liesKombiSignal(datei);
         } else {
             this->aktElement = "Vorsignal";
@@ -286,7 +286,7 @@ void StrLeser::liesFahrstrSignal(istream& datei, Streckenelement &element, Strec
     liesGleitkommazahl("Fahrstraßensignal-Standort Rotation Y", datei);
     liesGleitkommazahl("Fahrstraßensignal-Standort Rotation Z", datei);
 
-    if (strecke.dateiInfo->formatMinVersion != "1.1") {
+    if (strecke.formatMinVersion != "1.1") {
         liesZeile("Fahrstraßensignal: ohne Funktion 1", datei);
         liesZeile("Fahrstraßensignal: ohne Funktion 2", datei);
         liesZeile("Fahrstraßensignal: ohne Funktion 3", datei);
@@ -297,7 +297,7 @@ void StrLeser::liesFahrstrSignal(istream& datei, Streckenelement &element, Strec
 
     liesZeile("Fahrstraßensignal: Landschaftsdatei", datei);
 
-    if (strecke.dateiInfo->formatMinVersion != "1.1") {
+    if (strecke.formatMinVersion != "1.1") {
         liesZeile("Fahrstraßensignal: ohne Funktion 7", datei);
     }
 
@@ -306,7 +306,7 @@ void StrLeser::liesFahrstrSignal(istream& datei, Streckenelement &element, Strec
     liesZeile("Fahrstraßensignal: Ereignis", datei);
     liesZeile("Fahrstraßensignal: Angekündigte Geschwindigkeit", datei);
 
-    if (strecke.dateiInfo->formatMinVersion != "1.1") {
+    if (strecke.formatMinVersion != "1.1") {
         liesZeile("Fahrstraßensignal: Verweis auf Masterelement", datei);
     }
 }

@@ -44,6 +44,12 @@ struct Strecke : public ZusiObjekt {
 
     // Register.
     unordered_map<fahrstr_register_nr_t, unique_ptr<FahrstrRegister>> fahrstrRegister;
+
+    Strecke(string formatVersion, string formatMinVersion)
+        : ZusiObjekt(formatVersion, formatMinVersion),
+        breitengrad(), rekursionstiefe(), gebietsschema(), utmPunkt(), signalHaltabstand(),
+        streckenelemente(), referenzpunkte(), blickpunkte(), fahrstrRegister() {}
+    virtual ~Strecke() {}
 };
 
 #endif

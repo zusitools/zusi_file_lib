@@ -143,8 +143,8 @@ void liesRefPunkt(xml_node<>& refpkt_node, Strecke& strecke) {
 }
 
 unique_ptr<Strecke> St3Leser::parseWurzel(xml_node<>& wurzel) {
-    unique_ptr<Strecke> strecke(new Strecke());
-    strecke->dateiInfo = this->liesDateiInfo(wurzel);
+    DateiInfo dateiInfo = this->liesDateiInfo(wurzel);
+    unique_ptr<Strecke> strecke(new Strecke(dateiInfo.formatVersion, dateiInfo.formatMinVersion));
 
     xml_node<> *str_node = wurzel.first_node("Strecke");
     if (str_node != nullptr)

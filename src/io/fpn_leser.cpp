@@ -19,8 +19,8 @@ void liesStrModul(xml_node<>& n, Fahrplan& fahrplan) {
 }
 
 unique_ptr<Fahrplan> FpnLeser::parseWurzel(xml_node<>& wurzel) {
-    unique_ptr<Fahrplan> fahrplan(new Fahrplan());
-    fahrplan->dateiInfo = this->liesDateiInfo(wurzel);
+    DateiInfo dateiInfo = this->liesDateiInfo(wurzel);
+    unique_ptr<Fahrplan> fahrplan(new Fahrplan(dateiInfo.formatVersion, dateiInfo.formatMinVersion));
 
     xml_node<> *fpn_node = wurzel.first_node("Fahrplan");
     if (fpn_node != nullptr)
