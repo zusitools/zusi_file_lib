@@ -262,7 +262,7 @@ unique_ptr<Strecke> St3Leser::parseWurzel(xml_node<>& wurzel) {
     }
 
     for (auto& refpunkt : strecke->referenzpunkte) {
-        if (refpunkt && refpunkt->referenzNr >= 0 && refpunkt->streckenelementNr < strecke->streckenelemente.size()) {
+        if (refpunkt && refpunkt->streckenelementNr < strecke->streckenelemente.size()) {
             refpunkt->streckenelement = strecke->streckenelemente.at(refpunkt->streckenelementNr).get();
         }
     }
