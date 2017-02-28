@@ -26,7 +26,7 @@ unique_ptr<Strecke> StrLeser::liesStrDatei(istream& datei) {
         if (formatVersion == "1.1" || formatVersion == "2.0" || formatVersion == "2.1") {
             formatMinVersion = "1.1";
         } else {
-            formatMinVersion = result->formatVersion;
+            formatMinVersion = formatVersion;
         }
         result = unique_ptr<Strecke>(new Strecke(formatVersion, formatMinVersion));
 
