@@ -36,13 +36,17 @@ protected:
     virtual unique_ptr<R> parseWurzel(xml_node<>& wurzel) = 0; // Hier wird das dateispezifische Parsen implementiert.
 
 public:
-    unique_ptr<R> liesDatei(istream& datei) {
-        // TODO: Locale auch zuruecksetzen, wenn hier irgendwo ein Fehler fliegt
+    unique_ptr<R> liesDatei(istream& stream) {
         char *oldlocale = setlocale(LC_NUMERIC, nullptr);
         setlocale(LC_NUMERIC, "C");
 
-        vector<char> buffer((istreambuf_iterator<char>(datei)), istreambuf_iterator<char>());
-        buffer.push_back('\0');
+        stream.seekg(0, ios::end);
+        size_t size = stream.tellg();
+        stream.seekg(0);
+
+        vector<char> buffer(size + 1);
+        stream.read(&buffer.front(), size);
+        buffer[size] = '\0';
 
         xml_document<> dok;
         dok.parse<0>(&buffer[0]);
@@ -54,13 +58,14 @@ public:
             throw std::invalid_argument("Keine gültige Zusi-Datei (Zusi-Wurzelknoten nicht gefunden)");
         }
 
+        // TODO: Locale auch zuruecksetzen, wenn hier irgendwo ein Fehler fliegt
         auto result = this->parseWurzel(*wurzel);
         setlocale(LC_NUMERIC, oldlocale);
         return result;
     }
 
     unique_ptr<R> liesDateiMitDateiname(const string dateiname) {
-        ifstream datei(dateiname);
+        ifstream datei(dateiname, std::ios::binary);
         return this->liesDatei(datei);
     }
 };
