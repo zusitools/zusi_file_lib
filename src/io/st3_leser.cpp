@@ -1,6 +1,9 @@
 #include "st3_leser.hpp"
 
 #include <cstring>
+#include <boost/spirit/include/qi_real.hpp>
+#include <boost/spirit/include/qi_int.hpp>
+#include <boost/spirit/include/qi_uint.hpp>
 
 #include "lib/rapidxml-1.13/rapidxml.hpp"
 
@@ -10,7 +13,9 @@ void liesFloatAttr(xml_node<> &node, const char *name, float *wert) {
         xml_attribute<> *attr = node.first_attribute(name);
         if (attr != nullptr)
         {
-            *wert = atof(attr->value());
+            // TODO: Fehlerbehandlung
+            using boost::spirit::qi::float_;
+            boost::spirit::qi::parse(attr->value(), attr->value() + attr->value_size(), float_, *wert);
         }
     }
 }
@@ -23,22 +28,24 @@ void liesXYZ(xml_node<> &node, float *x, float *y, float *z) {
 
 int liesInt(xml_node<> &node, const char* attrName) {
     xml_attribute<> *attr = node.first_attribute(attrName);
+    int result = 0;
     if (attr != nullptr) {
         // TODO: Fehlerbehandlung
-        return stoi(attr->value());
-    } else {
-        return 0;
+        using boost::spirit::qi::int_;
+        boost::spirit::qi::parse(attr->value(), attr->value() + attr->value_size(), int_, result);
     }
+    return result;
 }
 
 unsigned int liesUint(xml_node<> &node, const char* attrName) {
     xml_attribute<> *attr = node.first_attribute(attrName);
+    unsigned int result = 0;
     if (attr != nullptr) {
         // TODO: Fehlerbehandlung
-        return strtoul(attr->value(), nullptr, 10);
-    } else {
-        return 0;
+        using boost::spirit::qi::uint_;
+        boost::spirit::qi::parse(attr->value(), attr->value() + attr->value_size(), uint_, result);
     }
+    return result;
 }
 
 void setzeVorgaengerNachfolger(Strecke &strecke) {
