@@ -126,10 +126,19 @@ public:
 
     StreckenelementUndRichtung() = delete;
     StreckenelementUndRichtung(const StreckenelementUndRichtung&) = default;
-    StreckenelementUndRichtung& operator=(StreckenelementUndRichtung other) {
+
+    StreckenelementUndRichtung& operator=(const StreckenelementUndRichtung &other) {
+        if (*this == other) return *this;
         this->streckenelement = other.streckenelement;
         this->richtung = other.richtung;
         return *this;
+    }
+
+    bool operator==(const StreckenelementUndRichtung &other) const {
+      return this->streckenelement == other.streckenelement && this->richtung == other.richtung;
+    }
+    bool operator!=(const StreckenelementUndRichtung &other) const {
+      return !(*this == other);
     }
 
     Streckenelement* operator->() const {
@@ -226,6 +235,10 @@ struct Streckenelement {
         return richtung == Streckenelement::RICHTUNG_NORM ?
             Streckenelement::RICHTUNG_GEGEN : Streckenelement::RICHTUNG_NORM;
     }
+
+    explicit Streckenelement() : nr(), p1(), p2(), ueberhoehung(), kruemmung(), volt(), drahthoehe(), oberbauName(),
+        fahrleitungTyp(), zwangshelligkeit(), vTrassierung(), richtungsInfo(), nachfolgerElemente(), nachfolgerElementeUnaufgeloest(),
+        anschluss(), flags() {}
 };
 
 #undef _ZUSI_FILE_LIB_INLINE
