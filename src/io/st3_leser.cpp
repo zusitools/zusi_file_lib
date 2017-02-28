@@ -1,6 +1,8 @@
 #include "st3_leser.hpp"
 
+#include <cassert>
 #include <cstring>
+
 #include <boost/spirit/include/qi_real.hpp>
 #include <boost/spirit/include/qi_int.hpp>
 #include <boost/spirit/include/qi_uint.hpp>
@@ -21,9 +23,31 @@ void liesFloatAttr(xml_node<> &node, const char *name, float *wert) {
 }
 
 void liesXYZ(xml_node<> &node, float *x, float *y, float *z) {
-    liesFloatAttr(node, "X", x);
-    liesFloatAttr(node, "Y", y);
-    liesFloatAttr(node, "Z", z);
+    assert(x != nullptr);
+    assert(y != nullptr);
+    assert(z != nullptr);
+
+    for (xml_attribute<> *attr = node.first_attribute();
+            attr != nullptr;
+            attr = attr->next_attribute()) {
+        auto attr_name = attr->name();
+        auto attr_namesize = attr->name_size();
+        if (attr_namesize != 1) {
+            continue;
+        }
+        float *wert;
+        using boost::spirit::qi::float_;
+        if (attr_name[0] == 'X') {
+            wert = x;
+        } else if (attr_name[0] == 'Y') {
+            wert = y;
+        } else if (attr_name[0] == 'Z') {
+            wert = z;
+        } else {
+            continue;
+        }
+        boost::spirit::qi::parse(attr->value(), attr->value() + attr->value_size(), float_, *wert);
+    }
 }
 
 int liesInt(xml_node<> &node, const char* attrName) {
