@@ -17,10 +17,8 @@ BOOST_AUTO_TEST_CASE(leere_st3_datei) {
     unique_ptr<Strecke> strecke = St3Leser().liesDatei(infile);
     BOOST_CHECK(strecke);
 
-    BOOST_CHECK(strecke->dateiInfo);
-
-    BOOST_CHECK_EQUAL(strecke->dateiInfo->formatVersion, "A.1");
-    BOOST_CHECK_EQUAL(strecke->dateiInfo->formatMinVersion, "A.1");
+    BOOST_CHECK_EQUAL(strecke->formatVersion, "A.1");
+    BOOST_CHECK_EQUAL(strecke->formatMinVersion, "A.1");
 }
 
 BOOST_AUTO_TEST_CASE(element_koordinaten) {

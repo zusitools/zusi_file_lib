@@ -17,14 +17,14 @@ void testVorgaengerNachfolger(unique_ptr<Strecke>& strecke, streckenelement_nr_t
 
     // TODO: Bei Zusi 2 hat die Liste der Vorgänger keine definierte Ordnung.
     for (size_t i = 0; i < nrsVorgaenger.size(); i++) {
-        BOOST_MESSAGE("Element " << nr << ", Vorgaenger " << i);
+        BOOST_TEST_MESSAGE("Element " << nr << ", Vorgaenger " << i);
         auto vorgaenger = element->normrichtung().vorgaenger(i);
         BOOST_CHECK_EQUAL(vorgaenger.richtung, richtungenVorgaenger.at(i));
         BOOST_CHECK_EQUAL(&*vorgaenger, strecke->streckenelemente.at(nrsVorgaenger.at(i)).get());
     }
 
     for (size_t i = 0; i < nrsNachfolger.size(); i++) {
-        BOOST_MESSAGE("Element " << nr << ", Nachfolger " << i);
+        BOOST_TEST_MESSAGE("Element " << nr << ", Nachfolger " << i);
         auto nachfolger = element->normrichtung().nachfolger(i);
         BOOST_CHECK_EQUAL(nachfolger.richtung, richtungenNachfolger.at(i));
         BOOST_CHECK_EQUAL(&*nachfolger, strecke->streckenelemente.at(nrsNachfolger.at(i)).get());
