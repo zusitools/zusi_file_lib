@@ -214,3 +214,19 @@ BOOST_AUTO_TEST_CASE(referenzpunkte) {
     BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(15)->streckenelement, strecke->streckenelemente.at(5).get());
     BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(15)->beschreibung, "Signalhaltfall");
 }
+
+BOOST_AUTO_TEST_CASE(vmax) {
+    ifstream infile("./eingabe/zusi3/VmaxTest.st3");
+    unique_ptr<Strecke> strecke = St3Leser().liesDatei(infile);
+
+    BOOST_REQUIRE_EQUAL(strecke->streckenelemente.size(), 4+1);
+
+    BOOST_CHECK_CLOSE(strecke->streckenelemente.at(1)->richtungsInfo[Streckenelement::RICHTUNG_NORM].vmax, 0.0, epsilon);
+    BOOST_CHECK_CLOSE(strecke->streckenelemente.at(1)->richtungsInfo[Streckenelement::RICHTUNG_GEGEN].vmax, 0.0, epsilon);
+
+    BOOST_CHECK_CLOSE(strecke->streckenelemente.at(2)->richtungsInfo[Streckenelement::RICHTUNG_NORM].vmax, 27.7778, epsilon);
+    BOOST_CHECK_CLOSE(strecke->streckenelemente.at(2)->richtungsInfo[Streckenelement::RICHTUNG_GEGEN].vmax, 0.0, epsilon);
+
+    BOOST_CHECK_CLOSE(strecke->streckenelemente.at(3)->richtungsInfo[Streckenelement::RICHTUNG_NORM].vmax, -1.0, epsilon);
+    BOOST_CHECK_CLOSE(strecke->streckenelemente.at(3)->richtungsInfo[Streckenelement::RICHTUNG_GEGEN].vmax, 27.7778, epsilon);
+}

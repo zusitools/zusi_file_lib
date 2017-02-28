@@ -116,6 +116,15 @@ void liesRichtungsInfo(xml_node<>& ri_node, Streckenelement& element, const stre
             }
         }
     }
+
+    for (xml_attribute<> *attr = ri_node.first_attribute();
+            attr != nullptr;
+            attr = attr->next_attribute()) {
+        auto attr_namesize = attr->name_size();
+        if (!strncmp(attr->name(), "vMax", attr_namesize)) {
+            richtungsInfo.vmax = atof(attr->value());
+        }
+    }
 }
 
 void liesRefPunkt(xml_node<>& refpkt_node, Strecke& strecke) {

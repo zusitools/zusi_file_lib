@@ -62,7 +62,7 @@ struct StreckenelementRichtungsInfo {
     FahrstrRegister* fahrstrRegister;
 
     // Die zulässige Höchstgeschwindigkeit [m/s].
-    geschwindigkeit_t vMax;
+    geschwindigkeit_t vmax;
 
     // Die Kilometrierung am Elementanfang(?) [km]
     kilometrierung_t km;
