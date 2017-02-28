@@ -120,6 +120,8 @@ public:
 
     _ZUSI_FILE_LIB_INLINE StreckenelementUndRichtung gegenrichtung() const;
 
+    _ZUSI_FILE_LIB_INLINE StreckenelementRichtungsInfo& richtungsInfo() const;
+
     StreckenelementUndRichtung(Streckenelement *streckenelement, streckenelement_richtung_t richtung) :
             streckenelement(streckenelement), richtung(richtung) {
     }
