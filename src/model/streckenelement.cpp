@@ -39,10 +39,10 @@ void Streckenelement::setzeVorgaenger(const nachfolger_index_t index,
 }
 
 StreckenelementUndRichtung StreckenelementUndRichtung::nachfolger(const nachfolger_index_t index) const {
-    return StreckenelementUndRichtung(
+    return StreckenelementUndRichtung {
         this->streckenelement->nachfolgerElemente[this->richtung].at(index),
         ((this->streckenelement->anschluss[this->richtung] >> index) & 1) == 0 ?
-            Streckenelement::RICHTUNG_NORM : Streckenelement::RICHTUNG_GEGEN);
+            Streckenelement::RICHTUNG_NORM : Streckenelement::RICHTUNG_GEGEN };
 }
 
 bool StreckenelementUndRichtung::hatNachfolger(const nachfolger_index_t index) const {
@@ -53,10 +53,10 @@ bool StreckenelementUndRichtung::hatNachfolger(const nachfolger_index_t index) c
 StreckenelementUndRichtung StreckenelementUndRichtung::vorgaenger(const nachfolger_index_t index) const {
     auto gegenrichtung = Streckenelement::richtungUmkehren(this->richtung);
 
-    return StreckenelementUndRichtung(
+    return StreckenelementUndRichtung {
         this->streckenelement->nachfolgerElemente[gegenrichtung].at(index),
         ((this->streckenelement->anschluss[gegenrichtung] >> index) & 1) == 0 ?
-            Streckenelement::RICHTUNG_GEGEN : Streckenelement::RICHTUNG_NORM);
+            Streckenelement::RICHTUNG_GEGEN : Streckenelement::RICHTUNG_NORM };
 }
 
 bool StreckenelementUndRichtung::hatVorgaenger(const nachfolger_index_t index) const {
@@ -65,7 +65,7 @@ bool StreckenelementUndRichtung::hatVorgaenger(const nachfolger_index_t index) c
 }
 
 StreckenelementUndRichtung StreckenelementUndRichtung::gegenrichtung() const {
-    return StreckenelementUndRichtung(this->streckenelement, Streckenelement::richtungUmkehren(this->richtung));
+    return StreckenelementUndRichtung { this->streckenelement, Streckenelement::richtungUmkehren(this->richtung) };
 }
 
 StreckenelementRichtungsInfo& StreckenelementUndRichtung::richtungsInfo() const {
