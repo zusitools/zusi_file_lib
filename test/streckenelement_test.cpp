@@ -84,3 +84,15 @@ BOOST_AUTO_TEST_CASE(gegenrichtung) {
     BOOST_CHECK_EQUAL(elementRichtung2.gegenrichtung().richtung,
             static_cast<streckenelement_richtung_t>(Streckenelement::RICHTUNG_NORM));
 }
+
+BOOST_AUTO_TEST_CASE(endpunkt) {
+    unique_ptr<Streckenelement> element(new Streckenelement());
+    element->p1 = { -1.0f, 2.0f, 0.0f };
+    element->p2 = { 100.0f, -200.0f, 0.0f };
+
+    StreckenelementUndRichtung elementRichtung1 { element.get(), Streckenelement::RICHTUNG_NORM },
+                               elementRichtung2 { element.get(), Streckenelement::RICHTUNG_GEGEN };
+
+    BOOST_CHECK_EQUAL(&elementRichtung1.endpunkt(), &element->p2);
+    BOOST_CHECK_EQUAL(&elementRichtung2.endpunkt(), &element->p1);
+}

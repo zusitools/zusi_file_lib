@@ -121,6 +121,8 @@ public:
 
     _ZUSI_FILE_LIB_INLINE StreckenelementRichtungsInfo& richtungsInfo() const;
 
+    _ZUSI_FILE_LIB_INLINE Punkt3D& endpunkt() const;
+
     bool operator==(const StreckenelementUndRichtung &other) const {
       return this->streckenelement == other.streckenelement && this->richtung == other.richtung;
     }

@@ -72,6 +72,10 @@ StreckenelementRichtungsInfo& StreckenelementUndRichtung::richtungsInfo() const 
     return this->streckenelement->richtungsInfo[this->richtung];
 }
 
+Punkt3D& StreckenelementUndRichtung::endpunkt() const {
+    return this->richtung == Streckenelement::RICHTUNG_NORM ? this->streckenelement->p2 : this->streckenelement->p1;
+}
+
 Streckenelement& StreckenelementUndRichtung::operator*() const {
     return *(this->streckenelement);
 }
