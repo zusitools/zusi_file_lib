@@ -21,19 +21,17 @@ BOOST_AUTO_TEST_CASE(leere_str_datei) {
     BOOST_CHECK(strecke);
 
     // Dateiinformationen.
-    BOOST_CHECK(strecke->dateiInfo);
-
-    BOOST_CHECK_EQUAL(strecke->dateiInfo->formatVersion, "2.3");
-    BOOST_CHECK_EQUAL(strecke->dateiInfo->formatMinVersion, "2.3");
+    BOOST_CHECK_EQUAL(strecke->formatVersion, "2.3");
+    BOOST_CHECK_EQUAL(strecke->formatMinVersion, "2.3");
 
     // Dateibeschreibung.
     BOOST_CHECK_EQUAL(
-      strecke->dateiInfo->beschreibung, "Freier Text, 1. Zeile\nFreier Text, 2. Zeile");
+      strecke->beschreibung, "Freier Text, 1. Zeile\nFreier Text, 2. Zeile");
 
     // Dateiautor.
-    BOOST_CHECK_EQUAL(strecke->dateiInfo->autorInfo.size(), 1);
-    BOOST_CHECK(strecke->dateiInfo->autorInfo.at(0));
-    BOOST_CHECK_EQUAL(strecke->dateiInfo->autorInfo.at(0)->name, "TestAutor");
+    BOOST_CHECK_EQUAL(strecke->autorInfo.size(), 1);
+    BOOST_CHECK(strecke->autorInfo.at(0));
+    BOOST_CHECK_EQUAL(strecke->autorInfo.at(0)->name, "TestAutor");
 
     // Gebietsschema.
     BOOST_CHECK_EQUAL(strecke->gebietsschema, "DBAGWest2000");
@@ -115,7 +113,6 @@ BOOST_AUTO_TEST_CASE(aufgleispunkte) {
     auto& referenzpunkt2 = strecke->referenzpunkte.at(2);
 
     BOOST_CHECK_EQUAL(referenzpunkt1->referenzNr, 1);
-    BOOST_CHECK_EQUAL(referenzpunkt1->referenzNrInModul, 1);
     BOOST_CHECK_EQUAL(referenzpunkt1->referenzTyp, Referenzpunkt::Typ::Aufgleispunkt);
     BOOST_CHECK_EQUAL(referenzpunkt1->streckenelement, strecke->streckenelemente.at(4).get());
     BOOST_CHECK_EQUAL(referenzpunkt1->richtung,
@@ -124,7 +121,6 @@ BOOST_AUTO_TEST_CASE(aufgleispunkte) {
     BOOST_CHECK_EQUAL(referenzpunkt1->beschreibung, "#");
     
     BOOST_CHECK_EQUAL(referenzpunkt2->referenzNr, 2);
-    BOOST_CHECK_EQUAL(referenzpunkt2->referenzNrInModul, 2);
     BOOST_CHECK_EQUAL(referenzpunkt2->referenzTyp, Referenzpunkt::Typ::Aufgleispunkt);
     BOOST_CHECK_EQUAL(referenzpunkt2->streckenelement, strecke->streckenelemente.at(2).get());
     BOOST_CHECK_EQUAL(referenzpunkt2->richtung,

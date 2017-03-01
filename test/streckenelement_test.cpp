@@ -73,8 +73,8 @@ BOOST_AUTO_TEST_CASE(setze_vorgaenger) {
 
 BOOST_AUTO_TEST_CASE(gegenrichtung) {
     unique_ptr<Streckenelement> element(new Streckenelement());
-    StreckenelementUndRichtung elementRichtung1(element.get(), Streckenelement::RICHTUNG_NORM),
-                               elementRichtung2(element.get(), Streckenelement::RICHTUNG_GEGEN);
+    StreckenelementUndRichtung elementRichtung1 { element.get(), Streckenelement::RICHTUNG_NORM },
+                               elementRichtung2 { element.get(), Streckenelement::RICHTUNG_GEGEN };
 
     BOOST_CHECK_EQUAL(&*elementRichtung1.gegenrichtung(), element.get());
     BOOST_CHECK_EQUAL(elementRichtung1.gegenrichtung().richtung,

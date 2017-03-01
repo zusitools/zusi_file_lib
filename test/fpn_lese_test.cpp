@@ -14,10 +14,8 @@ BOOST_AUTO_TEST_CASE(leere_fpn_datei) {
     unique_ptr<Fahrplan> fahrplan = FpnLeser().liesDatei(infile);
     BOOST_REQUIRE(fahrplan);
 
-    BOOST_CHECK(fahrplan->dateiInfo);
-
-    BOOST_CHECK_EQUAL(fahrplan->dateiInfo->formatVersion, "A.1");
-    BOOST_CHECK_EQUAL(fahrplan->dateiInfo->formatMinVersion, "A.1");
+    BOOST_CHECK_EQUAL(fahrplan->formatVersion, "A.1");
+    BOOST_CHECK_EQUAL(fahrplan->formatMinVersion, "A.1");
 }
 
 BOOST_AUTO_TEST_CASE(streckenmodule) {
