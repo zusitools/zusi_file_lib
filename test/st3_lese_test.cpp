@@ -7,10 +7,8 @@
 
 using namespace std;
 
-// Wert für Floating-Point-Vergleiche (in Prozent der zu vergleichenden Werte!)
-#define epsilon 0.00001
-
 #include "testhelpers.hpp"
+using testhelpers::epsilon;
 
 BOOST_AUTO_TEST_CASE(leere_st3_datei) {
     ifstream infile("./eingabe/zusi3/LeereSt3Datei.st3");

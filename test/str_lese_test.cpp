@@ -8,10 +8,8 @@
 
 #include <io/str_leser.hpp>
 
-// Wert für Floating-Point-Vergleiche (in Prozent der zu vergleichenden Werte!)
-#define epsilon 0.00001
-
 #include "testhelpers.hpp"
+using testhelpers::epsilon;
 
 using namespace std;
 

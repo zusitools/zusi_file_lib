@@ -1,3 +1,21 @@
+#ifndef TESTHELPERS_HPP
+#define TESTHELPERS_HPP
+
+#include <boost/test/included/unit_test.hpp>
+#include <boost/test/floating_point_comparison.hpp>
+
+#include <model/strecke.hpp>
+#include <model/streckenelement.hpp>
+
+using namespace std;
+
+namespace testhelpers {
+    // Wert für Floating-Point-Vergleiche (in Prozent der zu vergleichenden Werte!)
+    const double epsilon = 0.00001;
+}
+
+using testhelpers::epsilon;
+
 void testVorgaengerNachfolger(unique_ptr<Strecke>& strecke, streckenelement_nr_t nr,
         vector<streckenelement_nr_t> nrsVorgaenger, vector<streckenelement_richtung_t> richtungenVorgaenger,
         vector<streckenelement_nr_t> nrsNachfolger, vector<streckenelement_richtung_t> richtungenNachfolger) {
@@ -45,3 +63,5 @@ template<typename T>
 void testSetEqual(set<T>& actual, set<T> expected) {
     BOOST_CHECK_EQUAL_COLLECTIONS(actual.begin(), actual.end(), expected.begin(), expected.end());
 }
+
+#endif
