@@ -103,6 +103,7 @@ BOOST_AUTO_TEST_CASE(lies_z2_strecken) {
     char *zusiStreckenPfad = getenv("ZUSI2_STRECKEN_PFAD");
     BOOST_REQUIRE(zusiStreckenPfad != nullptr);
 
+    auto globalLeseStart = chrono::high_resolution_clock::now();
     for (const string& dateiname : strDateiNamen) {
         BOOST_TEST_CHECKPOINT(dateiname);
         ifstream infile(zusiStreckenPfad + dateiname);
@@ -112,6 +113,10 @@ BOOST_AUTO_TEST_CASE(lies_z2_strecken) {
         auto ms = chrono::duration_cast<chrono::milliseconds>(leseEnde - leseStart).count();
         BOOST_TEST_MESSAGE(dateiname + ": " + to_string(ms) + " ms");
     }
+
+    auto globalLeseEnde = chrono::high_resolution_clock::now();
+    auto ms = chrono::duration_cast<chrono::milliseconds>(globalLeseEnde - globalLeseStart).count();
+    BOOST_TEST_MESSAGE("Gesamt: " + to_string(ms) + " ms");
 }
 
 BOOST_AUTO_TEST_CASE(lies_z3_strecken) {
