@@ -210,6 +210,11 @@ struct Streckenelement {
         return this->richtung(Streckenelement::RICHTUNG_GEGEN);
     }
 
+    /** Gibt ein Array zurueck, das mit streckenelement_richtung_t indiziert werden kann. */
+    inline std::array<StreckenelementUndRichtung, 2> richtungen() {
+        return { this->richtung(Streckenelement::RICHTUNG_GEGEN), this->richtung(Streckenelement::RICHTUNG_NORM) };
+    }
+
     _ZUSI_FILE_LIB_INLINE void setzeNachfolger(const nachfolger_index_t index, const streckenelement_richtung_t richtung,
             Streckenelement& nachfolger);
     _ZUSI_FILE_LIB_INLINE void setzeNachfolger(const nachfolger_index_t index, const streckenelement_richtung_t richtung,
