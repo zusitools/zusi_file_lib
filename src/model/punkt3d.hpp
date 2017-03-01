@@ -11,13 +11,18 @@
 
 // Ein Punkt oder eine Rotation im dreidimensionalen Raum.
 struct Punkt3D {
-    Punkt3D() : Punkt3D(0, 0, 0) {}
-    Punkt3D(koordinate_t x, koordinate_t y, koordinate_t z) : x(x), y(y), z(z) {}
-
     koordinate_t x;
     koordinate_t y;
     koordinate_t z;
+
+    _ZUSI_FILE_LIB_INLINE Punkt3D& operator-=(const Punkt3D& rhs);
+    friend Punkt3D operator-(Punkt3D lhs, const Punkt3D& rhs) {
+      lhs -= rhs;
+      return lhs;
+    }
 };
+
+static_assert(std::is_pod<Punkt3D>::value, "Punkt3D sollte ein POD-Datentyp sein");
 
 // Eine Blickrichtung als zwei Vektoren.
 struct Richtung3D {

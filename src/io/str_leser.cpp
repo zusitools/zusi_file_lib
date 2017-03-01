@@ -94,7 +94,7 @@ unique_ptr<Strecke> StrLeser::liesStrDatei(istream& datei) {
             x = Z2Leser::liesGleitkommazahl("Blickpunkt-Rotation X", datei);
             y = Z2Leser::liesGleitkommazahl("Blickpunkt-Rotation Y", datei);
             z = Z2Leser::liesGleitkommazahl("Blickpunkt-Rotation Z", datei);
-            blickpunkt->position.setRichtungAlsRot(Punkt3D(x, y, z));
+            blickpunkt->position.setRichtungAlsRot(Punkt3D { x, y, z });
             blickpunkt->name = Z2Leser::liesZeile("Blickpunkt-Name", datei);
 
             result->blickpunkte.push_back(std::move(blickpunkt));
