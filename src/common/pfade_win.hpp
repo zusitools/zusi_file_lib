@@ -8,29 +8,23 @@ namespace zusi_file_lib {
 
         using namespace std;
 
-        string getZusi3Datenpfad() {
-            static string zusi3Datenpfad = string();
+		static string zusi3Datenpfad = string();
 
+        string& getZusi3Datenpfad() {
             if (zusi3Datenpfad.empty()) {
                 HKEY key;
                 char buffer[MAX_PATH];
                 DWORD len = MAX_PATH;
-                if (SUCCEEDED(RegOpenKeyEx(HKEY_LOCAL_MACHINE, L"Software\\Zusi3", 0, KEY_READ, &key)) ||
-                        SUCCEEDED(RegOpenKeyEx(HKEY_LOCAL_MACHINE, L"Software\\Wow6432Node\\Zusi3", 0, KEY_READ, &key)) ||
-                        SUCCEEDED(RegOpenKeyEx(HKEY_CURRENT_USER, L"Software\\Zusi3", 0, KEY_READ, &key)) ||
-                        SUCCEEDED(RegOpenKeyEx(HKEY_CURRENT_USER, L"Software\\Wow6432Node\\Zusi3", 0, KEY_READ, &key))) {
-                    // TODO: use RegQueryValueEx and return wstring?
-                    if (SUCCEEDED(RegGetValueA(key, nullptr, "DatenVerzeichnis", RRF_RT_REG_SZ, nullptr, (LPBYTE)buffer, &len))) {
-                        zusi3Datenpfad = string(buffer, len - 1); // subtract terminating null character
-                        RegCloseKey(key);
-                    }
+                if (SUCCEEDED(RegOpenKeyEx(HKEY_LOCAL_MACHINE, L"Software\\Zusi3", 0, KEY_READ | KEY_WOW64_32KEY, &key)) &&
+				        SUCCEEDED(RegGetValueA(key, nullptr, "DatenVerzeichnis", RRF_RT_REG_SZ, nullptr, (LPBYTE)buffer, &len))) {
+                    zusi3Datenpfad = string(buffer, len - 1); // subtract terminating null character
+                    RegCloseKey(key);
                 }
             }
-
             return zusi3Datenpfad;
         }
 
-        string zusiPfadZuOsPfad(const string zusiPfad, const string osPfadUebergeordnet = std::string()) {
+        string zusiPfadZuOsPfad(const string& zusiPfad, const string osPfadUebergeordnet = std::string()) {
             string result;
             if (zusiPfad.find('\\') == zusiPfad.npos && !osPfadUebergeordnet.empty()) {
                 // Relativ zu uebergeordnetem Pfad
@@ -40,11 +34,10 @@ namespace zusi_file_lib {
                 result = osPfadUebergeordnet.substr(0, osPfadUebergeordnet.rfind('/'));
             } else {
                 // Relativ zum Zusi-Datenverzeichnis
-                string datenpfad = getZusi3Datenpfad();
-                if (datenpfad.empty()) {
+                result = getZusi3Datenpfad();
+                if (result.empty()) {
                     return "";
                 }
-                result = string(datenpfad);
             }
 
             if (result.back() == '\\' && zusiPfad.front() == '\\') {
@@ -53,7 +46,8 @@ namespace zusi_file_lib {
                 result.push_back('\\');
             }
 
-            return result + zusiPfad;
+            result += zusiPfad;
+            return result;
         }
 
     }
