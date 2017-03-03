@@ -37,9 +37,6 @@ protected:
 
 public:
     unique_ptr<R> liesDatei(istream& stream) {
-        char *oldlocale = setlocale(LC_NUMERIC, nullptr);
-        setlocale(LC_NUMERIC, "C");
-
         stream.seekg(0, ios::end);
         size_t size = stream.tellg();
         stream.seekg(0);
@@ -54,14 +51,10 @@ public:
         xml_node<> *wurzel = dok.first_node("Zusi");
         if (wurzel == nullptr)
         {
-            setlocale(LC_NUMERIC, oldlocale);
             throw std::invalid_argument("Keine gültige Zusi-Datei (Zusi-Wurzelknoten nicht gefunden)");
         }
 
-        // TODO: Locale auch zuruecksetzen, wenn hier irgendwo ein Fehler fliegt
-        auto result = this->parseWurzel(*wurzel);
-        setlocale(LC_NUMERIC, oldlocale);
-        return result;
+        return this->parseWurzel(*wurzel);
     }
 
     unique_ptr<R> liesDateiMitDateiname(const string dateiname) {

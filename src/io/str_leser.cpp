@@ -10,11 +10,6 @@
 using namespace std;
 
 unique_ptr<Strecke> StrLeser::liesStrDatei(istream& datei) {
-    char *oldlocale = setlocale(LC_NUMERIC, nullptr);
-    setlocale(LC_NUMERIC, "C");
-
-    unique_ptr<Strecke> result;
-
     try {
         this->zeilenNr = 0;
         string tmp;
@@ -28,7 +23,7 @@ unique_ptr<Strecke> StrLeser::liesStrDatei(istream& datei) {
         } else {
             formatMinVersion = formatVersion;
         }
-        result = unique_ptr<Strecke>(new Strecke(formatVersion, formatMinVersion));
+        auto result = std::make_unique<Strecke>(formatVersion, formatMinVersion);
 
         // Autor-Information.
         unique_ptr<AutorInfo> autorInfo(new AutorInfo());
@@ -117,13 +112,11 @@ unique_ptr<Strecke> StrLeser::liesStrDatei(istream& datei) {
 
             referenzpunkt->elementRichtung.streckenelement = result->streckenelemente.at(referenzpunkt->streckenelementNr).get();
         }
+        return result;
     } catch (const std::exception& ex) {
         throw invalid_argument("Fehler beim Einlesen von Zeile " + to_string(this->zeilenNr) + " ("
             + this->aktElement + "): " + ex.what());
     }
-
-    setlocale(LC_NUMERIC, oldlocale);
-    return result;
 }
 
 unique_ptr<Strecke> StrLeser::liesStrDateiMitDateiname(const string dateiname) {
