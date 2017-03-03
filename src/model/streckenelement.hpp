@@ -78,6 +78,8 @@ struct StreckenelementRichtungsInfo {
     unique_ptr<Signal> signal;
 
     // TODO: Koppelweiche
+
+    StreckenelementRichtungsInfo() : ereignisse(), fahrstrRegister(nullptr), vmax(-1.0f), km(0.0f), kmAufsteigend(false), fahrstrSignal(), signal() {}
 };
 
 // Ein Verweis auf ein evtl. (noch nicht geladenes) Streckenelement.
