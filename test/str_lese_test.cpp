@@ -249,3 +249,13 @@ BOOST_AUTO_TEST_CASE(fahrstr_register) {
     auto& element4 = strecke->streckenelemente.at(4)->richtungsInfo[Streckenelement::RICHTUNG_NORM];
     BOOST_CHECK_EQUAL(element4.fahrstrRegister, strecke->fahrstrRegister[42].get());
 }
+
+BOOST_AUTO_TEST_CASE(vmax) {
+    ifstream infile("./eingabe/zusi2/VmaxTest.str");
+    unique_ptr<Strecke> strecke = StrLeser().liesStrDatei(infile);
+
+    BOOST_REQUIRE(strecke->streckenelemente.size() > 3);
+    BOOST_CHECK_CLOSE(strecke->streckenelemente.at(1)->richtungsInfo[Streckenelement::RICHTUNG_NORM].vmax, 100.0 / 3.6, epsilon);
+    BOOST_CHECK_CLOSE(strecke->streckenelemente.at(2)->richtungsInfo[Streckenelement::RICHTUNG_NORM].vmax, 0.0 / 3.6, epsilon);
+    BOOST_CHECK_CLOSE(strecke->streckenelemente.at(3)->richtungsInfo[Streckenelement::RICHTUNG_NORM].vmax, -1.0 / 3.6, epsilon);
+}

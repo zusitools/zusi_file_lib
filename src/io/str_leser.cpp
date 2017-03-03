@@ -173,7 +173,7 @@ void StrLeser::liesStreckenelemente(istream& datei, Strecke& strecke) {
             }
         }
 
-        liesZeile("Element-vMax", datei);
+        richtung.vmax = liesGleitkommazahl("Element-vMax", datei) / 3.6;
         if (strecke.formatMinVersion != "1.1") {
             liesZeile("Reservierter Streckenelement-Eintrag", datei);
         }
