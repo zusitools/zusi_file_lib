@@ -164,43 +164,43 @@ BOOST_AUTO_TEST_CASE(referenzpunkte) {
     BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(1)->referenzNr, 1);
     BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(1)->referenzTyp, Referenzpunkt::Typ::Aufgleispunkt);
     BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(1)->streckenelementNr, 1);
-    BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(1)->richtung, static_cast<streckenelement_richtung_t>(Streckenelement::RICHTUNG_NORM));
-    BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(1)->streckenelement, strecke->streckenelemente.at(1).get());
+    BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(1)->elementRichtung.richtung, static_cast<streckenelement_richtung_t>(Streckenelement::RICHTUNG_NORM));
+    BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(1)->elementRichtung.streckenelement, strecke->streckenelemente.at(1).get());
     BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(1)->beschreibung, "Aufgleispunkt");
 
     BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(2)->referenzNr, 2);
     BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(2)->referenzTyp, Referenzpunkt::Typ::Modulgrenze);
     BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(2)->streckenelementNr, 1);
-    BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(2)->richtung, static_cast<streckenelement_richtung_t>(Streckenelement::RICHTUNG_GEGEN));
-    BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(2)->streckenelement, strecke->streckenelemente.at(1).get());
+    BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(2)->elementRichtung.richtung, static_cast<streckenelement_richtung_t>(Streckenelement::RICHTUNG_GEGEN));
+    BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(2)->elementRichtung.streckenelement, strecke->streckenelemente.at(1).get());
     BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(2)->beschreibung, "Modulgrenze");
 
     BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(3)->referenzNr, 3);
     BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(3)->referenzTyp, Referenzpunkt::Typ::Register);
     BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(3)->streckenelementNr, 2);
-    BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(3)->richtung, static_cast<streckenelement_richtung_t>(Streckenelement::RICHTUNG_GEGEN));
-    BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(3)->streckenelement, strecke->streckenelemente.at(2).get());
+    BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(3)->elementRichtung.richtung, static_cast<streckenelement_richtung_t>(Streckenelement::RICHTUNG_GEGEN));
+    BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(3)->elementRichtung.streckenelement, strecke->streckenelemente.at(2).get());
     BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(3)->beschreibung, "Nr. 456");
 
     BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(4)->referenzNr, 4);
     BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(4)->referenzTyp, Referenzpunkt::Typ::Weiche);
     BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(4)->streckenelementNr, 3);
-    BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(4)->richtung, static_cast<streckenelement_richtung_t>(Streckenelement::RICHTUNG_NORM));
-    BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(4)->streckenelement, strecke->streckenelemente.at(3).get());
+    BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(4)->elementRichtung.richtung, static_cast<streckenelement_richtung_t>(Streckenelement::RICHTUNG_NORM));
+    BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(4)->elementRichtung.streckenelement, strecke->streckenelemente.at(3).get());
     BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(4)->beschreibung, "123");
 
     BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(5)->referenzNr, 5);
     BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(5)->referenzTyp, Referenzpunkt::Typ::Aufloesepunkt);
     BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(5)->streckenelementNr, 5);
-    BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(5)->richtung, static_cast<streckenelement_richtung_t>(Streckenelement::RICHTUNG_GEGEN));
-    BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(5)->streckenelement, strecke->streckenelemente.at(5).get());
+    BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(5)->elementRichtung.richtung, static_cast<streckenelement_richtung_t>(Streckenelement::RICHTUNG_GEGEN));
+    BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(5)->elementRichtung.streckenelement, strecke->streckenelemente.at(5).get());
     BOOST_CHECK(strecke->referenzpunkte.at(5)->beschreibung.empty());
 
     BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(6)->referenzNr, 6);
     BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(6)->referenzTyp, Referenzpunkt::Typ::Signal);
     BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(6)->streckenelementNr, 42);
-    BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(6)->richtung, static_cast<streckenelement_richtung_t>(Streckenelement::RICHTUNG_NORM));
-    BOOST_CHECK(strecke->referenzpunkte.at(6)->streckenelement == nullptr);
+    BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(6)->elementRichtung.richtung, static_cast<streckenelement_richtung_t>(Streckenelement::RICHTUNG_NORM));
+    BOOST_CHECK(strecke->referenzpunkte.at(6)->elementRichtung.streckenelement == nullptr);
     BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(6)->beschreibung, "Bla bla");
 
     BOOST_CHECK(!strecke->referenzpunkte.at(7));
@@ -208,8 +208,8 @@ BOOST_AUTO_TEST_CASE(referenzpunkte) {
     BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(15)->referenzNr, 15);
     BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(15)->referenzTyp, Referenzpunkt::Typ::Signalhaltfall);
     BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(15)->streckenelementNr, 5);
-    BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(15)->richtung, static_cast<streckenelement_richtung_t>(Streckenelement::RICHTUNG_GEGEN));
-    BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(15)->streckenelement, strecke->streckenelemente.at(5).get());
+    BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(15)->elementRichtung.richtung, static_cast<streckenelement_richtung_t>(Streckenelement::RICHTUNG_GEGEN));
+    BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(15)->elementRichtung.streckenelement, strecke->streckenelemente.at(5).get());
     BOOST_CHECK_EQUAL(strecke->referenzpunkte.at(15)->beschreibung, "Signalhaltfall");
 }
 

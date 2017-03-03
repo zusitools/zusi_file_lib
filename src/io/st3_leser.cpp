@@ -169,7 +169,7 @@ void liesRefPunkt(xml_node<>& refpkt_node, Strecke& strecke) {
             refpunkt->streckenelementNr = (Referenzpunkt::Typ)strtoul(attr->value(), nullptr, 10);
 
         } else if (!strncmp(attr->name(), "StrNorm", attr_namesize)) {
-            refpunkt->richtung = stoi(attr->value()) == 1 ? Streckenelement::RICHTUNG_NORM : Streckenelement::RICHTUNG_GEGEN;
+            refpunkt->elementRichtung.richtung = stoi(attr->value()) == 1 ? Streckenelement::RICHTUNG_NORM : Streckenelement::RICHTUNG_GEGEN;
 
         } else if (!strncmp(attr->name(), "Info", attr_namesize)) {
             refpunkt->beschreibung = std::string(attr->value());
@@ -305,7 +305,7 @@ unique_ptr<Strecke> St3Leser::parseWurzel(xml_node<>& wurzel) {
 
     for (auto& refpunkt : strecke->referenzpunkte) {
         if (refpunkt && refpunkt->streckenelementNr < strecke->streckenelemente.size()) {
-            refpunkt->streckenelement = strecke->streckenelemente.at(refpunkt->streckenelementNr).get();
+            refpunkt->elementRichtung.streckenelement = strecke->streckenelemente.at(refpunkt->streckenelementNr).get();
         }
     }
 

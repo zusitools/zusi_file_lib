@@ -59,7 +59,7 @@ unique_ptr<Strecke> StrLeser::liesStrDatei(istream& datei) {
         tmp = liesZeile("Aufgleispunkte", datei);
         while (tmp != "#") {
             unique_ptr<Referenzpunkt> referenzpunkt(new Referenzpunkt());
-            referenzpunkt->richtung = Streckenelement::RICHTUNG_NORM;
+            referenzpunkt->elementRichtung.richtung = Streckenelement::RICHTUNG_NORM;
             if (result->formatMinVersion != "1.1") {
                 referenzpunkt->referenzNr = konvertiereInGanzzahl("Aufgleisreferenz-Nr.", tmp);
                 referenzpunkt->streckenelementNr = liesGanzzahl("Aufgleiselement-Nr.", datei);
@@ -115,7 +115,7 @@ unique_ptr<Strecke> StrLeser::liesStrDatei(istream& datei) {
                 continue;
             }
 
-            referenzpunkt->streckenelement = result->streckenelemente.at(referenzpunkt->streckenelementNr).get();
+            referenzpunkt->elementRichtung.streckenelement = result->streckenelemente.at(referenzpunkt->streckenelementNr).get();
         }
     } catch (const std::exception& ex) {
         throw invalid_argument("Fehler beim Einlesen von Zeile " + to_string(this->zeilenNr) + " ("

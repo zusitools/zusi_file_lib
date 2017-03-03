@@ -6,8 +6,6 @@
 #include <common/types.hpp>
 #include <model/streckenelement.hpp>
 
-using namespace std;
-
 // Ein Referenzpunkt einer Strecke. Die Referenz kann aufgelöst sein (der
 // Streckenelement-Zeiger hat einen Wert) oder nicht (z.B. wenn das Element nicht existiert).
 struct Referenzpunkt {
@@ -29,17 +27,14 @@ struct Referenzpunkt {
     // Referenz-Typ.
     referenz_typ_t referenzTyp;
 
-    // Das Streckenelement, auf das sich die Referenz bezieht.
-    Streckenelement* streckenelement;
-
-    // Die Richtung des Streckenelements, auf das sich die Referenz bezieht.
-    streckenelement_richtung_t richtung;
+    // Das Streckenelement und die Richtung, auf das sich die Referenz bezieht.
+    StreckenelementUndRichtung elementRichtung;
 
     // Die Nummer des Streckenelements, auf das sich die Referenz bezieht.
     streckenelement_nr_t streckenelementNr;
 
     // Beschreibung.
-    string beschreibung;
+    std::string beschreibung;
 
 };
 
