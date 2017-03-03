@@ -7,6 +7,7 @@ using namespace std;
 #include <set>
 #include <string>
 #include <vector>
+#include <array>
 
 #include <common/types.hpp>
 #include <model/ereignis.hpp>
