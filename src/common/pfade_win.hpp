@@ -6,11 +6,7 @@ namespace zusi_file_lib {
 
     namespace pfade {
 
-        using namespace std;
-
-		static string zusi3Datenpfad = string();
-
-        string& getZusi3Datenpfad() {
+        const std::string& getZusi3Datenpfad() {
             if (zusi3Datenpfad.empty()) {
                 HKEY key;
                 char buffer[MAX_PATH];
@@ -24,8 +20,8 @@ namespace zusi_file_lib {
             return zusi3Datenpfad;
         }
 
-        string zusiPfadZuOsPfad(const string& zusiPfad, const string osPfadUebergeordnet = std::string()) {
-            string result;
+        std::string zusiPfadZuOsPfad(const string& zusiPfad, const string osPfadUebergeordnet) {
+            std::string result;
             if (zusiPfad.find('\\') == zusiPfad.npos && !osPfadUebergeordnet.empty()) {
                 // Relativ zu uebergeordnetem Pfad
                 if (zusiPfad.empty()) {

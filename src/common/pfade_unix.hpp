@@ -4,10 +4,15 @@ namespace zusi_file_lib {
 
     namespace pfade {
 
-        using namespace std;
+        const std::string& getZusi3Datenpfad() {
+            if (zusi3Datenpfad.empty()) {
+                zusi3Datenpfad = std::string(getenv("ZUSI3_DATAPATH"));
+            }
+            return zusi3Datenpfad;
+        }
 
-        string zusiPfadZuOsPfad(const string zusiPfad, const string osPfadUebergeordnet = std::string()) {
-            string result;
+        std::string zusiPfadZuOsPfad(const std::string& zusiPfad, const std::string& osPfadUebergeordnet) {
+            std::string result;
             if (zusiPfad.find('\\') == zusiPfad.npos && !osPfadUebergeordnet.empty()) {
                 // Relativ zu uebergeordnetem Pfad
                 if (zusiPfad.empty()) {
@@ -16,11 +21,7 @@ namespace zusi_file_lib {
                 result = osPfadUebergeordnet.substr(0, osPfadUebergeordnet.rfind('/'));
             } else {
                 // Relativ zum Zusi-Datenverzeichnis
-                const char* datapath = getenv("ZUSI3_DATAPATH");
-                if (datapath == nullptr) {
-                    return "";
-                }
-                result = string(datapath);
+                result = std::string(getZusi3Datenpfad());
             }
 
             if (result.back() == '/' && zusiPfad.front() == '\\') {
