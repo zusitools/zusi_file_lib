@@ -266,7 +266,7 @@ void StrLeser::liesStreckenelemente(istream& datei, Strecke& strecke) {
     }
 }
 
-void StrLeser::liesFahrstrSignal(istream& datei, Streckenelement &element, Strecke &strecke) {
+void StrLeser::liesFahrstrSignal(istream& datei, Streckenelement&, Strecke &strecke) {
     string tmp = liesZeile(datei);
     if (tmp == "#") {
         return;
@@ -344,7 +344,7 @@ unique_ptr<Signal> StrLeser::liesKombiSignal(istream& datei) {
     return signal;
 }
 
-void StrLeser::liesHauptsignal(istream& datei, Streckenelement& element) {
+void StrLeser::liesHauptsignal(istream& datei, Streckenelement&) {
     string tmp = liesZeile("Hauptsignal", datei);
     if (tmp == "#") {
         return;
@@ -376,7 +376,7 @@ void StrLeser::liesHauptsignal(istream& datei, Streckenelement& element) {
     liesZeile("Hauptsignal: Reservierter Eintrag 2", datei);
 }
 
-void StrLeser::liesVorsignal(istream& datei, Streckenelement& element) {
+void StrLeser::liesVorsignal(istream& datei, Streckenelement&) {
     string tmp = liesZeile("Vorsignal", datei);
     if (tmp == "#") {
         return;
