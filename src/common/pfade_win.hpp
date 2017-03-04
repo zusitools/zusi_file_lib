@@ -20,7 +20,7 @@ namespace zusi_file_lib {
             return zusi3Datenpfad;
         }
 
-        std::string zusiPfadZuOsPfad(const string& zusiPfad, const string osPfadUebergeordnet) {
+        std::string zusiPfadZuOsPfad(const std::string& zusiPfad, const std::string& osPfadUebergeordnet) {
             std::string result;
             if (zusiPfad.find('\\') == zusiPfad.npos && !osPfadUebergeordnet.empty()) {
                 // Relativ zu uebergeordnetem Pfad
