@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <unordered_map>
+#include <vector>
 
 #include <model/blickpunkt.hpp>
 #include <model/fahrstr_register.hpp>
@@ -10,8 +11,6 @@
 #include <model/streckenelement.hpp>
 #include <model/utmpunkt.hpp>
 #include <model/zusiobjekt.hpp>
-
-using namespace std;
 
 struct Strecke : public ZusiObjekt {
 
@@ -34,13 +33,13 @@ struct Strecke : public ZusiObjekt {
 
     // Die in der Strecke enthaltenen Elemente. Die Position innerhalb der
     // Liste entspricht der Nummer des Streckenelements.
-    vector<unique_ptr<Streckenelement>> streckenelemente;
+    std::vector<std::unique_ptr<Streckenelement>> streckenelemente;
 
     // Referenzpunkte (Aufgleispunkte etc.)
-    vector<unique_ptr<Referenzpunkt>> referenzpunkte;
+    std::vector<std::unique_ptr<Referenzpunkt>> referenzpunkte;
 
     // Streckenfeste Blickpunkte.
-    vector<unique_ptr<Blickpunkt>> blickpunkte;
+    std::vector<std::unique_ptr<Blickpunkt>> blickpunkte;
 
     // Register.
     unordered_map<fahrstr_register_nr_t, unique_ptr<FahrstrRegister>> fahrstrRegister;
