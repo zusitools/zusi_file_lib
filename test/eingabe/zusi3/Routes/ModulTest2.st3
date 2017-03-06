@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Zusi>
+<Info DateiTyp="Strecke" Version="A.1" MinVersion="A.1" />
+<Strecke>
+<Datei/>
+<HintergrundDatei/>
+<BefehlsKonfiguration/>
+<Kachelpfad Dateiname="Kacheln\" NurInfo="1"/>
+<UTM/>
+<SkyDome>
+<HimmelTex Dateiname="_Setup\sky\sky.dds"/>
+<SonneTex Dateiname="_Setup\sky\sun.dds"/>
+<SonneHorizontTex Dateiname="_Setup\sky\sun_horizon.dds"/>
+<MondTex Dateiname="_Setup\sky\moon.dds"/>
+<SternTex Dateiname="_Setup\sky\star.dds"/>
+</SkyDome>
+<ModulDateien>
+<Datei Dateiname="routes\ModulTest1.st3" NurInfo="1"/>
+</ModulDateien>
+<ReferenzElemente ReferenzNr="1" StrElement="3" RefTyp="1" Info="Module boundary towards routes\ModulTest1.st3"/>
+<StrElement Nr="3" spTrass="27.7778" Oberbau="B55 SKL-Oberbau">
+<g X="10"/>
+<b X="20"/>
+<NachGegenModul Nr="1">
+<Datei Dateiname="routes\ModulTest1.st3" NurInfo="1"/>
+</NachGegenModul>
+</StrElement>
+</Strecke>
+</Zusi>

@@ -86,15 +86,25 @@ struct StreckenelementRichtungsInfo {
 struct StreckenelementAufloeseInfo {
     streckenelement_richtung_t richtung;
     nachfolger_index_t nachfolger_index;
-    // std::string* modul // TODO
+    std::string modul;
     union {
         streckenelement_nr_t nr_se;
         referenz_nr_t nr_ref;
     } nr;
 
-    StreckenelementAufloeseInfo(const streckenelement_richtung_t richtung, const nachfolger_index_t nachfolger_index, const streckenelement_nr_t nr_se)
-                : richtung(richtung), nachfolger_index(nachfolger_index) /*, modul(nullptr) */ {
+    StreckenelementAufloeseInfo(streckenelement_richtung_t richtung,
+            nachfolger_index_t nachfolger_index,
+            streckenelement_nr_t nr_se)
+                : richtung(richtung), nachfolger_index(nachfolger_index), modul() {
         nr.nr_se = nr_se;
+    }
+
+    StreckenelementAufloeseInfo(streckenelement_richtung_t richtung,
+            nachfolger_index_t nachfolger_index,
+            const std::string& modul,
+            referenz_nr_t nr_ref)
+                : richtung(richtung), nachfolger_index(nachfolger_index), modul(modul) {
+        nr.nr_ref = nr_ref;
     }
 };
 

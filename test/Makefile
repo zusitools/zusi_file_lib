@@ -4,6 +4,7 @@ LDFLAGS =
 BOOST_TEST_LOG_LEVEL = message
 BOOST_TEST_COLOR_OUTPUT = yes
 BOOST_TEST_REPORT_LEVEL = detailed
+BOOST_PARAMS = BOOST_TEST_REPORT_LEVEL=$(BOOST_TEST_REPORT_LEVEL) BOOST_TEST_LOG_LEVEL=$(BOOST_TEST_LOG_LEVEL) BOOST_TEST_COLOR_OUTPUT=$(BOOST_TEST_COLOR_OUTPUT)
 
 src = $(wildcard *.cpp)
 obj = $(src:.cpp=)
@@ -12,15 +13,16 @@ ok  = $(src:.cpp=.ok)
 .PHONY: test
 test: $(ok)
 
+.PHONY: build
 build: $(obj)
 
 $(ok): %.ok: %
-	ZUSI2_STRECKEN_PFAD=/mnt/zusi/Zusi/Strecken/ ZUSI3_STRECKEN_PFAD=/mnt/zusi/Zusi3/OmegaDatenFull/Routes/ BOOST_TEST_REPORT_LEVEL=$(BOOST_TEST_REPORT_LEVEL) BOOST_TEST_LOG_LEVEL=$(BOOST_TEST_LOG_LEVEL) BOOST_TEST_COLOR_OUTPUT=$(BOOST_TEST_COLOR_OUTPUT) ./$(@:.ok=)
+	ZUSI2_STRECKEN_PFAD=/mnt/zusi/Zusi/Strecken/ ZUSI3_STRECKEN_PFAD=/mnt/zusi/Zusi3/OmegaDatenFull/Routes/ ZUSI3_DATAPATH=./eingabe/zusi3 $(BOOST_PARAMS) ./$(@:.ok=)
 	touch $@
 
 pfade_unix_test.ok: pfade_unix_test
-	ZUSI3_DATAPATH=/mnt/zusi/Zusi3/Daten BOOST_TEST_REPORT_LEVEL=$(BOOST_TEST_REPORT_LEVEL) BOOST_TEST_LOG_LEVEL=$(BOOST_TEST_LOG_LEVEL) ./pfade_unix_test
-	ZUSI3_DATAPATH=/mnt/zusi/Zusi3/Daten/ BOOST_TEST_REPORT_LEVEL=$(BOOST_TEST_REPORT_LEVEL) BOOST_TEST_LOG_LEVEL=$(BOOST_TEST_LOG_LEVEL) ./pfade_unix_test
+	ZUSI3_DATAPATH=/mnt/zusi/Zusi3/Daten $(BOOST_PARAMS) ./pfade_unix_test
+	ZUSI3_DATAPATH=/mnt/zusi/Zusi3/Daten/ $(BOOST_PARAMS) ./pfade_unix_test
 	touch pfade_unix_test.ok
 
 .PHONY: clean

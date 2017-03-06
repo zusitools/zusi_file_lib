@@ -72,15 +72,43 @@ unsigned int liesUint(xml_node<> &node, const char* attrName) {
     return result;
 }
 
+std::string liesDateiDateiname(xml_node<> &node) {
+    for (xml_node<> *n = node.first_node();
+            n != nullptr;
+            n = n->next_sibling()) {
+        if (!strncmp(n->name(), "Datei", n->name_size())) {
+            for (xml_attribute<> *attr = n->first_attribute();
+                    attr != nullptr;
+                    attr = attr->next_attribute()) {
+                auto attr_namesize = attr->name_size();
+                if (!strncmp(attr->name(), "Dateiname", attr_namesize)) {
+                    return std::string(attr->name(), attr_namesize);
+                }
+            }
+        }
+    }
+    return std::string();
+}
+
 void setzeVorgaengerNachfolger(Strecke &strecke) {
     for (auto& streckenelement : strecke.streckenelemente) {
         if (!streckenelement) continue;
         for (size_t idx = 0, len = streckenelement->nachfolgerElementeUnaufgeloest.size(); idx < len; idx++) {
             auto& aufloeseInfo = streckenelement->nachfolgerElementeUnaufgeloest[len - 1 - idx];
-            auto& nachfolger = strecke.streckenelemente.at(aufloeseInfo.nr.nr_se);
-            if (nachfolger) {
-                streckenelement->setzeNachfolger(aufloeseInfo.nachfolger_index, aufloeseInfo.richtung, *nachfolger);
-                streckenelement->nachfolgerElementeUnaufgeloest.erase(streckenelement->nachfolgerElementeUnaufgeloest.begin() + (len - 1 - idx));
+            if (aufloeseInfo.modul.empty()) {
+                auto& nachfolger = strecke.streckenelemente.at(aufloeseInfo.nr.nr_se); // TODO Fehlerbehandlung
+                if (nachfolger) {
+                    streckenelement->setzeNachfolger(aufloeseInfo.nachfolger_index, aufloeseInfo.richtung, *nachfolger);
+                    streckenelement->nachfolgerElementeUnaufgeloest.erase(streckenelement->nachfolgerElementeUnaufgeloest.begin() + (len - 1 - idx));
+                } else {
+                    if (aufloeseInfo.nachfolger_index >= streckenelement->nachfolgerElemente[aufloeseInfo.richtung].size()) {
+                        streckenelement->nachfolgerElemente[aufloeseInfo.richtung].resize(aufloeseInfo.nachfolger_index + 1);
+                    }
+                }
+            } else {
+                if (aufloeseInfo.nachfolger_index >= streckenelement->nachfolgerElemente[aufloeseInfo.richtung].size()) {
+                    streckenelement->nachfolgerElemente[aufloeseInfo.richtung].resize(aufloeseInfo.nachfolger_index + 1);
+                }
             }
         }
     }
@@ -261,11 +289,19 @@ unique_ptr<Strecke> St3Leser::parseWurzel(xml_node<>& wurzel) {
                     nachgegen_idx++;
 
                 } else if (!strncmp(n->name(), "NachNormModul", n_namesize)) {
-                    // TODO
+                    // TODO Modul
+                    unsigned int nachfolgerNr = liesUint(*n, "Nr");
+                    std::string dateiname = liesDateiDateiname(*n);
+                    element->nachfolgerElementeUnaufgeloest.push_back(
+                        StreckenelementAufloeseInfo(Streckenelement::RICHTUNG_NORM, nachnorm_idx, dateiname, nachfolgerNr));
                     nachnorm_idx++;
 
                 } else if (!strncmp(n->name(), "NachGegenModul", n_namesize)) {
-                    // TODO
+                    // TODO Modul
+                    unsigned int nachfolgerNr = liesUint(*n, "Nr");
+                    std::string dateiname = liesDateiDateiname(*n);
+                    element->nachfolgerElementeUnaufgeloest.push_back(
+                        StreckenelementAufloeseInfo(Streckenelement::RICHTUNG_GEGEN, nachgegen_idx, dateiname, nachfolgerNr));
                     nachgegen_idx++;
 
                 // Richtungsinfo
