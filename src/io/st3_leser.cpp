@@ -239,7 +239,7 @@ unique_ptr<Strecke> St3Leser::parseWurzel(xml_node<>& wurzel) {
 
                     if (!aufgeloest) {
                         element->nachfolgerElementeUnaufgeloest.push_back(
-                                StreckenelementAufloeseInfo(Streckenelement::RICHTUNG_NORM, nachgegen_idx, nachfolgerNr));
+                                StreckenelementAufloeseInfo(Streckenelement::RICHTUNG_NORM, nachnorm_idx, nachfolgerNr));
                     }
                     nachnorm_idx++;
 
