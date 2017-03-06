@@ -15,7 +15,7 @@ using namespace std;
 
 BOOST_AUTO_TEST_CASE(leere_str_datei) {
     ifstream infile("./eingabe/zusi2/LeereStrecke.str");
-    unique_ptr<Strecke> strecke = StrLeser().liesStrDatei(infile);
+    unique_ptr<Strecke> strecke = StrLeser().liesDatei(infile);
     BOOST_CHECK(strecke);
 
     // Dateiinformationen.
@@ -52,14 +52,14 @@ BOOST_AUTO_TEST_CASE(leere_str_datei) {
 
 BOOST_AUTO_TEST_CASE(leere_str_datei_kein_haltabstand) {
     ifstream infile("./eingabe/zusi2/LeereStrecke_KeinHaltabstand.str");
-    unique_ptr<Strecke> strecke = StrLeser().liesStrDatei(infile);
+    unique_ptr<Strecke> strecke = StrLeser().liesDatei(infile);
 
     BOOST_CHECK_EQUAL(strecke->signalHaltabstand, 0);
 }
 
 BOOST_AUTO_TEST_CASE(leere_str_datei_blickpunkte) {
     ifstream infile("./eingabe/zusi2/LeereStrecke_Blickpunkte.str");
-    unique_ptr<Strecke> strecke = StrLeser().liesStrDatei(infile);
+    unique_ptr<Strecke> strecke = StrLeser().liesDatei(infile);
 
     BOOST_CHECK_EQUAL(strecke->blickpunkte.size(), 2);
 
@@ -89,7 +89,7 @@ BOOST_AUTO_TEST_CASE(leere_str_datei_blickpunkte) {
 
 BOOST_AUTO_TEST_CASE(nachfolger_vorgaenger) {
     ifstream infile("./eingabe/zusi2/NachfolgerVorgaengerTest.str");
-    unique_ptr<Strecke> strecke = StrLeser().liesStrDatei(infile);
+    unique_ptr<Strecke> strecke = StrLeser().liesDatei(infile);
 
     BOOST_REQUIRE_EQUAL(strecke->streckenelemente.size(), 6);
 
@@ -103,7 +103,7 @@ BOOST_AUTO_TEST_CASE(nachfolger_vorgaenger) {
 
 BOOST_AUTO_TEST_CASE(aufgleispunkte) {
     ifstream infile("./eingabe/zusi2/AufgleispunkteTest.str");
-    unique_ptr<Strecke> strecke = StrLeser().liesStrDatei(infile);
+    unique_ptr<Strecke> strecke = StrLeser().liesDatei(infile);
 
     BOOST_REQUIRE_EQUAL(strecke->referenzpunkte.size(), 3);
 
@@ -129,7 +129,7 @@ BOOST_AUTO_TEST_CASE(aufgleispunkte) {
 
 BOOST_AUTO_TEST_CASE(element_koordinaten) {
     ifstream infile("./eingabe/zusi2/ElementKoordinatenTest.str");
-    unique_ptr<Strecke> strecke = StrLeser().liesStrDatei(infile);
+    unique_ptr<Strecke> strecke = StrLeser().liesDatei(infile);
 
     BOOST_REQUIRE_EQUAL(strecke->streckenelemente.size(), 2);
 
@@ -144,7 +144,7 @@ BOOST_AUTO_TEST_CASE(element_koordinaten) {
 
 BOOST_AUTO_TEST_CASE(element_flags) {
     ifstream infile("./eingabe/zusi2/ElementFlagsTest.str");
-    unique_ptr<Strecke> strecke = StrLeser().liesStrDatei(infile);
+    unique_ptr<Strecke> strecke = StrLeser().liesDatei(infile);
 
     BOOST_REQUIRE_EQUAL(strecke->streckenelemente.size(), 11);
 
@@ -177,7 +177,7 @@ BOOST_AUTO_TEST_CASE(element_flags) {
 
 BOOST_AUTO_TEST_CASE(ereignisse) {
     ifstream infile("./eingabe/zusi2/EreignisTest.str");
-    unique_ptr<Strecke> strecke = StrLeser().liesStrDatei(infile);
+    unique_ptr<Strecke> strecke = StrLeser().liesDatei(infile);
 
     BOOST_REQUIRE(strecke->streckenelemente.size() > 15);
 
@@ -201,7 +201,7 @@ BOOST_AUTO_TEST_CASE(ereignisse) {
 
 BOOST_AUTO_TEST_CASE(signalnamen) {
     ifstream infile("./eingabe/zusi2/SignalTest.str");
-    unique_ptr<Strecke> strecke = StrLeser().liesStrDatei(infile);
+    unique_ptr<Strecke> strecke = StrLeser().liesDatei(infile);
 
     BOOST_REQUIRE(strecke->streckenelemente.size() > 6);
 
@@ -227,7 +227,7 @@ BOOST_AUTO_TEST_CASE(signalnamen) {
 
 BOOST_AUTO_TEST_CASE(fahrstr_register) {
     ifstream infile("./eingabe/zusi2/RegisterTest.str");
-    unique_ptr<Strecke> strecke = StrLeser().liesStrDatei(infile);
+    unique_ptr<Strecke> strecke = StrLeser().liesDatei(infile);
 
     BOOST_REQUIRE(strecke->streckenelemente.size() > 4);
     BOOST_REQUIRE(strecke->fahrstrRegister.size() == 2);
@@ -252,7 +252,7 @@ BOOST_AUTO_TEST_CASE(fahrstr_register) {
 
 BOOST_AUTO_TEST_CASE(vmax) {
     ifstream infile("./eingabe/zusi2/VmaxTest.str");
-    unique_ptr<Strecke> strecke = StrLeser().liesStrDatei(infile);
+    unique_ptr<Strecke> strecke = StrLeser().liesDatei(infile);
 
     BOOST_REQUIRE(strecke->streckenelemente.size() > 3);
     BOOST_CHECK_CLOSE(strecke->streckenelemente.at(1)->richtungsInfo[Streckenelement::RICHTUNG_NORM].vmax, 100.0 / 3.6, epsilon);

@@ -108,7 +108,7 @@ BOOST_AUTO_TEST_CASE(lies_z2_strecken) {
         BOOST_TEST_CHECKPOINT(dateiname);
         ifstream infile(zusiStreckenPfad + dateiname);
         auto leseStart = chrono::high_resolution_clock::now();
-        unique_ptr<Strecke> strecke = StrLeser().liesStrDatei(infile);
+        unique_ptr<Strecke> strecke = StrLeser().liesDatei(infile);
         auto leseEnde = chrono::high_resolution_clock::now();
         auto ms = chrono::duration_cast<chrono::milliseconds>(leseEnde - leseStart).count();
         BOOST_TEST_MESSAGE(dateiname + ": " + to_string(ms) + " ms");

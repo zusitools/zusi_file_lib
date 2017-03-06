@@ -9,13 +9,12 @@
 
 using namespace std;
 
-unique_ptr<Strecke> StrLeser::liesStrDatei(istream& datei) {
+unique_ptr<Strecke> StrLeser::parse() {
     try {
         this->zeilenNr = 0;
-        string tmp;
 
         // Dateiformat-Version.
-        string formatVersion = Z2Leser::liesZeile("Dateiformat-Version", datei);
+        string formatVersion = Z2Leser::liesZeile("Dateiformat-Version");
 
         string formatMinVersion;
         if (formatVersion == "1.1" || formatVersion == "2.0" || formatVersion == "2.1") {
@@ -27,38 +26,39 @@ unique_ptr<Strecke> StrLeser::liesStrDatei(istream& datei) {
 
         // Autor-Information.
         unique_ptr<AutorInfo> autorInfo(new AutorInfo());
-        autorInfo->name = Z2Leser::liesZeile("Autor-Name", datei);
+        autorInfo->name = Z2Leser::liesZeile("Autor-Name");
         result->autorInfo.push_back(std::move(autorInfo));
 
-        result->breitengrad = Z2Leser::liesGanzzahl("Breitengrad", datei);
-        result->rekursionstiefe = Z2Leser::liesGanzzahl("Rekursionstiefe", datei);
-        result->gebietsschema = Z2Leser::liesZeile("Gebietsschema", datei);
+        result->breitengrad = Z2Leser::liesGanzzahl("Breitengrad");
+        result->rekursionstiefe = Z2Leser::liesGanzzahl("Rekursionstiefe");
+        result->gebietsschema = Z2Leser::liesZeile("Gebietsschema");
 
-        result->beschreibung = Z2Leser::liesMehrzeiligenString("Dateibeschreibung", datei);
+        result->beschreibung = Z2Leser::liesMehrzeiligenString("Dateibeschreibung");
 
         if (result->formatMinVersion != "1.1") {
-            Z2Leser::liesMehrzeiligenString("UTM-Info", datei);
+            Z2Leser::liesMehrzeiligenString("UTM-Info");
         }
 
         // Geschwindigkeits-Multiplikator 3,6 (ohne Funktion); ab Zusi 2.4.5.0: Signalhaltabstand.
-        try {
-            result->signalHaltabstand =
-                Z2Leser::liesGanzzahl("Geschwindigkeitsmultiplikator/Haltabstand", datei);
-        } catch (invalid_argument) {
-            result->signalHaltabstand = 0;
+        if (*this->pos == '3' && *(this->pos + 1) == ',' && *(this->pos + 2) == '6') {
+            this->pos += 3;
+            if (!this->liesZeilenende()) {
+                throw invalid_argument("Zusaetzliche Zeichen am Ende der Zeile");
+            }
+        } else {
+            result->signalHaltabstand = Z2Leser::liesGanzzahl("Signal-Haltabstand");
         }
 
-        Z2Leser::liesZeile("Pfad Landschaftsdatei", datei);
+        Z2Leser::liesZeile("Pfad Landschaftsdatei");
 
         // Referenzpunkte: Einsatzelemente
-        tmp = liesZeile("Aufgleispunkte", datei);
-        while (tmp != "#") {
+        while (!this->liesRauteZeilenende()) {
             unique_ptr<Referenzpunkt> referenzpunkt(new Referenzpunkt());
             referenzpunkt->elementRichtung.richtung = Streckenelement::RICHTUNG_NORM;
             if (result->formatMinVersion != "1.1") {
-                referenzpunkt->referenzNr = konvertiereInGanzzahl("Aufgleisreferenz-Nr.", tmp);
-                referenzpunkt->streckenelementNr = liesGanzzahl("Aufgleiselement-Nr.", datei);
-                referenzpunkt->beschreibung = liesZeile("Aufgleispunkt-Beschreibung", datei);
+                referenzpunkt->referenzNr = liesGanzzahl("Aufgleisreferenz-Nr.");
+                referenzpunkt->streckenelementNr = liesGanzzahl("Aufgleiselement-Nr.");
+                referenzpunkt->beschreibung = liesZeile("Aufgleispunkt-Beschreibung");
 
                 if (result->referenzpunkte.size() <= referenzpunkt->referenzNr) {
                     result->referenzpunkte.resize(referenzpunkt->referenzNr + 1);
@@ -66,39 +66,34 @@ unique_ptr<Strecke> StrLeser::liesStrDatei(istream& datei) {
                 result->referenzpunkte.at(referenzpunkt->referenzNr) = std::move(referenzpunkt);
             } else {
                 referenzpunkt->referenzNr = result->referenzpunkte.size();
-                referenzpunkt->streckenelementNr =
-                    konvertiereInGanzzahl("Aufgleiselement-Nr.", tmp);
+                referenzpunkt->streckenelementNr = liesGanzzahl("Aufgleiselement-Nr.");
                 result->referenzpunkte.push_back(std::move(referenzpunkt));
             }
-
-            tmp = liesZeile("Aufgleispunkte", datei);
         }
 
         // Streckenfeste Standorte (Blickpunkte).
-        tmp = Z2Leser::liesZeile("Blickpunkte", datei);
-        while (tmp != "#") {
+        while (!this->liesRauteZeilenende()) {
             unique_ptr<Blickpunkt> blickpunkt(new Blickpunkt());
-            blickpunkt->position.loc.x = Z2Leser::konvertiereInGleitkommazahl("Blickpunkt-Position X", tmp);
-            blickpunkt->position.loc.y = Z2Leser::liesGleitkommazahl("Blickpunkt-Position Y", datei);
-            blickpunkt->position.loc.z = Z2Leser::liesGleitkommazahl("Blickpunkt-Position Z", datei);
+            blickpunkt->position.loc.x = Z2Leser::liesGleitkommazahl("Blickpunkt-Position X");
+            blickpunkt->position.loc.y = Z2Leser::liesGleitkommazahl("Blickpunkt-Position Y");
+            blickpunkt->position.loc.z = Z2Leser::liesGleitkommazahl("Blickpunkt-Position Z");
 
             // Zwischenspeichern der Koordinaten in lokale Variablen -- wenn man die Aufrufe an
             // liesGleitkommazahl in die Konstruktorparameter packt, ist die Aufrufreihenfolge
             // undefiniert.
             koordinate_t x, y, z;
-            x = Z2Leser::liesGleitkommazahl("Blickpunkt-Rotation X", datei);
-            y = Z2Leser::liesGleitkommazahl("Blickpunkt-Rotation Y", datei);
-            z = Z2Leser::liesGleitkommazahl("Blickpunkt-Rotation Z", datei);
+            x = Z2Leser::liesGleitkommazahl("Blickpunkt-Rotation X");
+            y = Z2Leser::liesGleitkommazahl("Blickpunkt-Rotation Y");
+            z = Z2Leser::liesGleitkommazahl("Blickpunkt-Rotation Z");
             blickpunkt->position.setRichtungAlsRot(Punkt3D { x, y, z });
-            blickpunkt->name = Z2Leser::liesZeile("Blickpunkt-Name", datei);
+            blickpunkt->name = Z2Leser::liesZeile("Blickpunkt-Name");
 
             result->blickpunkte.push_back(std::move(blickpunkt));
-            tmp = Z2Leser::liesZeile("Blickpunkte", datei);
         }
 
         // Streckenelemente
         this->aktElement = "Streckenelemente";
-        this->liesStreckenelemente(datei, *result);
+        this->liesStreckenelemente(*result);
 
         // Löse Element-Referenzen auf, soweit möglich.
         for (auto& referenzpunkt : result->referenzpunkte) {
@@ -119,51 +114,40 @@ unique_ptr<Strecke> StrLeser::liesStrDatei(istream& datei) {
     }
 }
 
-unique_ptr<Strecke> StrLeser::liesStrDateiMitDateiname(const string dateiname) {
-    ifstream datei(dateiname);
-    return StrLeser::liesStrDatei(datei);
-}
-
-void StrLeser::liesStreckenelemente(istream& datei, Strecke& strecke) {
+void StrLeser::liesStreckenelemente(Strecke& strecke) {
     // Die Nachfolger-Nummern jedes Streckenelements.
     vector<vector<streckenelement_nr_t>> nachfolgerNrs;
 
-    while (!datei.eof()) {
+    while (this->pos != this->buffer.end()) {
         unique_ptr<Streckenelement> element(new Streckenelement());
         StreckenelementRichtungsInfo& richtung =
             element->richtungsInfo[Streckenelement::RICHTUNG_NORM];
 
-        string tmp = liesZeile("Streckenelement", datei);
-        if (datei.eof()) {
-            // EOF wird nach dem ersten fehlgeschlagenen Lesen gesetzt.
-            break;
-        }
+        element->nr = liesGanzzahl("Streckenelement-Nummer");
 
-        element->nr = konvertiereInGanzzahl("Streckenelement-Nummer", tmp);
+        liesZeile("Kilometrierung");
+        liesZeile("Zählrichtung Kilometrierung");
+        liesZeile("Landschaftsbezeichnung"); // # wiederholt von Vorgänger
 
-        liesZeile("Kilometrierung", datei);
-        liesZeile("Zählrichtung Kilometrierung", datei);
-        liesZeile("Landschaftsbezeichnung", datei); // # wiederholt von Vorgänger
-
-        ereignis_nr_t ereignisNr = liesGanzzahl("Ereignis-Nummer", datei);
+        ereignis_nr_t ereignisNr = liesGanzzahl("Ereignis-Nummer");
         if (ereignisNr != 0) {
             richtung.ereignisse.emplace_back();
             neuesEreignis(ereignisNr, richtung.ereignisse.back());
         }
 
         // Element-Koordinaten
-        element->p1.x = liesGleitkommazahl("Element-Koordinate X1", datei);
-        element->p1.y = liesGleitkommazahl("Element-Koordinate Y1", datei);
-        element->p1.z = liesGleitkommazahl("Element-Koordinate Z1", datei);
-        element->p2.x = liesGleitkommazahl("Element-Koordinate X2", datei);
-        element->p2.y = liesGleitkommazahl("Element-Koordinate Y2", datei);
-        element->p2.z = liesGleitkommazahl("Element-Koordinate Z2", datei);
+        element->p1.x = liesGleitkommazahl("Element-Koordinate X1");
+        element->p1.y = liesGleitkommazahl("Element-Koordinate Y1");
+        element->p1.z = liesGleitkommazahl("Element-Koordinate Z1");
+        element->p2.x = liesGleitkommazahl("Element-Koordinate X2");
+        element->p2.y = liesGleitkommazahl("Element-Koordinate Y2");
+        element->p2.z = liesGleitkommazahl("Element-Koordinate Z2");
 
-        liesZeile("Überhöhung", datei);
+        liesZeile("Überhöhung");
 
         // Nachfolger 1-3
         for (size_t i = 0; i < 3; i++) {
-            streckenelement_nr_t nachfolgerNr = liesGanzzahl("Nachfolger " + to_string(i), datei);
+            streckenelement_nr_t nachfolgerNr = liesGanzzahl("Nachfolger " + to_string(i));
             if (nachfolgerNr != 0) {
                 if (nachfolgerNrs.size() <= element->nr + 1) {
                     nachfolgerNrs.resize(element->nr + 1);
@@ -173,13 +157,13 @@ void StrLeser::liesStreckenelemente(istream& datei, Strecke& strecke) {
             }
         }
 
-        richtung.vmax = liesGleitkommazahl("Element-vMax", datei) / 3.6;
+        richtung.vmax = liesGleitkommazahl("Element-vMax") / 3.6;
         if (strecke.formatMinVersion != "1.1") {
-            liesZeile("Reservierter Streckenelement-Eintrag", datei);
+            liesZeile("Reservierter Streckenelement-Eintrag");
         }
-        liesZeile("Name Bahnsteig/Betriebsstelle", datei);
+        liesZeile("Name Bahnsteig/Betriebsstelle");
 
-        string flags = liesZeile("Funktionsflags", datei);
+        string flags = liesZeile("Funktionsflags");
         for (char& flag : flags) {
             switch (flag) {
                 case 'T':
@@ -206,21 +190,27 @@ void StrLeser::liesStreckenelemente(istream& datei, Strecke& strecke) {
             }
         }
 
-        liesZeile("Oberleitungsspannung", datei);
+        liesZeile("Oberleitungsspannung");
 
         this->aktElement = "Fahrstraßensignal";
-        liesFahrstrSignal(datei, *element, strecke);
+        liesFahrstrSignal(*element, strecke);
 
         if (strecke.formatMinVersion != "1.1") {
-            richtung.signal = liesKombiSignal(datei);
+            if (!this->liesRauteZeilenende()) {
+                richtung.signal = liesKombiSignal();
+            }
         } else {
-            this->aktElement = "Vorsignal";
-            liesVorsignal(datei, *element);
-            this->aktElement = "Hauptsignal";
-            liesHauptsignal(datei, *element);
+            if (!this->liesRauteZeilenende()) {
+                this->aktElement = "Vorsignal";
+                liesVorsignal(*element);
+            }
+            if (!this->liesRauteZeilenende()) {
+                this->aktElement = "Hauptsignal";
+                liesHauptsignal(*element);
+            }
         }
 
-        fahrstr_register_nr_t registerNr = liesGanzzahl("Fahrstraßenregister-Nummer", datei);
+        fahrstr_register_nr_t registerNr = liesGanzzahl("Fahrstraßenregister-Nummer");
         if (registerNr != 0) {
             if (strecke.fahrstrRegister.find(registerNr) == strecke.fahrstrRegister.end()) {
                 unique_ptr<FahrstrRegister> fahrstrRegister(new FahrstrRegister());
@@ -266,139 +256,119 @@ void StrLeser::liesStreckenelemente(istream& datei, Strecke& strecke) {
     }
 }
 
-void StrLeser::liesFahrstrSignal(istream& datei, Streckenelement&, Strecke &strecke) {
-    string tmp = liesZeile(datei);
-    if (tmp == "#") {
+void StrLeser::liesFahrstrSignal(Streckenelement&, Strecke &strecke) {
+    if (this->liesRauteZeilenende()) {
         return;
     }
 
-    konvertiereInGleitkommazahl("Fahrstraßensignal-Standort X", tmp);
-    liesGleitkommazahl("Fahrstraßensignal-Standort Y", datei);
-    liesGleitkommazahl("Fahrstraßensignal-Standort Z", datei);
-    liesGleitkommazahl("Fahrstraßensignal-Standort Rotation X", datei);
-    liesGleitkommazahl("Fahrstraßensignal-Standort Rotation Y", datei);
-    liesGleitkommazahl("Fahrstraßensignal-Standort Rotation Z", datei);
+    liesGleitkommazahl("Fahrstraßensignal-Standort X");
+    liesGleitkommazahl("Fahrstraßensignal-Standort Y");
+    liesGleitkommazahl("Fahrstraßensignal-Standort Z");
+    liesGleitkommazahl("Fahrstraßensignal-Standort Rotation X");
+    liesGleitkommazahl("Fahrstraßensignal-Standort Rotation Y");
+    liesGleitkommazahl("Fahrstraßensignal-Standort Rotation Z");
 
     if (strecke.formatMinVersion != "1.1") {
-        liesZeile("Fahrstraßensignal: ohne Funktion 1", datei);
-        liesZeile("Fahrstraßensignal: ohne Funktion 2", datei);
-        liesZeile("Fahrstraßensignal: ohne Funktion 3", datei);
-        liesZeile("Fahrstraßensignal: ohne Funktion 4", datei);
-        liesZeile("Fahrstraßensignal: ohne Funktion 5", datei);
-        liesZeile("Fahrstraßensignal: ohne Funktion 6", datei);
+        liesZeile("Fahrstraßensignal: ohne Funktion 1");
+        liesZeile("Fahrstraßensignal: ohne Funktion 2");
+        liesZeile("Fahrstraßensignal: ohne Funktion 3");
+        liesZeile("Fahrstraßensignal: ohne Funktion 4");
+        liesZeile("Fahrstraßensignal: ohne Funktion 5");
+        liesZeile("Fahrstraßensignal: ohne Funktion 6");
     }
 
-    liesZeile("Fahrstraßensignal: Landschaftsdatei", datei);
+    liesZeile("Fahrstraßensignal: Landschaftsdatei");
 
     if (strecke.formatMinVersion != "1.1") {
-        liesZeile("Fahrstraßensignal: ohne Funktion 7", datei);
+        liesZeile("Fahrstraßensignal: ohne Funktion 7");
     }
 
-    liesMehrzeiligenString("Fahrstraßensignal: Signalbilder", datei);
+    liesMehrzeiligenString("Fahrstraßensignal: Signalbilder");
 
-    liesZeile("Fahrstraßensignal: Ereignis", datei);
-    liesZeile("Fahrstraßensignal: Angekündigte Geschwindigkeit", datei);
+    liesZeile("Fahrstraßensignal: Ereignis");
+    liesZeile("Fahrstraßensignal: Angekündigte Geschwindigkeit");
 
     if (strecke.formatMinVersion != "1.1") {
-        liesZeile("Fahrstraßensignal: Verweis auf Masterelement", datei);
+        liesZeile("Fahrstraßensignal: Verweis auf Masterelement");
     }
 }
 
-unique_ptr<Signal> StrLeser::liesKombiSignal(istream& datei) {
-    string tmp = liesZeile("Kombinationssignal", datei);
-    if (tmp == "#") {
-        return nullptr;
-    }
-
+unique_ptr<Signal> StrLeser::liesKombiSignal() {
     unique_ptr<Signal> signal(new Signal());
 
-    konvertiereInGleitkommazahl("Kombinationssignal-Standort X1", tmp);
-    liesGleitkommazahl("Kombinationssignal-Standort Y1", datei);
-    liesGleitkommazahl("Kombinationssignal-Standort Z1", datei);
-    liesGleitkommazahl("Kombinationssignal-Standort Rotation X1", datei);
-    liesGleitkommazahl("Kombinationssignal-Standort Rotation Y1", datei);
-    liesGleitkommazahl("Kombinationssignal-Standort Rotation Z1", datei);
-    liesGleitkommazahl("Kombinationssignal-Standort X2", datei);
-    liesGleitkommazahl("Kombinationssignal-Standort Y2", datei);
-    liesGleitkommazahl("Kombinationssignal-Standort Z2", datei);
-    liesGleitkommazahl("Kombinationssignal-Standort Rotation X2", datei);
-    liesGleitkommazahl("Kombinationssignal-Standort Rotation Y2", datei);
-    liesGleitkommazahl("Kombinationssignal-Standort Rotation Z2", datei);
+    liesGleitkommazahl("Kombinationssignal-Standort X1");
+    liesGleitkommazahl("Kombinationssignal-Standort Y1");
+    liesGleitkommazahl("Kombinationssignal-Standort Z1");
+    liesGleitkommazahl("Kombinationssignal-Standort Rotation X1");
+    liesGleitkommazahl("Kombinationssignal-Standort Rotation Y1");
+    liesGleitkommazahl("Kombinationssignal-Standort Rotation Z1");
+    liesGleitkommazahl("Kombinationssignal-Standort X2");
+    liesGleitkommazahl("Kombinationssignal-Standort Y2");
+    liesGleitkommazahl("Kombinationssignal-Standort Z2");
+    liesGleitkommazahl("Kombinationssignal-Standort Rotation X2");
+    liesGleitkommazahl("Kombinationssignal-Standort Rotation Y2");
+    liesGleitkommazahl("Kombinationssignal-Standort Rotation Z2");
 
-    liesMehrzeiligenString("Kombinationssignal-Landschaftsdateien", datei);
-    signal->betriebsstelle = liesZeile("Kombinationssignal-Blockname", datei);
-    signal->signalbezeichnung = liesZeile("Kombinationssignal-Gleis", datei);
+    liesMehrzeiligenString("Kombinationssignal-Landschaftsdateien");
+    signal->betriebsstelle = liesZeile("Kombinationssignal-Blockname");
+    signal->signalbezeichnung = liesZeile("Kombinationssignal-Gleis");
 
-    size_t anzahlHsigZeilen = liesGanzzahl("Kombinationssignal Anzahl Hsig-Zeilen", datei) + 1;
-    size_t anzahlVsigSpalten = liesGanzzahl("Kombinationssignal Anzahl Vsig-Spalten", datei) + 1;
+    size_t anzahlHsigZeilen = liesGanzzahl("Kombinationssignal Anzahl Hsig-Zeilen") + 1;
+    size_t anzahlVsigSpalten = liesGanzzahl("Kombinationssignal Anzahl Vsig-Spalten") + 1;
 
     this->aktElement = "Kombinationssignal: Fahrziele, Vsig-Geschwindigkeiten, Matrix, Ersatzzignal";
     for (size_t i = 0; i < 5 * anzahlHsigZeilen + anzahlVsigSpalten + 1 +
             6 * anzahlHsigZeilen * anzahlVsigSpalten + 7; i++) {
-        liesZeile(datei);
+        liesZeile();
     };
 
-    liesMehrzeiligenString("Kombinationssignal: Zugeordnete Vorsignale", datei);
-    liesZeile("Kombinationssignal: Reservierter Eintrag", datei);
+    liesMehrzeiligenString("Kombinationssignal: Zugeordnete Vorsignale");
+    liesZeile("Kombinationssignal: Reservierter Eintrag");
 
     return signal;
 }
 
-void StrLeser::liesHauptsignal(istream& datei, Streckenelement&) {
-    string tmp = liesZeile("Hauptsignal", datei);
-    if (tmp == "#") {
-        return;
+void StrLeser::liesHauptsignal(Streckenelement&) {
+    liesGleitkommazahl("Hauptsignal-Standort X");
+    liesGleitkommazahl("Hauptsignal-Standort Y");
+    liesGleitkommazahl("Hauptsignal-Standort Z");
+    liesGleitkommazahl("Hauptsignal-Standort Rotation X");
+    liesGleitkommazahl("Hauptsignal-Standort Rotation Y");
+    liesGleitkommazahl("Hauptsignal-Standort Rotation Z");
+    liesMehrzeiligenString("Hauptsignal-Landschaftsdateien");
+
+    liesZeile("Hauptsignal: Reservierter Eintrag 1");
+    liesZeile("Hauptsignal-Blockname");
+    liesZeile("Hauptsignal-Gleis");
+
+    while (!this->liesRauteZeilenende()) {
+        liesZeile("Hauptsignal-Fahrstraße: Blockname");
+        liesZeile("Hauptsignal-Fahrstraße: Gleis");
+        liesZeile("Hauptsignal-Fahrstraße: Signalbild-Nr");
+        liesZeile("Hauptsignal-Fahrstraße: vMax");
+        liesZeile("Hauptsignal-Fahrstraße: Reservierter Eintrag");
     }
 
-    konvertiereInGleitkommazahl("Hauptsignal-Standort X", tmp);
-    liesGleitkommazahl("Hauptsignal-Standort Y", datei);
-    liesGleitkommazahl("Hauptsignal-Standort Z", datei);
-    liesGleitkommazahl("Hauptsignal-Standort Rotation X", datei);
-    liesGleitkommazahl("Hauptsignal-Standort Rotation Y", datei);
-    liesGleitkommazahl("Hauptsignal-Standort Rotation Z", datei);
-    liesMehrzeiligenString("Hauptsignal-Landschaftsdateien", datei);
-
-    liesZeile("Hauptsignal: Reservierter Eintrag 1", datei);
-    liesZeile("Hauptsignal-Blockname", datei);
-    liesZeile("Hauptsignal-Gleis", datei);
-
-    tmp = liesZeile("Hauptsignal-Fahrstraßen: Blockname oder Endmarke", datei);
-    while (tmp != "#") {
-        // tmp == Blockname
-        liesZeile("Hauptsignal-Fahrstraße: Gleis", datei);
-        liesZeile("Hauptsignal-Fahrstraße: Signalbild-Nr", datei);
-        liesZeile("Hauptsignal-Fahrstraße: vMax", datei);
-        liesZeile("Hauptsignal-Fahrstraße: Reservierter Eintrag", datei);
-        tmp = liesZeile("Hauptsignal-Fahrstraßen", datei);
-    }
-
-    liesMehrzeiligenString("Hauptsignal: Zugeordnete Vorsignale", datei);
-    liesZeile("Hauptsignal: Reservierter Eintrag 2", datei);
+    liesMehrzeiligenString("Hauptsignal: Zugeordnete Vorsignale");
+    liesZeile("Hauptsignal: Reservierter Eintrag 2");
 }
 
-void StrLeser::liesVorsignal(istream& datei, Streckenelement&) {
-    string tmp = liesZeile("Vorsignal", datei);
-    if (tmp == "#") {
-        return;
+void StrLeser::liesVorsignal(Streckenelement&) {
+    liesGleitkommazahl("Vorsignal-Standort X");
+    liesGleitkommazahl("Vorsignal-Standort Y");
+    liesGleitkommazahl("Vorsignal-Standort Z");
+    liesGleitkommazahl("Vorsignal-Standort Rotation X");
+    liesGleitkommazahl("Vorsignal-Standort Rotation Y");
+    liesGleitkommazahl("Vorsignal-Standort Rotation Z");
+    liesZeile("Vorsignal-Landschaftsdatei");
+
+    while (!this->liesRauteZeilenende()) {
+        liesZeile("Vorsignal-Signalbild: Landschaft");
+        liesGanzzahl("Vorsignal-Signalbild: Ereignis");
+        liesGanzzahl("Vorsignal-Signalbild: vMax");
     }
 
-    konvertiereInGleitkommazahl("Vorsignal-Standort X", tmp);
-    liesGleitkommazahl("Vorsignal-Standort Y", datei);
-    liesGleitkommazahl("Vorsignal-Standort Z", datei);
-    liesGleitkommazahl("Vorsignal-Standort Rotation X", datei);
-    liesGleitkommazahl("Vorsignal-Standort Rotation Y", datei);
-    liesGleitkommazahl("Vorsignal-Standort Rotation Z", datei);
-    liesZeile("Vorsignal-Landschaftsdatei", datei);
-
-    tmp = liesZeile("Vorsignal-Signalbilder: Landschaft oder Endmarke", datei);
-    while (tmp != "#") {
-        // tmp == Landschaft
-        liesGanzzahl("Vorsignal-Signalbild: Ereignis", datei);
-        liesGanzzahl("Vorsignal-Signalbild: vMax", datei);
-        tmp = liesZeile("Vorsignal-Signalbilder", datei);
-    }
-
-    liesZeile("Vorsignal dunkel bei Halt am Hsig", datei);
+    liesZeile("Vorsignal dunkel bei Halt am Hsig");
 }
 
 void StrLeser::neuesEreignis(ereignis_nr_t ereignisNr, Ereignis& ereignis) {

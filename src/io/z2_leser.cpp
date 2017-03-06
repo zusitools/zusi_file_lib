@@ -5,6 +5,7 @@
 
 #include <boost/spirit/include/qi_real.hpp>
 #include <boost/spirit/include/qi_int.hpp>
+#include <boost/spirit/include/qi_eol.hpp>
 
 #include <io/z2_leser.hpp>
 
@@ -23,94 +24,117 @@ struct decimal_comma_real_policies : qi::real_policies<T>
     }
 };
 
-string Z2Leser::liesZeile(istream& datei) {
-    string result;
-    getline(datei, result);
-#ifdef DEBUG
-    cout << this->zeilenNr << ":" << aktElement << ":" << result << endl;
-#endif
-    this->zeilenNr++;
-    auto substrLaenge = result.size();
-    while (substrLaenge > 0 &&
-            (result.at(substrLaenge - 1) == '\r' || result.at(substrLaenge - 1) == '\n')) {
-        substrLaenge--;
+bool Z2Parser::liesZeilenende() {
+    bool found = false;
+    if (this->pos != this->buffer.end() && *this->pos == '\r') {
+        found = true;
+        ++(this->pos);
     }
-    return result.substr(0, substrLaenge);
+    if (this->pos != this->buffer.end() && *this->pos == '\n') {
+        found = true;
+        ++(this->pos);
+    }
+    if (found) {
+        this->zeilenNr++;
+    }
+    return found;
 }
 
-string Z2Leser::liesZeile(const string& aktElement, istream& datei) {
+bool Z2Parser::liesRauteZeilenende() {
+    if (this->pos != this->buffer.end() && *this->pos == '#') {
+        ++(this->pos);
+        if (!this->liesZeilenende()) {
+            throw invalid_argument("Zusaetzliche Zeichen am Ende der Zeile.");
+        }
+        return true;
+    }
+    return false;
+}
+
+std::string Z2Parser::liesZeile() {
+    std::vector<char>::const_iterator end = this->pos;
+    while (end != this->buffer.end() && *end != '\r' && *end != '\n') {
+        ++end;
+    }
+    std::string result(this->pos, end);
+    this->pos = end;
+    this->liesZeilenende();
+    return result;
+}
+
+string Z2Parser::liesZeile(const string& aktElement) {
     this->aktElement = aktElement;
-    return liesZeile(datei);
+    std::string result = this->liesZeile();
+#ifdef DEBUG
+    cout << this->zeilenNr << ":" << this->aktElement << ":" << result << endl;
+#endif
+    return result;
 }
 
-int_fast32_t Z2Leser::liesGanzzahl(istream &datei) {
-    return Z2Leser::konvertiereInGanzzahl(Z2Leser::liesZeile(datei));
-}
-
-int_fast32_t Z2Leser::liesGanzzahl(const string& aktElement, istream& datei) {
-    this->aktElement = aktElement;
-    return liesGanzzahl(datei);
-}
-
-int_fast32_t Z2Leser::konvertiereInGanzzahl(string zeile) {
-    auto begin = zeile.begin(), end = zeile.end();
-    int_fast32_t result;
-    if (!qi::parse(begin, end, qi::int_, result) || (begin != end)) {
-        throw invalid_argument("'" + zeile + "' kann nicht in eine Ganzzahl konvertiert werden.");
+int_fast32_t Z2Parser::liesGanzzahl() {
+    auto it = this->pos;
+    double result;
+    if (!qi::parse(it, this->buffer.cend(), qi::int_, result)) {
+        throw invalid_argument("Zeile kann nicht in eine Ganzzahl konvertiert werden. Gelesener Teil: '" + std::string(this->pos, it) + "'");
+    }
+    this->pos = it;
+    if (!this->liesZeilenende()) {
+        throw invalid_argument("Zusaetzliche Zeichen am Ende der Zeile.");
     }
     return result;
 }
 
-int_fast32_t Z2Leser::konvertiereInGanzzahl(const string& aktElement, string zeile) {
+int_fast32_t Z2Parser::liesGanzzahl(const string& aktElement) {
     this->aktElement = aktElement;
-    return konvertiereInGanzzahl(zeile);
+    int_fast32_t result = this->liesGanzzahl();
+#ifdef DEBUG
+    cout << this->zeilenNr-1 << ":" << this->aktElement << ":" << result << endl;
+#endif
+    return result;
 }
 
-double Z2Leser::liesGleitkommazahl(istream& datei) {
-    return Z2Leser::konvertiereInGleitkommazahl(Z2Leser::liesZeile(datei));
-}
-
-double Z2Leser::liesGleitkommazahl(const string& aktElement, istream& datei) {
-    this->aktElement = aktElement;
-    return liesGleitkommazahl(datei);
-}
-
-double Z2Leser::konvertiereInGleitkommazahl(string zeile) {
-    auto begin = zeile.begin(), end = zeile.end();
+double Z2Parser::liesGleitkommazahl() {
+    auto it = this->pos;
     double result;
     qi::real_parser<double, decimal_comma_real_policies<double> > parser;
-    if (!qi::parse(begin, end, parser, result) || (begin != end)) {
-        throw invalid_argument("'" + zeile + "' kann nicht in eine Gleitkommazahl konvertiert werden.");
+    if (!qi::parse(it, this->buffer.cend(), parser, result)) {
+        throw invalid_argument("Zeile kann nicht in eine Gleitkommazahl konvertiert werden. Gelesener Teil: '" + std::string(this->pos, it) + "'");
+    }
+    this->pos = it;
+    if (!this->liesZeilenende()) {
+        throw invalid_argument("Zusaetzliche Zeichen am Ende der Zeile.");
     }
     return result;
 }
 
-double Z2Leser::konvertiereInGleitkommazahl(const string& aktElement, string zeile) {
+double Z2Parser::liesGleitkommazahl(const string& aktElement) {
     this->aktElement = aktElement;
-    return konvertiereInGleitkommazahl(zeile);
+    double result = this->liesGleitkommazahl();
+#ifdef DEBUG
+    cout << this->zeilenNr << ":" << this->aktElement << ":" << result << endl;
+#endif
+    return result;
 }
 
-string Z2Leser::liesMehrzeiligenString(istream& datei) {
+string Z2Parser::liesMehrzeiligenString() {
     string zeile;
     string result;
     bool ersteZeile = true;
 
-    do {
-      zeile = Z2Leser::liesZeile(datei);
-      if (zeile.compare("#") == 0) {
-        break;
-      }
-      if (!ersteZeile) {
-        result.append("\n");
-      }
-      result.append(zeile);
-      ersteZeile = false;
-    } while (!datei.eof());
+    while (!this->liesRauteZeilenende()) {
+        zeile = this->liesZeile(this->aktElement);
+        if (ersteZeile) {
+            ersteZeile = false;
+        } else {
+            result.append("\n");
+        }
+        result.append(zeile);
+    }
 
     return result;
 }
 
-string Z2Leser::liesMehrzeiligenString(const string& aktElement, istream& datei) {
+string Z2Parser::liesMehrzeiligenString(const string& aktElement) {
     this->aktElement = aktElement;
-    return liesMehrzeiligenString(datei);
+    return this->liesMehrzeiligenString();
 }
