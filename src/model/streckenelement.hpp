@@ -113,9 +113,13 @@ struct StreckenelementUndRichtung {
 
     _ZUSI_FILE_LIB_INLINE bool hatNachfolger(const nachfolger_index_t index = 0) const;
 
+    _ZUSI_FILE_LIB_INLINE size_t anzahlNachfolger() const;
+
     _ZUSI_FILE_LIB_INLINE StreckenelementUndRichtung vorgaenger(const nachfolger_index_t index = 0) const;
 
     _ZUSI_FILE_LIB_INLINE bool hatVorgaenger(const nachfolger_index_t index = 0) const;
+
+    _ZUSI_FILE_LIB_INLINE size_t anzahlVorgaenger() const;
 
     _ZUSI_FILE_LIB_INLINE StreckenelementUndRichtung gegenrichtung() const;
 

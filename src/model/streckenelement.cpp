@@ -50,6 +50,10 @@ bool StreckenelementUndRichtung::hatNachfolger(const nachfolger_index_t index) c
     return index < nachfolger.size() && nachfolger[index] != nullptr;
 }
 
+size_t StreckenelementUndRichtung::anzahlNachfolger() const {
+    return this->streckenelement->nachfolgerElemente[this->richtung].size();
+}
+
 StreckenelementUndRichtung StreckenelementUndRichtung::vorgaenger(const nachfolger_index_t index) const {
     auto gegenrichtung = Streckenelement::richtungUmkehren(this->richtung);
 
@@ -62,6 +66,10 @@ StreckenelementUndRichtung StreckenelementUndRichtung::vorgaenger(const nachfolg
 bool StreckenelementUndRichtung::hatVorgaenger(const nachfolger_index_t index) const {
     auto& nachfolger = this->streckenelement->nachfolgerElemente[Streckenelement::richtungUmkehren(this->richtung)];
     return index < nachfolger.size() && nachfolger[index] != nullptr;
+}
+
+size_t StreckenelementUndRichtung::anzahlVorgaenger() const {
+    return this->streckenelement->nachfolgerElemente[Streckenelement::richtungUmkehren(this->richtung)].size();
 }
 
 StreckenelementUndRichtung StreckenelementUndRichtung::gegenrichtung() const {
