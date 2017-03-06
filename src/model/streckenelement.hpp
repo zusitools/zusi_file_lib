@@ -1,8 +1,6 @@
 #ifndef SRC_MODEL_STRECKENELEMENT_HPP
 #define SRC_MODEL_STRECKENELEMENT_HPP
 
-using namespace std;
-
 #include <memory>
 #include <set>
 #include <string>
@@ -57,7 +55,7 @@ enum StreckenelementFlag {
 struct StreckenelementRichtungsInfo {
 
     // Durch das Befahren ausgelöste Ereignisse.
-    vector<Ereignis> ereignisse;
+    std::vector<Ereignis> ereignisse;
 
     // Die Nummer des zugeordneten Fahrstraßenregisters.
     FahrstrRegister* fahrstrRegister;
@@ -72,10 +70,10 @@ struct StreckenelementRichtungsInfo {
     bool kmAufsteigend;
 
     // Fahrstraßensignal (nur Zusi 2)
-    unique_ptr<FahrstrassenSignal> fahrstrSignal;
+    std::unique_ptr<FahrstrassenSignal> fahrstrSignal;
 
     // (Kombinations-)Signal
-    unique_ptr<Signal> signal;
+    std::unique_ptr<Signal> signal;
 
     // TODO: Koppelweiche
 
@@ -105,7 +103,6 @@ struct Streckenelement;
 // Ein Verweis auf eine Richtung eines Streckenelements.
 // Auf die Properties und Methoden des Streckenelements kann mit dem Operator -> zugegriffen werden.
 struct StreckenelementUndRichtung {
-public:
     // Das Streckenelement, auf das sich die Referenz bezieht.
     Streckenelement* streckenelement;
 
@@ -187,17 +184,17 @@ struct Streckenelement {
 
     // Geordnete Liste von Nachfolgern in jeder Richtung.
     // Die Nachfolgerrichtung kann mittels "anschluss" berechnet werden.
-    vector<Streckenelement*> nachfolgerElemente[2];
+    std::vector<Streckenelement*> nachfolgerElemente[2];
 
     // Verweise auf nicht aufgeloeste Nachfolgerelemente;
-    vector<StreckenelementAufloeseInfo> nachfolgerElementeUnaufgeloest;
+    std::vector<StreckenelementAufloeseInfo> nachfolgerElementeUnaufgeloest;
 
     // Anschluss-Informationen für Norm- und Gegenrichtung.
     // Eine 1 in Bit Nr. i bedeutet, dass Nachfolger i in Gegenrichtung liegt.
     uint8_t anschluss[2];
 
     // Die Funktionsflags.
-    set<StreckenelementFlag> flags;
+    std::set<StreckenelementFlag> flags;
 
     // ---
 
