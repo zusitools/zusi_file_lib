@@ -1,7 +1,7 @@
 #include "streckenelement.hpp"
 
-void Streckenelement::setzeNachfolger(const nachfolger_index_t index,
-        const streckenelement_richtung_t richtung,
+void Streckenelement::setzeNachfolger(nachfolger_index_t index,
+        streckenelement_richtung_t richtung,
         Streckenelement& nachfolger) {
     if (index >= nachfolgerElemente[richtung].size()) {
         nachfolgerElemente[richtung].resize(index + 1);
@@ -10,10 +10,10 @@ void Streckenelement::setzeNachfolger(const nachfolger_index_t index,
     nachfolgerElemente[richtung].at(index) = &nachfolger;
 }
 
-void Streckenelement::setzeNachfolger(const nachfolger_index_t index,
-        const streckenelement_richtung_t richtung,
+void Streckenelement::setzeNachfolger(nachfolger_index_t index,
+        streckenelement_richtung_t richtung,
         Streckenelement& nachfolger,
-        const streckenelement_richtung_t nachfolgerRichtung) {
+        streckenelement_richtung_t nachfolgerRichtung) {
 
     if (nachfolgerRichtung == Streckenelement::RICHTUNG_GEGEN) {
         this->anschluss[richtung] |= 1 << index;
@@ -21,16 +21,16 @@ void Streckenelement::setzeNachfolger(const nachfolger_index_t index,
     this->setzeNachfolger(index, richtung, nachfolger);
 }
 
-void Streckenelement::setzeVorgaenger(const nachfolger_index_t index,
-        const streckenelement_richtung_t richtung,
+void Streckenelement::setzeVorgaenger(nachfolger_index_t index,
+        streckenelement_richtung_t richtung,
         Streckenelement& vorgaenger) {
     setzeNachfolger(index, Streckenelement::richtungUmkehren(richtung), vorgaenger);
 }
 
-void Streckenelement::setzeVorgaenger(const nachfolger_index_t index,
-        const streckenelement_richtung_t richtung,
+void Streckenelement::setzeVorgaenger(nachfolger_index_t index,
+        streckenelement_richtung_t richtung,
         Streckenelement& vorgaenger,
-        const streckenelement_richtung_t vorgaengerRichtung) {
+        streckenelement_richtung_t vorgaengerRichtung) {
 
     if (vorgaengerRichtung == Streckenelement::RICHTUNG_NORM) {
         this->anschluss[Streckenelement::richtungUmkehren(richtung)] |= 1 << index;

@@ -219,14 +219,20 @@ struct Streckenelement {
         return { this->richtung(Streckenelement::RICHTUNG_GEGEN), this->richtung(Streckenelement::RICHTUNG_NORM) };
     }
 
-    _ZUSI_FILE_LIB_INLINE void setzeNachfolger(const nachfolger_index_t index, const streckenelement_richtung_t richtung,
+    _ZUSI_FILE_LIB_INLINE void setzeNachfolger(nachfolger_index_t index,
+            streckenelement_richtung_t richtung,
             Streckenelement& nachfolger);
-    _ZUSI_FILE_LIB_INLINE void setzeNachfolger(const nachfolger_index_t index, const streckenelement_richtung_t richtung,
-            Streckenelement& nachfolger, const streckenelement_richtung_t nachfolgerRichtung);
-    _ZUSI_FILE_LIB_INLINE void setzeVorgaenger(const nachfolger_index_t index, const streckenelement_richtung_t richtung,
+    _ZUSI_FILE_LIB_INLINE void setzeNachfolger(nachfolger_index_t index,
+            streckenelement_richtung_t richtung,
+            Streckenelement& nachfolger,
+            streckenelement_richtung_t nachfolgerRichtung);
+    _ZUSI_FILE_LIB_INLINE void setzeVorgaenger(nachfolger_index_t index,
+            streckenelement_richtung_t richtung,
             Streckenelement& vorgaenger);
-    _ZUSI_FILE_LIB_INLINE void setzeVorgaenger(const nachfolger_index_t index, const streckenelement_richtung_t richtung,
-            Streckenelement& vorgaenger, const streckenelement_richtung_t vorgaengerRichtung);
+    _ZUSI_FILE_LIB_INLINE void setzeVorgaenger(nachfolger_index_t index,
+            streckenelement_richtung_t richtung,
+            Streckenelement& vorgaenger,
+            streckenelement_richtung_t vorgaengerRichtung);
 
     inline bool hatFktFlag(StreckenelementFlag flag) const { return flags.find(flag) != flags.end(); }
 
