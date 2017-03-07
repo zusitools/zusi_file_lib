@@ -38,6 +38,14 @@ void Streckenelement::setzeVorgaenger(nachfolger_index_t index,
     this->setzeVorgaenger(index, richtung, vorgaenger);
 }
 
+std::vector<Streckenelement*>& StreckenelementUndRichtung::nachfolgerElemente() const {
+    return this->streckenelement->nachfolgerElemente[this->richtung];
+}
+
+uint8_t StreckenelementUndRichtung::anschluss() const {
+    return this->streckenelement->anschluss[this->richtung];
+}
+
 StreckenelementUndRichtung StreckenelementUndRichtung::nachfolger(const nachfolger_index_t index) const {
     return StreckenelementUndRichtung {
         this->streckenelement->nachfolgerElemente[this->richtung].at(index),

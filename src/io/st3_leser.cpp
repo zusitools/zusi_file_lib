@@ -91,27 +91,22 @@ std::string liesDateiDateiname(xml_node<> &node) {
 }
 
 void setzeVorgaengerNachfolger(Strecke &strecke) {
-    for (auto& streckenelement : strecke.streckenelemente) {
-        if (!streckenelement) continue;
-        for (size_t idx = 0, len = streckenelement->nachfolgerElementeUnaufgeloest.size(); idx < len; idx++) {
-            auto& aufloeseInfo = streckenelement->nachfolgerElementeUnaufgeloest[len - 1 - idx];
-            if (aufloeseInfo.modul.empty()) {
-                auto& nachfolger = strecke.streckenelemente.at(aufloeseInfo.nr.nr_se); // TODO Fehlerbehandlung
+    strecke.aufloeseInfo.erase(std::remove_if(strecke.aufloeseInfo.begin(), strecke.aufloeseInfo.end(),
+        [&strecke](StreckenelementAufloeseInfo& ai) {
+            if (ai.nachfolger_index >= ai.element_richtung.nachfolgerElemente().size()) {
+                ai.element_richtung.nachfolgerElemente().resize(ai.nachfolger_index + 1);
+            }
+            if (!ai.anderes_modul) {
+                auto& nachfolger = strecke.streckenelemente.at(ai.ref.nr_se); // TODO Fehlerbehandlung
                 if (nachfolger) {
-                    streckenelement->setzeNachfolger(aufloeseInfo.nachfolger_index, aufloeseInfo.richtung, *nachfolger);
-                    streckenelement->nachfolgerElementeUnaufgeloest.erase(streckenelement->nachfolgerElementeUnaufgeloest.begin() + (len - 1 - idx));
-                } else {
-                    if (aufloeseInfo.nachfolger_index >= streckenelement->nachfolgerElemente[aufloeseInfo.richtung].size()) {
-                        streckenelement->nachfolgerElemente[aufloeseInfo.richtung].resize(aufloeseInfo.nachfolger_index + 1);
-                    }
+                    ai.element_richtung.nachfolgerElemente()[ai.nachfolger_index] = nachfolger.get();
+                    return true;
                 }
             } else {
-                if (aufloeseInfo.nachfolger_index >= streckenelement->nachfolgerElemente[aufloeseInfo.richtung].size()) {
-                    streckenelement->nachfolgerElemente[aufloeseInfo.richtung].resize(aufloeseInfo.nachfolger_index + 1);
-                }
+                // TODO auch Anschluss aktualisieren
             }
-        }
-    }
+            return false;
+    }), strecke.aufloeseInfo.end());
 }
 
 void liesRichtungsInfo(xml_node<>& ri_node, Streckenelement& element, const streckenelement_richtung_t richtung) {
@@ -266,8 +261,7 @@ unique_ptr<Strecke> St3Leser::parseWurzel(xml_node<>& wurzel) {
                     }
 
                     if (!aufgeloest) {
-                        element->nachfolgerElementeUnaufgeloest.push_back(
-                                StreckenelementAufloeseInfo(Streckenelement::RICHTUNG_NORM, nachnorm_idx, nachfolgerNr));
+                        strecke->aufloeseInfo.emplace_back(element->normrichtung(), nachnorm_idx, nachfolgerNr);
                     }
                     nachnorm_idx++;
 
@@ -283,8 +277,7 @@ unique_ptr<Strecke> St3Leser::parseWurzel(xml_node<>& wurzel) {
                     }
 
                     if (!aufgeloest) {
-                        element->nachfolgerElementeUnaufgeloest.push_back(
-                                StreckenelementAufloeseInfo(Streckenelement::RICHTUNG_GEGEN, nachgegen_idx, nachfolgerNr));
+                        strecke->aufloeseInfo.emplace_back(element->gegenrichtung(), nachgegen_idx, nachfolgerNr);
                     }
                     nachgegen_idx++;
 
@@ -292,16 +285,14 @@ unique_ptr<Strecke> St3Leser::parseWurzel(xml_node<>& wurzel) {
                     // TODO Modul
                     unsigned int nachfolgerNr = liesUint(*n, "Nr");
                     std::string dateiname = liesDateiDateiname(*n);
-                    element->nachfolgerElementeUnaufgeloest.push_back(
-                        StreckenelementAufloeseInfo(Streckenelement::RICHTUNG_NORM, nachnorm_idx, dateiname, nachfolgerNr));
+                    strecke->aufloeseInfo.emplace_back(element->normrichtung(), nachgegen_idx, dateiname, nachfolgerNr);
                     nachnorm_idx++;
 
                 } else if (!strncmp(n->name(), "NachGegenModul", n_namesize)) {
                     // TODO Modul
                     unsigned int nachfolgerNr = liesUint(*n, "Nr");
                     std::string dateiname = liesDateiDateiname(*n);
-                    element->nachfolgerElementeUnaufgeloest.push_back(
-                        StreckenelementAufloeseInfo(Streckenelement::RICHTUNG_GEGEN, nachgegen_idx, dateiname, nachfolgerNr));
+                    strecke->aufloeseInfo.emplace_back(element->gegenrichtung(), nachgegen_idx, dateiname, nachfolgerNr);
                     nachgegen_idx++;
 
                 // Richtungsinfo

@@ -80,34 +80,6 @@ struct StreckenelementRichtungsInfo {
     StreckenelementRichtungsInfo() : ereignisse(), fahrstrRegister(nullptr), vmax(-1.0f), km(0.0f), kmAufsteigend(false), fahrstrSignal(), signal() {}
 };
 
-// Ein Verweis auf ein evtl. (noch nicht geladenes) Streckenelement.
-// Die Nummer ist entweder eine Streckenelementnummer (wenn der Verweis im aktuellen Modul liegt)
-// oder eine Referenzpunkt-Nummer (wenn der Verweis in einem anderen Modul liegt).
-struct StreckenelementAufloeseInfo {
-    streckenelement_richtung_t richtung;
-    nachfolger_index_t nachfolger_index;
-    std::string modul;
-    union {
-        streckenelement_nr_t nr_se;
-        referenz_nr_t nr_ref;
-    } nr;
-
-    StreckenelementAufloeseInfo(streckenelement_richtung_t richtung,
-            nachfolger_index_t nachfolger_index,
-            streckenelement_nr_t nr_se)
-                : richtung(richtung), nachfolger_index(nachfolger_index), modul() {
-        nr.nr_se = nr_se;
-    }
-
-    StreckenelementAufloeseInfo(streckenelement_richtung_t richtung,
-            nachfolger_index_t nachfolger_index,
-            const std::string& modul,
-            referenz_nr_t nr_ref)
-                : richtung(richtung), nachfolger_index(nachfolger_index), modul(modul) {
-        nr.nr_ref = nr_ref;
-    }
-};
-
 struct Streckenelement;
 
 // Ein Verweis auf eine Richtung eines Streckenelements.
@@ -118,6 +90,10 @@ struct StreckenelementUndRichtung {
 
     // Die Richtung des Streckenelements, auf das sich die Referenz bezieht.
     streckenelement_richtung_t richtung;
+
+    _ZUSI_FILE_LIB_INLINE std::vector<Streckenelement*>& nachfolgerElemente() const;
+
+    _ZUSI_FILE_LIB_INLINE uint8_t anschluss() const;
 
     _ZUSI_FILE_LIB_INLINE StreckenelementUndRichtung nachfolger(const nachfolger_index_t index = 0) const;
 
@@ -142,6 +118,10 @@ struct StreckenelementUndRichtung {
     }
     bool operator!=(const StreckenelementUndRichtung &other) const {
       return !(*this == other);
+    }
+
+    operator bool() const {
+        return this->streckenelement != nullptr;
     }
 
     Streckenelement* operator->() const {
@@ -198,10 +178,9 @@ struct Streckenelement {
 
     // Geordnete Liste von Nachfolgern in jeder Richtung.
     // Die Nachfolgerrichtung kann mittels "anschluss" berechnet werden.
+    // Ein Nachfolger kann auch nullptr sein, falls die Verknuepfung noch nicht
+    // aufgeloest wurde.
     std::vector<Streckenelement*> nachfolgerElemente[2];
-
-    // Verweise auf nicht aufgeloeste Nachfolgerelemente;
-    std::vector<StreckenelementAufloeseInfo> nachfolgerElementeUnaufgeloest;
 
     // Anschluss-Informationen für Norm- und Gegenrichtung.
     // Eine 1 in Bit Nr. i bedeutet, dass Nachfolger i in Gegenrichtung liegt.
@@ -253,7 +232,7 @@ struct Streckenelement {
     }
 
     explicit Streckenelement() : nr(), p1(), p2(), ueberhoehung(), kruemmung(), volt(), drahthoehe(), oberbauName(),
-        fahrleitungTyp(), zwangshelligkeit(), vTrassierung(), richtungsInfo(), nachfolgerElemente(), nachfolgerElementeUnaufgeloest(),
+        fahrleitungTyp(), zwangshelligkeit(), vTrassierung(), richtungsInfo(), nachfolgerElemente(),
         anschluss(), flags() {}
 };
 
