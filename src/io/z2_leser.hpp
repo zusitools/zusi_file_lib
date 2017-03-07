@@ -22,32 +22,32 @@ protected:
     _ZUSI_FILE_LIB_INLINE bool liesRauteZeilenende();
 
     // Liest eine Zeile aus einem Stream und entfernt Zeilenende-Zeichen.
-    _ZUSI_FILE_LIB_INLINE string liesZeile();
-    _ZUSI_FILE_LIB_INLINE string liesZeile(const string& aktElement);
+    _ZUSI_FILE_LIB_INLINE std::pair<std::vector<char>::const_iterator, std::vector<char>::const_iterator> liesZeile();
+    _ZUSI_FILE_LIB_INLINE std::pair<std::vector<char>::const_iterator, std::vector<char>::const_iterator> liesZeile(const char* aktElement);
 
     // Liest eine Zeile mit einem Integer-Wert aus einem Stream.
     // Wirft std::invalid_argument, wenn keine Konversion durchgeführt werden konnte.
     _ZUSI_FILE_LIB_INLINE int_fast32_t liesGanzzahl();
-    _ZUSI_FILE_LIB_INLINE int_fast32_t liesGanzzahl(const string& aktElement);
+    _ZUSI_FILE_LIB_INLINE int_fast32_t liesGanzzahl(const char* aktElement);
     
     // Liest einen String mit einem Integer-Wert in eine Ganzzahl.
     _ZUSI_FILE_LIB_INLINE int_fast32_t konvertiereInGanzzahl(string zeile);
-    _ZUSI_FILE_LIB_INLINE int_fast32_t konvertiereInGanzzahl(const string& aktElement, string zeile);
+    _ZUSI_FILE_LIB_INLINE int_fast32_t konvertiereInGanzzahl(const char* aktElement, string zeile);
 
     // Liest eine Zeile mit einem Gleitkomma-Wert (Dezimalkomma) aus einem Stream.
     // Wirft std::invalid_argument, wenn keine Konversion durchgeführt werden konnte.
     _ZUSI_FILE_LIB_INLINE double liesGleitkommazahl();
-    _ZUSI_FILE_LIB_INLINE double liesGleitkommazahl(const string& aktElement);
+    _ZUSI_FILE_LIB_INLINE double liesGleitkommazahl(const char* aktElement);
 
     // Konvertiert einen String mit Dezimalkomma in eine Gleitkommazahl.
     _ZUSI_FILE_LIB_INLINE double konvertiereInGleitkommazahl(string zeile);
-    _ZUSI_FILE_LIB_INLINE double konvertiereInGleitkommazahl(const string& aktElement, string zeile);
+    _ZUSI_FILE_LIB_INLINE double konvertiereInGleitkommazahl(const char* aktElement, string zeile);
 
     // Liest einen durch "#" abgeschlossenen mehrzeiligen String aus der Datei. Das '#' und das
     // letzte Zeilenende werden dabei nicht in den String aufgenommen. Zeilenenden werden auf '\n'
     // normiert.
     _ZUSI_FILE_LIB_INLINE string liesMehrzeiligenString();
-    _ZUSI_FILE_LIB_INLINE string liesMehrzeiligenString(const string& aktElement);
+    _ZUSI_FILE_LIB_INLINE string liesMehrzeiligenString(const char* aktElement);
 
     // Die einzulesende Datei
     std::vector<char> buffer;
@@ -58,8 +58,8 @@ protected:
     // Die aktuelle Zeilennummer innerhalb der Datei.
     size_t zeilenNr;
 
-    // Beschreibung des aktuell gelesenen Elements.
-    string aktElement;
+    // Beschreibung des aktuell gelesenen Elements (zum Debuggen).
+    const char* aktElement;
 };
 
 template<typename R>

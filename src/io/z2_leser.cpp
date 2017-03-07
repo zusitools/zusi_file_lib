@@ -51,22 +51,22 @@ bool Z2Parser::liesRauteZeilenende() {
     return false;
 }
 
-std::string Z2Parser::liesZeile() {
+std::pair<std::vector<char>::const_iterator, std::vector<char>::const_iterator> Z2Parser::liesZeile() {
     std::vector<char>::const_iterator end = this->pos;
     while (end != this->buffer.end() && *end != '\r' && *end != '\n') {
         ++end;
     }
-    std::string result(this->pos, end);
+    auto result = std::make_pair(this->pos, end);
     this->pos = end;
     this->liesZeilenende();
     return result;
 }
 
-string Z2Parser::liesZeile(const string& aktElement) {
+std::pair<std::vector<char>::const_iterator, std::vector<char>::const_iterator> Z2Parser::liesZeile(const char* aktElement) {
     this->aktElement = aktElement;
-    std::string result = this->liesZeile();
+    auto result = this->liesZeile();
 #ifdef DEBUG
-    cout << this->zeilenNr << ":" << this->aktElement << ":" << result << endl;
+    cout << this->zeilenNr << ":" << this->aktElement << ":" << std::string(result.first, result.second) << endl;
 #endif
     return result;
 }
@@ -84,7 +84,7 @@ int_fast32_t Z2Parser::liesGanzzahl() {
     return result;
 }
 
-int_fast32_t Z2Parser::liesGanzzahl(const string& aktElement) {
+int_fast32_t Z2Parser::liesGanzzahl(const char* aktElement) {
     this->aktElement = aktElement;
     int_fast32_t result = this->liesGanzzahl();
 #ifdef DEBUG
@@ -107,7 +107,7 @@ double Z2Parser::liesGleitkommazahl() {
     return result;
 }
 
-double Z2Parser::liesGleitkommazahl(const string& aktElement) {
+double Z2Parser::liesGleitkommazahl(const char* aktElement) {
     this->aktElement = aktElement;
     double result = this->liesGleitkommazahl();
 #ifdef DEBUG
@@ -117,24 +117,23 @@ double Z2Parser::liesGleitkommazahl(const string& aktElement) {
 }
 
 string Z2Parser::liesMehrzeiligenString() {
-    string zeile;
     string result;
     bool ersteZeile = true;
 
     while (!this->liesRauteZeilenende()) {
-        zeile = this->liesZeile(this->aktElement);
+        auto zeile = this->liesZeile(this->aktElement);
         if (ersteZeile) {
             ersteZeile = false;
         } else {
             result.append("\n");
         }
-        result.append(zeile);
+        result.append(std::string(zeile.first, zeile.second));
     }
 
     return result;
 }
 
-string Z2Parser::liesMehrzeiligenString(const string& aktElement) {
+string Z2Parser::liesMehrzeiligenString(const char* aktElement) {
     this->aktElement = aktElement;
     return this->liesMehrzeiligenString();
 }

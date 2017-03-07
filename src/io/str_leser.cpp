@@ -9,12 +9,16 @@
 
 using namespace std;
 
+std::string mkstring(std::pair<std::vector<char>::const_iterator, std::vector<char>::const_iterator> p) {
+    return std::string(p.first, p.second);
+}
+
 unique_ptr<Strecke> StrLeser::parse() {
     try {
         this->zeilenNr = 0;
 
         // Dateiformat-Version.
-        string formatVersion = Z2Leser::liesZeile("Dateiformat-Version");
+        string formatVersion = mkstring(liesZeile("Dateiformat-Version"));
 
         string formatMinVersion;
         if (formatVersion == "1.1" || formatVersion == "2.0" || formatVersion == "2.1") {
@@ -26,12 +30,12 @@ unique_ptr<Strecke> StrLeser::parse() {
 
         // Autor-Information.
         unique_ptr<AutorInfo> autorInfo(new AutorInfo());
-        autorInfo->name = Z2Leser::liesZeile("Autor-Name");
+        autorInfo->name = mkstring(liesZeile("Autor-Name"));
         result->autorInfo.push_back(std::move(autorInfo));
 
         result->breitengrad = Z2Leser::liesGanzzahl("Breitengrad");
         result->rekursionstiefe = Z2Leser::liesGanzzahl("Rekursionstiefe");
-        result->gebietsschema = Z2Leser::liesZeile("Gebietsschema");
+        result->gebietsschema = mkstring(liesZeile("Gebietsschema"));
 
         result->beschreibung = Z2Leser::liesMehrzeiligenString("Dateibeschreibung");
 
@@ -58,7 +62,7 @@ unique_ptr<Strecke> StrLeser::parse() {
             if (result->formatMinVersion != "1.1") {
                 referenzpunkt->referenzNr = liesGanzzahl("Aufgleisreferenz-Nr.");
                 referenzpunkt->streckenelementNr = liesGanzzahl("Aufgleiselement-Nr.");
-                referenzpunkt->beschreibung = liesZeile("Aufgleispunkt-Beschreibung");
+                referenzpunkt->beschreibung = mkstring(liesZeile("Aufgleispunkt-Beschreibung"));
 
                 if (result->referenzpunkte.size() <= referenzpunkt->referenzNr) {
                     result->referenzpunkte.resize(referenzpunkt->referenzNr + 1);
@@ -86,7 +90,7 @@ unique_ptr<Strecke> StrLeser::parse() {
             y = Z2Leser::liesGleitkommazahl("Blickpunkt-Rotation Y");
             z = Z2Leser::liesGleitkommazahl("Blickpunkt-Rotation Z");
             blickpunkt->position.setRichtungAlsRot(Punkt3D { x, y, z });
-            blickpunkt->name = Z2Leser::liesZeile("Blickpunkt-Name");
+            blickpunkt->name = mkstring(liesZeile("Blickpunkt-Name"));
 
             result->blickpunkte.push_back(std::move(blickpunkt));
         }
@@ -147,7 +151,7 @@ void StrLeser::liesStreckenelemente(Strecke& strecke) {
 
         // Nachfolger 1-3
         for (size_t i = 0; i < 3; i++) {
-            streckenelement_nr_t nachfolgerNr = liesGanzzahl("Nachfolger " + to_string(i));
+            streckenelement_nr_t nachfolgerNr = liesGanzzahl("Nachfolgerelement");
             if (nachfolgerNr != 0) {
                 if (nachfolgerNrs.size() <= element->nr + 1) {
                     nachfolgerNrs.resize(element->nr + 1);
@@ -163,9 +167,9 @@ void StrLeser::liesStreckenelemente(Strecke& strecke) {
         }
         liesZeile("Name Bahnsteig/Betriebsstelle");
 
-        string flags = liesZeile("Funktionsflags");
-        for (char& flag : flags) {
-            switch (flag) {
+        auto flags = liesZeile("Funktionsflags");
+        for (auto it = flags.first; it != flags.second; ++it) {
+            switch (*it) {
                 case 'T':
                     element->flags.insert(StreckenelementFlag::Tunnel);
                     break;
@@ -310,8 +314,8 @@ unique_ptr<Signal> StrLeser::liesKombiSignal() {
     liesGleitkommazahl("Kombinationssignal-Standort Rotation Z2");
 
     liesMehrzeiligenString("Kombinationssignal-Landschaftsdateien");
-    signal->betriebsstelle = liesZeile("Kombinationssignal-Blockname");
-    signal->signalbezeichnung = liesZeile("Kombinationssignal-Gleis");
+    signal->betriebsstelle = mkstring(liesZeile("Kombinationssignal-Blockname"));
+    signal->signalbezeichnung = mkstring(liesZeile("Kombinationssignal-Gleis"));
 
     size_t anzahlHsigZeilen = liesGanzzahl("Kombinationssignal Anzahl Hsig-Zeilen") + 1;
     size_t anzahlVsigSpalten = liesGanzzahl("Kombinationssignal Anzahl Vsig-Spalten") + 1;
