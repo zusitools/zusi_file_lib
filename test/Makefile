@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -std=c++14 -Wall -Werror -I../src -I..
+CXXFLAGS = -std=c++14 -Wall -Werror -I../src -I.. -g
 LDFLAGS =
 BOOST_TEST_LOG_LEVEL = message
 BOOST_TEST_COLOR_OUTPUT = yes
