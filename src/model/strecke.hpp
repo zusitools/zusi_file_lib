@@ -30,7 +30,7 @@ struct StreckenelementAufloeseInfo {
     StreckenelementAufloeseInfo(StreckenelementUndRichtung element_richtung,
             nachfolger_index_t nachfolger_index,
             streckenelement_nr_t nr_se)
-                : element_richtung(element_richtung), nachfolger_index(nachfolger_index), anderes_modul(false), modul("foobar") {
+                : element_richtung(element_richtung), nachfolger_index(nachfolger_index), anderes_modul(false), modul() {
         ref.nr_se = nr_se;
     }
 
@@ -38,7 +38,7 @@ struct StreckenelementAufloeseInfo {
             nachfolger_index_t nachfolger_index,
             const std::string& modul,
             referenz_nr_t nr_ref)
-                : element_richtung(element_richtung), nachfolger_index(nachfolger_index), anderes_modul(true), modul("foobar") {
+                : element_richtung(element_richtung), nachfolger_index(nachfolger_index), anderes_modul(true), modul(modul) {
         ref.nr_ref = nr_ref;
     }
 };
