@@ -16,6 +16,12 @@ test: $(ok)
 .PHONY: build
 build: $(obj)
 
+zusi_offizielle_strecken_test: zusi_offizielle_strecken_test.cpp
+	$(CXX) $(CXXFLAGS) -O3 -flto -o $@ $^
+
+callgrind: zusi_offizielle_strecken_test
+	ZUSI2_STRECKEN_PFAD=/mnt/zusi/Zusi/Strecken/ ZUSI3_STRECKEN_PFAD=/mnt/zusi/Zusi3/OmegaDatenFull/Routes/ $(BOOST_PARAMS) valgrind --tool=callgrind ./zusi_offizielle_strecken_test
+
 $(ok): %.ok: %
 	ZUSI2_STRECKEN_PFAD=/mnt/zusi/Zusi/Strecken/ ZUSI3_STRECKEN_PFAD=/mnt/zusi/Zusi3/OmegaDatenFull/Routes/ ZUSI3_DATAPATH=./eingabe/zusi3 $(BOOST_PARAMS) $(GDB_CMD) ./$(@:.ok=)
 	touch $@
