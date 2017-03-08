@@ -17,12 +17,12 @@ test: $(ok)
 build: $(obj)
 
 $(ok): %.ok: %
-	ZUSI2_STRECKEN_PFAD=/mnt/zusi/Zusi/Strecken/ ZUSI3_STRECKEN_PFAD=/mnt/zusi/Zusi3/OmegaDatenFull/Routes/ ZUSI3_DATAPATH=./eingabe/zusi3 $(BOOST_PARAMS) ./$(@:.ok=)
+	ZUSI2_STRECKEN_PFAD=/mnt/zusi/Zusi/Strecken/ ZUSI3_STRECKEN_PFAD=/mnt/zusi/Zusi3/OmegaDatenFull/Routes/ ZUSI3_DATAPATH=./eingabe/zusi3 $(BOOST_PARAMS) $(GDB_CMD) ./$(@:.ok=)
 	touch $@
 
 pfade_unix_test.ok: pfade_unix_test
-	ZUSI3_DATAPATH=/mnt/zusi/Zusi3/Daten $(BOOST_PARAMS) ./pfade_unix_test
-	ZUSI3_DATAPATH=/mnt/zusi/Zusi3/Daten/ $(BOOST_PARAMS) ./pfade_unix_test
+	ZUSI3_DATAPATH=/mnt/zusi/Zusi3/Daten $(BOOST_PARAMS) $(GDB_CMD) ./pfade_unix_test
+	ZUSI3_DATAPATH=/mnt/zusi/Zusi3/Daten/ $(BOOST_PARAMS) $(GDB_CMD) ./pfade_unix_test
 	touch pfade_unix_test.ok
 
 .PHONY: clean
