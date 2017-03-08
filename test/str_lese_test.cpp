@@ -259,3 +259,13 @@ BOOST_AUTO_TEST_CASE(vmax) {
     BOOST_CHECK_CLOSE(strecke->streckenelemente.at(2)->richtungsInfo[Streckenelement::RICHTUNG_NORM].vmax, 0.0 / 3.6, epsilon);
     BOOST_CHECK_CLOSE(strecke->streckenelemente.at(3)->richtungsInfo[Streckenelement::RICHTUNG_NORM].vmax, -1.0 / 3.6, epsilon);
 }
+
+BOOST_AUTO_TEST_CASE(encoding) {
+    ifstream infile("./eingabe/zusi2/EncodingTest.str");
+    unique_ptr<Strecke> strecke = StrLeser().liesDatei(infile);
+
+    BOOST_REQUIRE(strecke->streckenelemente.size() > 2);
+    auto& element = strecke->streckenelemente.at(2)->richtungsInfo[Streckenelement::RICHTUNG_NORM];
+    BOOST_REQUIRE(element.signal);
+    BOOST_CHECK_EQUAL(element.signal->betriebsstelle, "Äöüß");
+}

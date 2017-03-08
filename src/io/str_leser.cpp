@@ -1,6 +1,6 @@
+#include <algorithm>
 #include <fstream>
 #include <string>
-#include <clocale>
 
 #include <model/autorinfo.hpp>
 #include <model/dateiinfo.hpp>
@@ -10,7 +10,22 @@
 using namespace std;
 
 std::string mkstring(std::pair<std::vector<char>::const_iterator, std::vector<char>::const_iterator> p) {
-    return std::string(p.first, p.second);
+    std::string result(p.first, p.second);
+    std::string::size_type size = result.size();
+    for (std::string::size_type i = 0; i < size; i++) {
+        // HACK HACK
+        // Konvertiere ISO-8859-1 nach UTF-8. Das macht alle moeglichen Annahmen ueber Encodings,
+        // aber fuer eine Lecagy-Applikation wie Zusi 2 muss das reichen.
+        // http://stackoverflow.com/a/4059934
+        unsigned char c = static_cast<unsigned char>(result[i]);
+        if (c >= 128) {
+            result[i] = 0xc2 + (c > 0xbf);
+            result.insert(i+1, 1, (c & 0x3f) + 0x80);
+            i++;
+            size++;
+        }
+    }
+    return result;
 }
 
 unique_ptr<Strecke> StrLeser::parse() {
