@@ -2,9 +2,7 @@
 
 #include <cstring>
 
-#include "lib/rapidxml-1.13/rapidxml.hpp"
-
-void liesStrModul(xml_node<>& n, Fahrplan& fahrplan) {
+void liesStrModul(const xml_node<>& n, Fahrplan* fahrplan) {
     xml_node<>* datei_node = n.first_node("Datei");
     if (!datei_node) {
         return;
@@ -15,10 +13,10 @@ void liesStrModul(xml_node<>& n, Fahrplan& fahrplan) {
         return;
     }
 
-    fahrplan.streckenmodule.push_back(std::string(dateiname_attr->value()));
+    fahrplan->streckenmodule.push_back(std::string(dateiname_attr->value()));
 }
 
-unique_ptr<Fahrplan> FpnLeser::parseWurzel(xml_node<>& wurzel) {
+std::unique_ptr<Fahrplan> FpnLeser::parseWurzel(const xml_node<>& wurzel) {
     DateiInfo dateiInfo = this->liesDateiInfo(wurzel);
     unique_ptr<Fahrplan> fahrplan(new Fahrplan(dateiInfo.formatVersion, dateiInfo.formatMinVersion));
 
@@ -32,7 +30,7 @@ unique_ptr<Fahrplan> FpnLeser::parseWurzel(xml_node<>& wurzel) {
 
             // Koordinaten
             if (!strncmp(n->name(), "StrModul", n_namesize)) {
-                liesStrModul(*n, *fahrplan);
+                liesStrModul(*n, fahrplan.get());
             }
         }
     }
