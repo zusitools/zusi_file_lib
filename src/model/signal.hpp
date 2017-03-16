@@ -1,6 +1,8 @@
 #ifndef SRC_MODEL_SIGNAL_HPP
 #define SRC_MODEL_SIGNAL_HPP
 
+#include <string>
+
 // Nur Zusi 3
 enum SignalTyp {
     Unbestimmt = 0,
@@ -28,13 +30,13 @@ struct FahrstrassenSignal {
 struct Signal {
 
     // Name der Betriebsstelle, zu der das Signal gehört.
-    string betriebsstelle;
+    std::string betriebsstelle;
 
     // Name des Stellwerks, von dem aus das Signal gesteuert wird.
-    string stellwerk;
+    std::string stellwerk;
 
     // Signalbezeichnung oder Gleis.
-    string signalbezeichnung;
+    std::string signalbezeichnung;
 
     // Typ des Signals (nur Zusi 3).
     SignalTyp signaltyp;

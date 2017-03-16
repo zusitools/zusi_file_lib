@@ -1,9 +1,9 @@
 #ifndef SRC_MODEL_EREIGNIS_HPP
 #define SRC_MODEL_EREIGNIS_HPP
 
-#include <common/types.hpp>
+#include <string>
 
-using namespace std;
+#include <common/types.hpp>
 
 enum EreignisTyp {
     // Zusi-3-spezifische oder gemeinsam genutzte Ereignisse.
@@ -106,7 +106,7 @@ struct Ereignis {
     ereignis_wert_t wert;
 
     // Der Parameter "Beschreibung" des Ereignisses.
-    string beschreibung;
+    std::string beschreibung;
 };
 
 

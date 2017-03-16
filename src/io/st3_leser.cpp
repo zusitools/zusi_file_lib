@@ -207,7 +207,7 @@ void liesRefPunkt(xml_node<>& refpkt_node, Strecke& strecke) {
     strecke.referenzpunkte.at(refpunkt->referenzNr) = std::move(refpunkt);
 }
 
-unique_ptr<Strecke> St3Leser::parseWurzel(xml_node<>& wurzel) {
+std::unique_ptr<Strecke> St3Leser::parseWurzel(const xml_node<>& wurzel) {
     DateiInfo dateiInfo = this->liesDateiInfo(wurzel);
     unique_ptr<Strecke> strecke(new Strecke(dateiInfo.formatVersion, dateiInfo.formatMinVersion));
 

@@ -8,15 +8,16 @@
 #include "model/dateiinfo.hpp"
 #include "lib/rapidxml-1.13/rapidxml.hpp"
 
-using namespace std;
-using namespace rapidxml;
+using rapidxml::xml_document;
+using rapidxml::xml_node;
+using rapidxml::xml_attribute;
 
 // Basisklasse für Dateileser, die das Zusi-3-Datenformat lesen.
 template<typename R>
 class Z3Leser {
 
 protected:
-    DateiInfo liesDateiInfo(xml_node<>& wurzel) {
+    DateiInfo liesDateiInfo(const xml_node<>& wurzel) {
         DateiInfo result = { };
         xml_node<> *dateiInfoNode = wurzel.first_node("Info");
         if (dateiInfoNode != nullptr) {
@@ -33,10 +34,10 @@ protected:
         return result;
     }
 
-    virtual unique_ptr<R> parseWurzel(xml_node<>& wurzel) = 0; // Hier wird das dateispezifische Parsen implementiert.
+    virtual std::unique_ptr<R> parseWurzel(const xml_node<>& wurzel) = 0; // Hier wird das dateispezifische Parsen implementiert.
 
 public:
-    unique_ptr<R> liesDatei(istream& stream) {
+    std::unique_ptr<R> liesDatei(std::istream& stream) {
         stream.seekg(0, ios::end);
         size_t size = stream.tellg();
         stream.seekg(0);
@@ -57,8 +58,8 @@ public:
         return this->parseWurzel(*wurzel);
     }
 
-    unique_ptr<R> liesDateiMitDateiname(const string dateiname) {
-        ifstream datei(dateiname, std::ios::binary);
+    std::unique_ptr<R> liesDateiMitDateiname(const std::string& dateiname) {
+        std::ifstream datei(dateiname, std::ios::binary);
         return this->liesDatei(datei);
     }
 };

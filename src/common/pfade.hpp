@@ -1,3 +1,8 @@
+#ifndef _SRC_COMMON_PFADE_HPP_
+#define _SRC_COMMON_PFADE_HPP_
+
+#include <string>
+
 namespace zusi_file_lib {
 
     namespace pfade {
@@ -16,3 +21,5 @@ namespace zusi_file_lib {
 #else
 #include "pfade_unix.hpp"
 #endif
+
+#endif  // _SRC_COMMON_PFADE_HPP_

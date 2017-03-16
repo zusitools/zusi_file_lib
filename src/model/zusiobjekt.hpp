@@ -1,22 +1,26 @@
 #ifndef SRC_MODEL_ZUSIOBJEKT_HPP
 #define SRC_MODEL_ZUSIOBJEKT_HPP
 
+#include <string>
+#include <vector>
+#include <memory>
+
 #include <model/autorinfo.hpp>
 
 // Ein allgemeines in Zusi verwendetes Objekt.
 struct ZusiObjekt {
 
     // Dateiformat-Version.
-    string formatVersion;
+    std::string formatVersion;
 
     // Dateiformat-Min.-Version
-    string formatMinVersion;
+    std::string formatMinVersion;
 
     // Autoren-Info.
-    vector<shared_ptr<AutorInfo>> autorInfo;
+    std::vector<std::shared_ptr<AutorInfo>> autorInfo;
 
     // Beschreibung des Objekts.
-    string beschreibung;
+    std::string beschreibung;
 
     // Objekt-ID.
     objektid_t objektId;

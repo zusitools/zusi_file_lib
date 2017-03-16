@@ -1,6 +1,8 @@
 #ifndef SRC_MODEL_PUNKT3D_HPP
 #define SRC_MODEL_PUNKT3D_HPP
 
+#include <type_traits>
+
 #include <common/types.hpp>
 
 #ifdef ZUSI_FILE_LIB_NOINLINE

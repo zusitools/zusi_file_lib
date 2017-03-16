@@ -3,15 +3,16 @@
 
 #include <cstdint>
 #include <istream>
+#include <fstream>
+#include <memory>
 #include <string>
+#include <vector>
 
 #ifdef ZUSI_FILE_LIB_NOINLINE
 #define _ZUSI_FILE_LIB_INLINE
 #else
 #define _ZUSI_FILE_LIB_INLINE inline
 #endif
-
-using namespace std;
 
 // Basisklasse für Dateileser, die das Zusi-2-Datenformat lesen.
 // Nicht reentrant!
@@ -31,8 +32,8 @@ protected:
     _ZUSI_FILE_LIB_INLINE int_fast32_t liesGanzzahl(const char* aktElement);
     
     // Liest einen String mit einem Integer-Wert in eine Ganzzahl.
-    _ZUSI_FILE_LIB_INLINE int_fast32_t konvertiereInGanzzahl(string zeile);
-    _ZUSI_FILE_LIB_INLINE int_fast32_t konvertiereInGanzzahl(const char* aktElement, string zeile);
+    _ZUSI_FILE_LIB_INLINE int_fast32_t konvertiereInGanzzahl(std::string zeile);
+    _ZUSI_FILE_LIB_INLINE int_fast32_t konvertiereInGanzzahl(const char* aktElement, std::string zeile);
 
     // Liest eine Zeile mit einem Gleitkomma-Wert (Dezimalkomma) aus einem Stream.
     // Wirft std::invalid_argument, wenn keine Konversion durchgeführt werden konnte.
@@ -40,14 +41,14 @@ protected:
     _ZUSI_FILE_LIB_INLINE double liesGleitkommazahl(const char* aktElement);
 
     // Konvertiert einen String mit Dezimalkomma in eine Gleitkommazahl.
-    _ZUSI_FILE_LIB_INLINE double konvertiereInGleitkommazahl(string zeile);
-    _ZUSI_FILE_LIB_INLINE double konvertiereInGleitkommazahl(const char* aktElement, string zeile);
+    _ZUSI_FILE_LIB_INLINE double konvertiereInGleitkommazahl(std::string zeile);
+    _ZUSI_FILE_LIB_INLINE double konvertiereInGleitkommazahl(const char* aktElement, std::string zeile);
 
     // Liest einen durch "#" abgeschlossenen mehrzeiligen String aus der Datei. Das '#' und das
     // letzte Zeilenende werden dabei nicht in den String aufgenommen. Zeilenenden werden auf '\n'
     // normiert.
-    _ZUSI_FILE_LIB_INLINE string liesMehrzeiligenString();
-    _ZUSI_FILE_LIB_INLINE string liesMehrzeiligenString(const char* aktElement);
+    _ZUSI_FILE_LIB_INLINE std::string liesMehrzeiligenString();
+    _ZUSI_FILE_LIB_INLINE std::string liesMehrzeiligenString(const char* aktElement);
 
     // Die einzulesende Datei
     std::vector<char> buffer;
@@ -64,22 +65,22 @@ protected:
 
 template<typename R>
 class Z2Leser : public Z2Parser {
-    virtual unique_ptr<R> parse() = 0; // Hier wird das dateispezifische Parsen implementiert.
+    virtual std::unique_ptr<R> parse() = 0; // Hier wird das dateispezifische Parsen implementiert.
 
 public:
-    unique_ptr<R> liesDatei(istream& stream) {
-        stream.seekg(0, ios::end);
+    std::unique_ptr<R> liesDatei(std::istream& stream) {
+        stream.seekg(0, std::ios::end);
         size_t size = stream.tellg();
         stream.seekg(0);
 
-        this->buffer = vector<char>(size);
+        this->buffer = std::vector<char>(size);
         stream.read(&this->buffer.front(), size);
         this->pos = this->buffer.begin();
         return this->parse();
     }
 
-    unique_ptr<R> liesDateiMitDateiname(const string dateiname) {
-        ifstream datei(dateiname, std::ios::binary);
+    std::unique_ptr<R> liesDateiMitDateiname(const std::string& dateiname) {
+        std::ifstream datei(dateiname, std::ios::binary);
         return this->liesDatei(datei);
     }
 };
