@@ -20,15 +20,15 @@
 class StrLeser : public Z2Leser<Strecke> {
 
 protected:
-    _ZUSI_FILE_LIB_INLINE virtual unique_ptr<Strecke> parse();
+    _ZUSI_FILE_LIB_INLINE unique_ptr<Strecke> parse() override;
 
 private:
-    _ZUSI_FILE_LIB_INLINE void liesStreckenelemente(Strecke& strecke);
-    _ZUSI_FILE_LIB_INLINE void liesFahrstrSignal(Streckenelement& element, Strecke& strecke);
+    _ZUSI_FILE_LIB_INLINE void liesStreckenelemente(Strecke* strecke);
+    _ZUSI_FILE_LIB_INLINE void liesFahrstrSignal(Streckenelement* element, const Strecke& strecke);
     _ZUSI_FILE_LIB_INLINE unique_ptr<Signal> liesKombiSignal();
-    _ZUSI_FILE_LIB_INLINE void liesHauptsignal(Streckenelement& element);
-    _ZUSI_FILE_LIB_INLINE void liesVorsignal(Streckenelement& element);
-    _ZUSI_FILE_LIB_INLINE void neuesEreignis(ereignis_nr_t ereignisNr, Ereignis& ereignis);
+    _ZUSI_FILE_LIB_INLINE void liesHauptsignal(Streckenelement* element);
+    _ZUSI_FILE_LIB_INLINE void liesVorsignal(Streckenelement* element);
+    _ZUSI_FILE_LIB_INLINE void neuesEreignis(ereignis_nr_t ereignisNr, Ereignis* ereignis);
 };
 
 #undef _ZUSI_FILE_LIB_INLINE

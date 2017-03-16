@@ -112,7 +112,7 @@ unique_ptr<Strecke> StrLeser::parse() {
 
         // Streckenelemente
         this->aktElement = "Streckenelemente";
-        this->liesStreckenelemente(*result);
+        this->liesStreckenelemente(result.get());
 
         // Löse Element-Referenzen auf, soweit möglich.
         for (auto& referenzpunkt : result->referenzpunkte) {
@@ -133,7 +133,7 @@ unique_ptr<Strecke> StrLeser::parse() {
     }
 }
 
-void StrLeser::liesStreckenelemente(Strecke& strecke) {
+void StrLeser::liesStreckenelemente(Strecke* strecke) {
     // Die Nachfolger-Nummern jedes Streckenelements.
     vector<vector<streckenelement_nr_t>> nachfolgerNrs;
 
@@ -151,7 +151,7 @@ void StrLeser::liesStreckenelemente(Strecke& strecke) {
         ereignis_nr_t ereignisNr = liesGanzzahl("Ereignis-Nummer");
         if (ereignisNr != 0) {
             richtung.ereignisse.emplace_back();
-            neuesEreignis(ereignisNr, richtung.ereignisse.back());
+            neuesEreignis(ereignisNr, &richtung.ereignisse.back());
         }
 
         // Element-Koordinaten
@@ -177,7 +177,7 @@ void StrLeser::liesStreckenelemente(Strecke& strecke) {
         }
 
         richtung.vmax = liesGleitkommazahl("Element-vMax") / 3.6;
-        if (strecke.formatMinVersion != "1.1") {
+        if (strecke->formatMinVersion != "1.1") {
             liesZeile("Reservierter Streckenelement-Eintrag");
         }
         liesZeile("Name Bahnsteig/Betriebsstelle");
@@ -212,43 +212,43 @@ void StrLeser::liesStreckenelemente(Strecke& strecke) {
         liesZeile("Oberleitungsspannung");
 
         this->aktElement = "Fahrstraßensignal";
-        liesFahrstrSignal(*element, strecke);
+        liesFahrstrSignal(element.get(), *strecke);
 
-        if (strecke.formatMinVersion != "1.1") {
+        if (strecke->formatMinVersion != "1.1") {
             if (!this->liesRauteZeilenende()) {
                 richtung.signal = liesKombiSignal();
             }
         } else {
             if (!this->liesRauteZeilenende()) {
                 this->aktElement = "Vorsignal";
-                liesVorsignal(*element);
+                liesVorsignal(element.get());
             }
             if (!this->liesRauteZeilenende()) {
                 this->aktElement = "Hauptsignal";
-                liesHauptsignal(*element);
+                liesHauptsignal(element.get());
             }
         }
 
         fahrstr_register_nr_t registerNr = liesGanzzahl("Fahrstraßenregister-Nummer");
         if (registerNr != 0) {
-            if (strecke.fahrstrRegister.find(registerNr) == strecke.fahrstrRegister.end()) {
+            if (strecke->fahrstrRegister.find(registerNr) == strecke->fahrstrRegister.end()) {
                 unique_ptr<FahrstrRegister> fahrstrRegister(new FahrstrRegister());
                 fahrstrRegister->registerNr = registerNr;
                 fahrstrRegister->manuell = registerNr <= 1000;
-                strecke.fahrstrRegister[registerNr] = std::move(fahrstrRegister);
+                strecke->fahrstrRegister[registerNr] = std::move(fahrstrRegister);
             }
-            richtung.fahrstrRegister = strecke.fahrstrRegister[registerNr].get();
+            richtung.fahrstrRegister = strecke->fahrstrRegister[registerNr].get();
         }
 
-        if (strecke.streckenelemente.size() <= element->nr + 1) {
-            strecke.streckenelemente.resize(element->nr + 1);
+        if (strecke->streckenelemente.size() <= element->nr + 1) {
+            strecke->streckenelemente.resize(element->nr + 1);
         }
-        strecke.streckenelemente.at(element->nr) = std::move(element);
+        strecke->streckenelemente.at(element->nr) = std::move(element);
     }
 
     // Verknüpfe Streckenelemente mit ihren Nachfolgern und Vorgängern.
-    for (size_t i = 0; i < strecke.streckenelemente.size() && i < nachfolgerNrs.size(); i++) {
-        Streckenelement* element = strecke.streckenelemente.at(i).get();
+    for (size_t i = 0; i < strecke->streckenelemente.size() && i < nachfolgerNrs.size(); i++) {
+        Streckenelement* element = strecke->streckenelemente.at(i).get();
 
         if (element == nullptr) {
             continue;
@@ -256,11 +256,11 @@ void StrLeser::liesStreckenelemente(Strecke& strecke) {
 
         for (size_t j = 0; j < nachfolgerNrs.at(i).size(); j++) {
             streckenelement_nr_t elemNr = nachfolgerNrs.at(i).at(j);
-            if (elemNr == 0 || elemNr >= strecke.streckenelemente.size()) {
+            if (elemNr == 0 || elemNr >= strecke->streckenelemente.size()) {
                 continue;
             }
 
-            Streckenelement* nachfolger = strecke.streckenelemente.at(elemNr).get();
+            Streckenelement* nachfolger = strecke->streckenelemente.at(elemNr).get();
             if (nachfolger == nullptr) {
                 continue;
             }
@@ -275,7 +275,7 @@ void StrLeser::liesStreckenelemente(Strecke& strecke) {
     }
 }
 
-void StrLeser::liesFahrstrSignal(Streckenelement&, Strecke &strecke) {
+void StrLeser::liesFahrstrSignal(Streckenelement*, const Strecke& strecke) {
     if (this->liesRauteZeilenende()) {
         return;
     }
@@ -347,7 +347,7 @@ unique_ptr<Signal> StrLeser::liesKombiSignal() {
     return signal;
 }
 
-void StrLeser::liesHauptsignal(Streckenelement&) {
+void StrLeser::liesHauptsignal(Streckenelement*) {
     liesGleitkommazahl("Hauptsignal-Standort X");
     liesGleitkommazahl("Hauptsignal-Standort Y");
     liesGleitkommazahl("Hauptsignal-Standort Z");
@@ -372,7 +372,7 @@ void StrLeser::liesHauptsignal(Streckenelement&) {
     liesZeile("Hauptsignal: Reservierter Eintrag 2");
 }
 
-void StrLeser::liesVorsignal(Streckenelement&) {
+void StrLeser::liesVorsignal(Streckenelement*) {
     liesGleitkommazahl("Vorsignal-Standort X");
     liesGleitkommazahl("Vorsignal-Standort Y");
     liesGleitkommazahl("Vorsignal-Standort Z");
@@ -390,70 +390,70 @@ void StrLeser::liesVorsignal(Streckenelement&) {
     liesZeile("Vorsignal dunkel bei Halt am Hsig");
 }
 
-void StrLeser::neuesEreignis(ereignis_nr_t ereignisNr, Ereignis& ereignis) {
+void StrLeser::neuesEreignis(ereignis_nr_t ereignisNr, Ereignis* ereignis) {
     if (ereignisNr >= 1 && ereignisNr <= 499) {
-        ereignis.ereignisTyp = EreignisTyp::BedingteEntgleisung;
-        ereignis.wert = float(ereignisNr) / 3.6;
+        ereignis->ereignisTyp = EreignisTyp::BedingteEntgleisung;
+        ereignis->wert = float(ereignisNr) / 3.6;
     } else if (ereignisNr >= 1000 && ereignisNr <= 1500) {
-        ereignis.ereignisTyp = EreignisTyp::Indusi1000Hz;
-        ereignis.wert = float(ereignisNr - 1000) / 3.6;
+        ereignis->ereignisTyp = EreignisTyp::Indusi1000Hz;
+        ereignis->wert = float(ereignisNr - 1000) / 3.6;
     } else if (ereignisNr >= 2000 && ereignisNr <= 2500) {
-        ereignis.ereignisTyp = EreignisTyp::Indusi2000Hz;
-        ereignis.wert = float(ereignisNr - 2000) / 3.6;
+        ereignis->ereignisTyp = EreignisTyp::Indusi2000Hz;
+        ereignis->wert = float(ereignisNr - 2000) / 3.6;
     } else if (ereignisNr == 4000 || (ereignisNr >= 4004 && ereignisNr <= 4500)) {
-        ereignis.ereignisTyp = EreignisTyp::GntGeschwindigkeitsErhoehung;
-        ereignis.wert = float(ereignisNr - 4000) / 3.6;
+        ereignis->ereignisTyp = EreignisTyp::GntGeschwindigkeitsErhoehung;
+        ereignis->wert = float(ereignisNr - 4000) / 3.6;
     } else {
         switch (ereignisNr) {
-            case 3001: ereignis.ereignisTyp = EreignisTyp::FahrstrAnfordern; break;
-            case 3002: ereignis.ereignisTyp = EreignisTyp::FahrstrAufloesen; break;
-            case 3003: ereignis.ereignisTyp = EreignisTyp::ZugEntfernen; break;
-            case 3004: ereignis.ereignisTyp = EreignisTyp::Zwangshalt; break;
-            case 3005: ereignis.ereignisTyp = EreignisTyp::LangsamfahrtEnde; break;
-            case 3006: ereignis.ereignisTyp = EreignisTyp::Betriebsstelle; break;
-            case 3007: ereignis.ereignisTyp = EreignisTyp::HaltepunktErwarten; break;
-            case 3008: ereignis.ereignisTyp = EreignisTyp::Bahnsteigmitte; break;
-            case 3009: ereignis.ereignisTyp = EreignisTyp::Bahnsteigende; break;
-            case 3010: ereignis.ereignisTyp = EreignisTyp::LangsamfahrtAnfang; break;
-            case 3011: ereignis.ereignisTyp = EreignisTyp::Pfeifen; break;
-            case 3012: ereignis.ereignisTyp = EreignisTyp::LzbAnfang; break;
-            case 3013: ereignis.ereignisTyp = EreignisTyp::LzbEnde; break;
-            case 3021: ereignis.ereignisTyp = EreignisTyp::VorherKeineFahrstrEntfernung; break;
-            case 3022: ereignis.ereignisTyp = EreignisTyp::Abfahrsignal; break;
-            case 3023: ereignis.ereignisTyp = EreignisTyp::WeiterfahrtNachHalt; break;
-            case 3024: ereignis.ereignisTyp = EreignisTyp::SignumWarnung; break;
-            case 3025: ereignis.ereignisTyp = EreignisTyp::SignumHalt; break;
+            case 3001: ereignis->ereignisTyp = EreignisTyp::FahrstrAnfordern; break;
+            case 3002: ereignis->ereignisTyp = EreignisTyp::FahrstrAufloesen; break;
+            case 3003: ereignis->ereignisTyp = EreignisTyp::ZugEntfernen; break;
+            case 3004: ereignis->ereignisTyp = EreignisTyp::Zwangshalt; break;
+            case 3005: ereignis->ereignisTyp = EreignisTyp::LangsamfahrtEnde; break;
+            case 3006: ereignis->ereignisTyp = EreignisTyp::Betriebsstelle; break;
+            case 3007: ereignis->ereignisTyp = EreignisTyp::HaltepunktErwarten; break;
+            case 3008: ereignis->ereignisTyp = EreignisTyp::Bahnsteigmitte; break;
+            case 3009: ereignis->ereignisTyp = EreignisTyp::Bahnsteigende; break;
+            case 3010: ereignis->ereignisTyp = EreignisTyp::LangsamfahrtAnfang; break;
+            case 3011: ereignis->ereignisTyp = EreignisTyp::Pfeifen; break;
+            case 3012: ereignis->ereignisTyp = EreignisTyp::LzbAnfang; break;
+            case 3013: ereignis->ereignisTyp = EreignisTyp::LzbEnde; break;
+            case 3021: ereignis->ereignisTyp = EreignisTyp::VorherKeineFahrstrEntfernung; break;
+            case 3022: ereignis->ereignisTyp = EreignisTyp::Abfahrsignal; break;
+            case 3023: ereignis->ereignisTyp = EreignisTyp::WeiterfahrtNachHalt; break;
+            case 3024: ereignis->ereignisTyp = EreignisTyp::SignumWarnung; break;
+            case 3025: ereignis->ereignisTyp = EreignisTyp::SignumHalt; break;
             case 3026:
-                ereignis.ereignisTyp = EreignisTyp::VorherKeineFahrstrEntfernung;
-                ereignis.wert = 1000;
+                ereignis->ereignisTyp = EreignisTyp::VorherKeineFahrstrEntfernung;
+                ereignis->wert = 1000;
                 break;
             case 3027:
-                ereignis.ereignisTyp = EreignisTyp::VorherKeineFahrstrEntfernung;
-                ereignis.wert = 2000;
+                ereignis->ereignisTyp = EreignisTyp::VorherKeineFahrstrEntfernung;
+                ereignis->wert = 2000;
                 break;
             case 3028:
-                ereignis.ereignisTyp = EreignisTyp::VorherKeineFahrstrEntfernung;
-                ereignis.wert = 3000;
+                ereignis->ereignisTyp = EreignisTyp::VorherKeineFahrstrEntfernung;
+                ereignis->wert = 3000;
                 break;
-            case 3029: ereignis.ereignisTyp = EreignisTyp::VorherKeineVsigVerknuepfung; break;
-            case 3030: ereignis.ereignisTyp = EreignisTyp::OhneFunktion; break;
-            case 3031: ereignis.ereignisTyp = EreignisTyp::BefehlAEinblenden; break;
-            case 3032: ereignis.ereignisTyp = EreignisTyp::BefehlAEinblendenStillstand; break;
-            case 3033: ereignis.ereignisTyp = EreignisTyp::BefehlBEinblenden; break;
-            case 3034: ereignis.ereignisTyp = EreignisTyp::BefehlBEinblendenStillstand; break;
-            case 3035: ereignis.ereignisTyp = EreignisTyp::LangsamfahrtEndeZuganfang; break;
-            case 3036: ereignis.ereignisTyp = EreignisTyp::Wendepunkt; break;
-            case 3037: ereignis.ereignisTyp = EreignisTyp::WendepunktAufAnderenBlocknamen; break;
-            case 3038: ereignis.ereignisTyp = EreignisTyp::SignalIstZugbedient; break;
-            case 3039: ereignis.ereignisTyp = EreignisTyp::ZugbedientesSignalSchalten; break;
-            case 3040: ereignis.ereignisTyp = EreignisTyp::Streckensound; break;
-            case 3041: ereignis.ereignisTyp = EreignisTyp::Abrupthalt; break;
-            case 3042: ereignis.ereignisTyp = EreignisTyp::RegisterNichtBelegen; break;
-            case 4001: ereignis.ereignisTyp = EreignisTyp::GntAnfang; break;
-            case 4002: ereignis.ereignisTyp = EreignisTyp::GntEnde; break;
-            case 4003: ereignis.ereignisTyp = EreignisTyp::GntIndusiUnterdrueckung; break;
+            case 3029: ereignis->ereignisTyp = EreignisTyp::VorherKeineVsigVerknuepfung; break;
+            case 3030: ereignis->ereignisTyp = EreignisTyp::OhneFunktion; break;
+            case 3031: ereignis->ereignisTyp = EreignisTyp::BefehlAEinblenden; break;
+            case 3032: ereignis->ereignisTyp = EreignisTyp::BefehlAEinblendenStillstand; break;
+            case 3033: ereignis->ereignisTyp = EreignisTyp::BefehlBEinblenden; break;
+            case 3034: ereignis->ereignisTyp = EreignisTyp::BefehlBEinblendenStillstand; break;
+            case 3035: ereignis->ereignisTyp = EreignisTyp::LangsamfahrtEndeZuganfang; break;
+            case 3036: ereignis->ereignisTyp = EreignisTyp::Wendepunkt; break;
+            case 3037: ereignis->ereignisTyp = EreignisTyp::WendepunktAufAnderenBlocknamen; break;
+            case 3038: ereignis->ereignisTyp = EreignisTyp::SignalIstZugbedient; break;
+            case 3039: ereignis->ereignisTyp = EreignisTyp::ZugbedientesSignalSchalten; break;
+            case 3040: ereignis->ereignisTyp = EreignisTyp::Streckensound; break;
+            case 3041: ereignis->ereignisTyp = EreignisTyp::Abrupthalt; break;
+            case 3042: ereignis->ereignisTyp = EreignisTyp::RegisterNichtBelegen; break;
+            case 4001: ereignis->ereignisTyp = EreignisTyp::GntAnfang; break;
+            case 4002: ereignis->ereignisTyp = EreignisTyp::GntEnde; break;
+            case 4003: ereignis->ereignisTyp = EreignisTyp::GntIndusiUnterdrueckung; break;
             default:
-                ereignis.ereignisTyp = (EreignisTyp)ereignisNr;
+                ereignis->ereignisTyp = (EreignisTyp)ereignisNr;
         }
     }
 }
