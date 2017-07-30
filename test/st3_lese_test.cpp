@@ -34,6 +34,16 @@ BOOST_AUTO_TEST_CASE(element_koordinaten) {
     BOOST_CHECK_CLOSE(element->p2.z, -30, epsilon);
 }
 
+BOOST_AUTO_TEST_CASE(oberbau) {
+    ifstream infile("./eingabe/zusi3/OberbauTest.st3");
+    unique_ptr<Strecke> strecke = St3Leser().liesDatei(infile);
+
+    BOOST_REQUIRE_EQUAL(strecke->streckenelemente.size(), 4);
+    BOOST_CHECK_EQUAL(strecke->streckenelemente.at(1)->oberbauName.c_str(), "B55 SKL-Oberbau");
+    BOOST_CHECK_EQUAL(strecke->streckenelemente.at(2)->oberbauName.c_str(), "");
+    BOOST_CHECK_EQUAL(strecke->streckenelemente.at(3)->oberbauName.c_str(), "B55 SKL-Oberbau");
+}
+
 BOOST_AUTO_TEST_CASE(vorgaenger_nachfolger) {
     ifstream infile("./eingabe/zusi3/VorgaengerNachfolgerTest.st3");
     unique_ptr<Strecke> strecke = St3Leser().liesDatei(infile);

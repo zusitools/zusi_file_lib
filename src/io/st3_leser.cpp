@@ -304,6 +304,12 @@ std::unique_ptr<Strecke> St3Leser::parseWurzel(const xml_node<>& wurzel) {
                 }
             }
 
+            // Oberbau
+            xml_attribute<>* oberbau_attr = elem_node->first_attribute("Oberbau");
+            if (oberbau_attr != nullptr) {
+              element->oberbauName = std::string(oberbau_attr->value());
+            }
+
             // Anschluss (ohne Nachfolger in anderen Modulen)
             auto anschluss = liesInt(*elem_node, "Anschluss");
             element->anschluss[Streckenelement::RICHTUNG_NORM] = anschluss & 0xFF;

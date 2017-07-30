@@ -162,7 +162,7 @@ struct Streckenelement {
     meter_t drahthoehe;
 
     // Der Name des Oberbaus.
-    string oberbauName;
+    std::string oberbauName;
 
     // Der Name des Fahrleitungstyps.
     string fahrleitungTyp;
