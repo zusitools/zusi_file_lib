@@ -51,6 +51,16 @@ enum StreckenelementFlag {
     KeineSchulterLinks = 8,
 };
 
+enum class FahrleitungTyp {
+    Ohne = 0,
+    Unbestimmt = 1,
+    AC_15000V_16_7_Hz = 2,
+    AC_25000V_50_Hz = 3,
+    DC_1500V = 4,
+    DC_1200V_Stromschiene = 5,
+    DC_3000V = 6,
+};
+
 // Info über eine Richtung eines Streckenelements.
 struct StreckenelementRichtungsInfo {
 
@@ -155,17 +165,14 @@ struct Streckenelement {
     // Die Krümmung des Elements [1/km].
     kruemmung_t kruemmung;
 
-    // Die Spannung der Oberleitung [kV]. 0 = nicht elektrifiziert.
-    spannung_t volt;
+    // Der Typ der Fahrleitung
+    FahrleitungTyp fahrleitungTyp;
 
     // Die Fahrdrahthöhe in Elementmitte [m].
     meter_t drahthoehe;
 
     // Der Name des Oberbaus.
     std::string oberbauName;
-
-    // Der Name des Fahrleitungstyps.
-    string fahrleitungTyp;
 
     // Die Zwangshelligkeit des Streckenelements [0..1].
     helligkeit_t zwangshelligkeit;
@@ -231,8 +238,8 @@ struct Streckenelement {
             Streckenelement::RICHTUNG_GEGEN : Streckenelement::RICHTUNG_NORM;
     }
 
-    explicit Streckenelement() : nr(), p1(), p2(), ueberhoehung(), kruemmung(), volt(), drahthoehe(), oberbauName(),
-        fahrleitungTyp(), zwangshelligkeit(), vTrassierung(), richtungsInfo(), nachfolgerElemente(),
+    explicit Streckenelement() : nr(), p1(), p2(), ueberhoehung(), kruemmung(), fahrleitungTyp(), drahthoehe(),
+         oberbauName(), zwangshelligkeit(), vTrassierung(), richtungsInfo(), nachfolgerElemente(),
         anschluss(), flags() {}
 };
 

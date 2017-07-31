@@ -9,17 +9,16 @@
 
 #include "lib/rapidxml-1.13/rapidxml.hpp"
 
-void liesFloatAttr(xml_node<> &node, const char *name, float *wert) {
-    if (wert != nullptr)
+float liesFloatAttr(xml_node<> &node, const char *name) {
+    xml_attribute<> *attr = node.first_attribute(name);
+    float result = 0;
+    if (attr != nullptr)
     {
-        xml_attribute<> *attr = node.first_attribute(name);
-        if (attr != nullptr)
-        {
-            // TODO: Fehlerbehandlung
-            using boost::spirit::qi::float_;
-            boost::spirit::qi::parse(attr->value(), attr->value() + attr->value_size(), float_, *wert);
-        }
+        // TODO: Fehlerbehandlung
+        using boost::spirit::qi::float_;
+        boost::spirit::qi::parse(attr->value(), attr->value() + attr->value_size(), float_, result);
     }
+    return result;
 }
 
 void liesXYZ(xml_node<> &node, float *x, float *y, float *z) {
@@ -309,6 +308,10 @@ std::unique_ptr<Strecke> St3Leser::parseWurzel(const xml_node<>& wurzel) {
             if (oberbau_attr != nullptr) {
               element->oberbauName = std::string(oberbau_attr->value());
             }
+
+            // Fahrleitung
+            element->fahrleitungTyp = static_cast<FahrleitungTyp>(liesInt(*elem_node, "Volt"));
+            element->drahthoehe = liesFloatAttr(*elem_node, "Drahthoehe");
 
             // Anschluss (ohne Nachfolger in anderen Modulen)
             auto anschluss = liesInt(*elem_node, "Anschluss");

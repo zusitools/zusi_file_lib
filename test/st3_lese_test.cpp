@@ -44,6 +44,20 @@ BOOST_AUTO_TEST_CASE(oberbau) {
     BOOST_CHECK_EQUAL(strecke->streckenelemente.at(3)->oberbauName.c_str(), "B55 SKL-Oberbau");
 }
 
+BOOST_AUTO_TEST_CASE(fahrleitung) {
+    ifstream infile("./eingabe/zusi3/FahrleitungTest.st3");
+    unique_ptr<Strecke> strecke = St3Leser().liesDatei(infile);
+
+    BOOST_REQUIRE_EQUAL(strecke->streckenelemente.size(), 4);
+    BOOST_CHECK(strecke->streckenelemente.at(1)->fahrleitungTyp == FahrleitungTyp::Ohne);
+    BOOST_CHECK(strecke->streckenelemente.at(2)->fahrleitungTyp == FahrleitungTyp::Unbestimmt);
+    BOOST_CHECK(static_cast<int>(strecke->streckenelemente.at(3)->fahrleitungTyp) == 10);
+
+    BOOST_CHECK_EQUAL(strecke->streckenelemente.at(1)->drahthoehe, 0);
+    BOOST_CHECK_EQUAL(strecke->streckenelemente.at(2)->drahthoehe, 10);
+    BOOST_CHECK_EQUAL(strecke->streckenelemente.at(3)->drahthoehe, -20.5);
+}
+
 BOOST_AUTO_TEST_CASE(vorgaenger_nachfolger) {
     ifstream infile("./eingabe/zusi3/VorgaengerNachfolgerTest.st3");
     unique_ptr<Strecke> strecke = St3Leser().liesDatei(infile);
