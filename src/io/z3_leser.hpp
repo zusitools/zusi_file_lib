@@ -4,6 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <memory>
+#include <string>
 
 #include "model/dateiinfo.hpp"
 #include "lib/rapidxml-1.13/rapidxml.hpp"
@@ -39,6 +40,9 @@ protected:
 public:
     std::unique_ptr<R> liesDatei(std::istream& stream) {
         stream.seekg(0, ios::end);
+        if (stream.bad()) {
+            throw std::invalid_argument("Keine gültige Zusi-Datei");
+        }
         size_t size = stream.tellg();
         stream.seekg(0);
 
@@ -59,8 +63,16 @@ public:
     }
 
     std::unique_ptr<R> liesDateiMitDateiname(const std::string& dateiname) {
-        std::ifstream datei(dateiname, std::ios::binary);
-        return this->liesDatei(datei);
+        try {
+            std::ifstream datei(dateiname, std::ios::binary);
+            if (datei.fail()) {
+                throw std::runtime_error("Kann Datei nicht öffnen");
+            }
+            return this->liesDatei(datei);
+        } catch (const std::runtime_error& e) {
+            using namespace std::literals::string_literals;
+            throw std::runtime_error("Fehler beim Öffnen von '"s + dateiname + "': " + e.what());
+        }
     }
 };
 
