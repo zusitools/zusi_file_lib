@@ -312,6 +312,7 @@ std::unique_ptr<Strecke> St3Leser::parseWurzel(const xml_node<>& wurzel) {
             // Fahrleitung
             element->fahrleitungTyp = static_cast<FahrleitungTyp>(liesInt(*elem_node, "Volt"));
             element->drahthoehe = liesFloatAttr(*elem_node, "Drahthoehe");
+            element->kruemmung = liesFloatAttr(*elem_node, "kr");
 
             // Anschluss (ohne Nachfolger in anderen Modulen)
             auto anschluss = liesInt(*elem_node, "Anschluss");
