@@ -162,7 +162,7 @@ struct Streckenelement {
     // Die Überhöhung des Elements [rad].
     ueberhoehung_t ueberhoehung;
 
-    // Die Krümmung des Elements [1/km].
+    // Die Krümmung des Elements [1/m].
     kruemmung_t kruemmung;
 
     // Der Typ der Fahrleitung
